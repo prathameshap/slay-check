@@ -57,12 +57,14 @@ class ReviewEngine:
         if self.config.ai_provider == "openai":
             return OpenAIProvider(
                 api_key=self.config.ai_token,
-                model=self.config.ai_model or "gpt-4"
+                model=self.config.ai_model or "gpt-4o",
+                base_url=self.config.ai_base_url
             )
         elif self.config.ai_provider == "anthropic":
             return AnthropicProvider(
                 api_key=self.config.ai_token,
-                model=self.config.ai_model or "claude-3-sonnet-20240229"
+                model=self.config.ai_model or "claude-3-sonnet-20240229",
+                base_url=self.config.ai_base_url
             )
         elif self.config.ai_provider == "google":
             return GoogleAIProvider(

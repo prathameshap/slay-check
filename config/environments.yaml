@@ -3,7 +3,8 @@
 # Development Configuration
 development:
   ai_provider: openai
-  ai_model: gpt-3.5-turbo  # Faster, cheaper model for development
+  ai_model: gpt-4o-mini  # Faster, cheaper model for development
+  ai_base_url: "https://api.openai.com/v1/"  # Default OpenAI endpoint
   review_criteria:
     analyze_problem: true
     algorithm_analysis: true
@@ -28,8 +29,9 @@ development:
 
 # Production Configuration
 production:
-  ai_provider: anthropic
-  ai_model: claude-3-opus-20240229  # Best model for production
+  ai_provider: openai
+  ai_model: gpt-4o  # Best OpenAI model for production
+  ai_base_url: "https://api.openai.com/v1/"  # Default OpenAI endpoint
   review_criteria:
     analyze_problem: true
     algorithm_analysis: true
@@ -60,8 +62,9 @@ production:
 
 # Security-Focused Configuration
 security:
-  ai_provider: anthropic       # Use Claude for security reviews
-  ai_model: claude-3-opus-20240229
+  ai_provider: openai       # Use OpenAI for security reviews
+  ai_model: gpt-4o
+  ai_base_url: "https://api.openai.com/v1/"  # Default OpenAI endpoint
   review_criteria:
     analyze_problem: true
     algorithm_analysis: false
@@ -87,7 +90,8 @@ security:
 # Performance-Focused Configuration
 performance:
   ai_provider: openai
-  ai_model: gpt-4-turbo  # Good for performance analysis
+  ai_model: gpt-4o  # Good for performance analysis
+  ai_base_url: "https://api.openai.com/v1/"  # Default OpenAI endpoint
   review_criteria:
     analyze_problem: false
     algorithm_analysis: true   # Focus on algorithms

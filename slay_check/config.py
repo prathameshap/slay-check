@@ -27,7 +27,8 @@ class Config(BaseModel):
     # AI Provider Configuration
     ai_provider: str = Field(default="openai", description="AI provider to use")
     ai_token: str = Field(default="", description="AI provider API token")
-    ai_model: Optional[str] = Field(default=None, description="AI model to use")
+    ai_model: Optional[str] = Field(default="gpt-4o", description="AI model to use")
+    ai_base_url: Optional[str] = Field(default="https://api.openai.com/v1/", description="Custom API base URL")
     
     # GitHub Configuration
     github_token: str = Field(default="", description="GitHub personal access token")
@@ -88,6 +89,8 @@ class Config(BaseModel):
         env_overrides = {
             "ai_provider": os.getenv("SLAY_CHECK_AI_PROVIDER"),
             "ai_token": os.getenv("SLAY_CHECK_AI_TOKEN"),
+            "ai_model": os.getenv("SLAY_CHECK_AI_MODEL"),
+            "ai_base_url": os.getenv("SLAY_CHECK_AI_BASE_URL"),
             "github_token": os.getenv("SLAY_CHECK_GITHUB_TOKEN"),
             "verbose": os.getenv("SLAY_CHECK_VERBOSE", "").lower() == "true",
             "dry_run": os.getenv("SLAY_CHECK_DRY_RUN", "").lower() == "true",

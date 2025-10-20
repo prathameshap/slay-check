@@ -12,10 +12,15 @@ from .base import AIProvider, ReviewRequest, ReviewResponse, Issue, IssueType, S
 class AnthropicProvider(AIProvider):
     """Anthropic provider for code review."""
     
-    def __init__(self, api_key: str, model: str = "claude-3-sonnet-20240229"):
-        self.client = AsyncAnthropic(api_key=api_key)
+    def __init__(self, api_key: str, model: str = "claude-3-sonnet-20240229", base_url: Optional[str] = None):
+        # Allow custom base URL for Anthropic-compatible APIs
+        if base_url:
+            self.client = AsyncAnthropic(api_key=api_key, base_url=base_url)
+        else:
+            self.client = AsyncAnthropic(api_key=api_key)
         self.model = model
         self.api_key = api_key
+        self.base_url = base_url
     
     def get_name(self) -> str:
         return "anthropic"

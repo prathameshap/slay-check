@@ -41,6 +41,8 @@ jobs:
           GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           SLAY_CHECK_AI_PROVIDER: openai
+          SLAY_CHECK_AI_MODEL: gpt-4o
+          SLAY_CHECK_AI_BASE_URL: https://api.openai.com/v1/
           SLAY_CHECK_AI_TOKEN: ${{ secrets.SLAY_CHECK_AI_TOKEN }}
           SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLAY_CHECK_VERBOSE: true
