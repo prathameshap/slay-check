@@ -50,7 +50,7 @@ jobs:
           SLAY_CHECK_AI_TOKEN: ${{ secrets.SLAY_CHECK_AI_TOKEN }}
           SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          slay-check review --pr ${{ github.event.pull_request.number }} --repo ${{ github.repository }}
+          python -m slay_check.github_action
 ```
 
 2. **Add secrets** to your repository:
