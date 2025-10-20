@@ -4,12 +4,12 @@ A high-performance, modular AI code review tool designed for GitHub Actions and 
 
 ## Features
 
-- 🤖 **Multi-AI Provider Support**: OpenAI, Anthropic, Google AI, and more
-- ⚡ **High Performance**: Built with Go for optimal speed and memory efficiency
-- 🔧 **Configurable Review Criteria**: Customize review parameters via YAML
-- 🚀 **GitHub Actions Ready**: Seamless integration with GitHub workflows
-- 💻 **CLI Support**: Run reviews locally during development
-- 📊 **Comprehensive Analysis**: Code quality, complexity, security, and best practices
+- **Multi-AI Provider Support**: OpenAI, Anthropic, Google AI, and more
+- **High Performance**: Built with Go for optimal speed and memory efficiency
+- **Configurable Review Criteria**: Customize review parameters via YAML
+- **GitHub Actions Ready**: Seamless integration with GitHub workflows
+- **CLI Support**: Run reviews locally during development
+- **Comprehensive Analysis**: Code quality, complexity, security, and best practices
 
 ## Quick Start
 
