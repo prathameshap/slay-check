@@ -16,15 +16,14 @@ jobs:
         with:
           fetch-depth: 0
           
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          go-version: '1.21'
+          python-version: '3.11'
           
-      - name: Build Slay Check
+      - name: Install Slay Check
         run: |
-          go mod download
-          go build -o slay-check ./cmd/github-action
+          pip install git+https://github.com/YOUR_USERNAME/slay-check.git
           
       - name: Run Slay Check
         env:
@@ -37,7 +36,7 @@ jobs:
           SLAY_CHECK_VERBOSE: ${{ vars.SLAY_CHECK_VERBOSE || 'false' }}
           SLAY_CHECK_DRY_RUN: ${{ vars.SLAY_CHECK_DRY_RUN || 'false' }}
         run: |
-          ./slay-check
+          python -m slay_check.github_action
           
       - name: Comment on PR
         if: failure()
