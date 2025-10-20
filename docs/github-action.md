@@ -22,15 +22,14 @@ jobs:
         with:
           fetch-depth: 0
           
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          go-version: '1.21'
+          python-version: '3.11'
           
-      - name: Build Slay Check
+      - name: Install Slay Check
         run: |
-          go mod download
-          go build -o slay-check ./cmd/github-action
+          pip install git+https://github.com/YOUR_USERNAME/slay-check.git
           
       - name: Run Slay Check
         env:
@@ -39,14 +38,14 @@ jobs:
           SLAY_CHECK_AI_TOKEN: ${{ secrets.SLAY_CHECK_AI_TOKEN }}
           SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ./slay-check
+          python -m slay_check.github_action
 ```
 
 ### Required Secrets
 
 Add these secrets to your repository:
 
-- `SLAY_CHECK_AI_TOKEN`: Your AI provider API token (OpenAI, Anthropic, etc.)
+- `SLAY_CHECK_AI_TOKEN`: Your AI provider API token (OpenAI, Anthropic, Google AI)
 - `GITHUB_TOKEN`: Automatically provided by GitHub Actions
 
 ### Optional Variables

@@ -1,0 +1,94 @@
+name: Slay Check - Multi-Provider Review
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  security-review:
+    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'security')
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Install Slay Check
+        run: |
+          pip install git+https://github.com/YOUR_USERNAME/slay-check.git
+          
+      - name: Run Security Review (Claude)
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+          SLAY_CHECK_AI_PROVIDER: anthropic
+          SLAY_CHECK_AI_TOKEN: ${{ secrets.ANTHROPIC_API_KEY }}
+          SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLAY_CHECK_VERBOSE: true
+        run: |
+          python -m slay_check.github_action
+
+  performance-review:
+    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'performance')
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Install Slay Check
+        run: |
+          pip install git+https://github.com/YOUR_USERNAME/slay-check.git
+          
+      - name: Run Performance Review (GPT-4)
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+          SLAY_CHECK_AI_PROVIDER: openai
+          SLAY_CHECK_AI_TOKEN: ${{ secrets.OPENAI_API_KEY }}
+          SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLAY_CHECK_VERBOSE: true
+        run: |
+          python -m slay_check.github_action
+
+  general-review:
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'security') && !contains(github.event.pull_request.labels.*.name, 'performance') }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Install Slay Check
+        run: |
+          pip install git+https://github.com/YOUR_USERNAME/slay-check.git
+          
+      - name: Run General Review (Google AI)
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+          SLAY_CHECK_AI_PROVIDER: google
+          SLAY_CHECK_AI_TOKEN: ${{ secrets.GOOGLE_AI_API_KEY }}
+          SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python -m slay_check.github_action

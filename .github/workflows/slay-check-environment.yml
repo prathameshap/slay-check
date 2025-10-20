@@ -1,0 +1,71 @@
+name: Slay Check - Environment-Specific Review
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  development-review:
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/main'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Install Slay Check
+        run: |
+          pip install git+https://github.com/YOUR_USERNAME/slay-check.git
+          
+      - name: Run Development Review
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+          SLAY_CHECK_AI_PROVIDER: openai
+          SLAY_CHECK_AI_TOKEN: ${{ secrets.OPENAI_API_KEY }}
+          SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLAY_CHECK_VERBOSE: true
+          SLAY_CHECK_DRY_RUN: true
+          SLAY_CHECK_MIN_SCORE_THRESHOLD: 5.0
+          SLAY_CHECK_CRITICAL_ISSUES_LIMIT: 10
+        run: |
+          python -m slay_check.github_action
+
+  production-review:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Install Slay Check
+        run: |
+          pip install git+https://github.com/YOUR_USERNAME/slay-check.git
+          
+      - name: Run Production Review
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+          SLAY_CHECK_AI_PROVIDER: anthropic
+          SLAY_CHECK_AI_TOKEN: ${{ secrets.ANTHROPIC_API_KEY }}
+          SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLAY_CHECK_VERBOSE: false
+          SLAY_CHECK_DRY_RUN: false
+          SLAY_CHECK_MIN_SCORE_THRESHOLD: 7.0
+          SLAY_CHECK_CRITICAL_ISSUES_LIMIT: 2
+        run: |
+          python -m slay_check.github_action

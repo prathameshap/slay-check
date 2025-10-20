@@ -3,6 +3,7 @@
 # Development Configuration
 development:
   ai_provider: openai
+  ai_model: gpt-3.5-turbo  # Faster, cheaper model for development
   review_criteria:
     analyze_problem: true
     algorithm_analysis: true
@@ -16,14 +17,19 @@ development:
     - "*.txt"
     - "vendor/*"
     - "testdata/*"
+    - "__pycache__/*"
+    - "*.pyc"
   max_file_size: 5000
   max_files_per_pr: 20
   verbose: true
   dry_run: true                # Don't post comments in dev
+  min_score_threshold: 5.0
+  critical_issues_limit: 10
 
 # Production Configuration
 production:
-  ai_provider: openai
+  ai_provider: anthropic
+  ai_model: claude-3-opus-20240229  # Best model for production
   review_criteria:
     analyze_problem: true
     algorithm_analysis: true
@@ -43,6 +49,8 @@ production:
     - "*.log"
     - "*.tmp"
     - "testdata/*"
+    - "__pycache__/*"
+    - "*.pyc"
   max_file_size: 10000
   max_files_per_pr: 50
   verbose: false
@@ -53,6 +61,7 @@ production:
 # Security-Focused Configuration
 security:
   ai_provider: anthropic       # Use Claude for security reviews
+  ai_model: claude-3-opus-20240229
   review_criteria:
     analyze_problem: true
     algorithm_analysis: false
@@ -66,6 +75,8 @@ security:
     - "*.txt"
     - "vendor/*"
     - "testdata/*"
+    - "__pycache__/*"
+    - "*.pyc"
   max_file_size: 15000
   max_files_per_pr: 30
   verbose: true
@@ -76,6 +87,7 @@ security:
 # Performance-Focused Configuration
 performance:
   ai_provider: openai
+  ai_model: gpt-4-turbo  # Good for performance analysis
   review_criteria:
     analyze_problem: false
     algorithm_analysis: true   # Focus on algorithms
@@ -89,6 +101,8 @@ performance:
     - "*.txt"
     - "vendor/*"
     - "testdata/*"
+    - "__pycache__/*"
+    - "*.pyc"
   max_file_size: 20000
   max_files_per_pr: 100
   verbose: true
