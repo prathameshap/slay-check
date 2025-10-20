@@ -93,6 +93,13 @@ class OpenAIProvider(AIProvider):
         if request.criteria.get("performance_review", True):
             prompt += "- Review for performance issues\n"
         
+        prompt += "\nIMPORTANT: You MUST find specific issues in the code. Even if the code is good, look for:\n"
+        prompt += "- Code style improvements\n"
+        prompt += "- Performance optimizations\n"
+        prompt += "- Best practice violations\n"
+        prompt += "- Potential bugs or edge cases\n"
+        prompt += "- Security considerations\n"
+        prompt += "- Maintainability improvements\n"
         prompt += "\nPlease provide your analysis in JSON format with the following structure:\n"
         prompt += """{
   "analysis": "Detailed analysis of the code",
@@ -154,13 +161,25 @@ class OpenAIProvider(AIProvider):
                 confidence=float(data.get("confidence", 0.7))
             )
             
-        except (json.JSONDecodeError, ValueError, KeyError):
-            # If JSON parsing fails, create a basic response
+        except (json.JSONDecodeError, ValueError, KeyError) as e:
+            # If JSON parsing fails, try to extract information from text
+            print(f"JSON parsing failed: {e}")
+            print(f"AI Response: {content[:500]}...")
+            
+            # Try to extract score from text
+            score = 7.0
+            if "score" in content.lower():
+                import re
+                score_match = re.search(r'score[:\s]*(\d+\.?\d*)', content.lower())
+                if score_match:
+                    score = float(score_match.group(1))
+            
+            # Create a basic response with the raw analysis
             return ReviewResponse(
                 analysis=content,
-                score=7.0,
-                issues=[],
-                suggestions=[],
+                score=score,
+                issues=[],  # No specific issues extracted
+                suggestions=[],  # No specific suggestions extracted
                 complexity=Complexity(),
-                confidence=0.7
+                confidence=0.5  # Lower confidence due to parsing failure
             )

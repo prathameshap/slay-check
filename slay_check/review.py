@@ -192,7 +192,18 @@ class ReviewEngine:
         )
         
         # Get AI review
+        if self.config.verbose:
+            print(f"Requesting AI review for {file_info.filename}...")
+        
         response = self.ai_provider.review_code(request)
+        
+        if self.config.verbose:
+            print(f"AI Response - Score: {response.score:.1f}, Issues: {len(response.issues)}")
+            if response.issues:
+                for i, issue in enumerate(response.issues, 1):
+                    print(f"  Issue {i}: {issue.severity} {issue.type} - {issue.message}")
+            else:
+                print("  No specific issues found by AI")
         
         return FileReview(
             filename=file_info.filename,
