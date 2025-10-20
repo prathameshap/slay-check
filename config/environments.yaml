@@ -1,0 +1,97 @@
+# Slay Check Configuration for Different Environments
+
+# Development Configuration
+development:
+  ai_provider: openai
+  review_criteria:
+    analyze_problem: true
+    algorithm_analysis: true
+    best_approaches: true
+    complexity_analysis: true
+    risk_assessment: true
+    security_review: false      # Skip security review in dev
+    performance_review: true
+  exclude_patterns:
+    - "*.md"
+    - "*.txt"
+    - "vendor/*"
+    - "testdata/*"
+  max_file_size: 5000
+  max_files_per_pr: 20
+  verbose: true
+  dry_run: true                # Don't post comments in dev
+
+# Production Configuration
+production:
+  ai_provider: openai
+  review_criteria:
+    analyze_problem: true
+    algorithm_analysis: true
+    best_approaches: true
+    complexity_analysis: true
+    risk_assessment: true
+    security_review: true       # Enable security review in prod
+    performance_review: true
+  exclude_patterns:
+    - "*.md"
+    - "*.txt"
+    - "vendor/*"
+    - "node_modules/*"
+    - "*.min.js"
+    - "*.min.css"
+    - "*.lock"
+    - "*.log"
+    - "*.tmp"
+    - "testdata/*"
+  max_file_size: 10000
+  max_files_per_pr: 50
+  verbose: false
+  dry_run: false
+  min_score_threshold: 7.0     # Higher threshold for production
+  critical_issues_limit: 2    # Stricter limit for production
+
+# Security-Focused Configuration
+security:
+  ai_provider: anthropic       # Use Claude for security reviews
+  review_criteria:
+    analyze_problem: true
+    algorithm_analysis: false
+    best_approaches: true
+    complexity_analysis: false
+    risk_assessment: true
+    security_review: true       # Focus on security
+    performance_review: false
+  exclude_patterns:
+    - "*.md"
+    - "*.txt"
+    - "vendor/*"
+    - "testdata/*"
+  max_file_size: 15000
+  max_files_per_pr: 30
+  verbose: true
+  dry_run: false
+  min_score_threshold: 8.0     # High threshold for security
+  critical_issues_limit: 1     # Very strict for security
+
+# Performance-Focused Configuration
+performance:
+  ai_provider: openai
+  review_criteria:
+    analyze_problem: false
+    algorithm_analysis: true   # Focus on algorithms
+    best_approaches: true
+    complexity_analysis: true  # Focus on complexity
+    risk_assessment: false
+    security_review: false
+    performance_review: true   # Focus on performance
+  exclude_patterns:
+    - "*.md"
+    - "*.txt"
+    - "vendor/*"
+    - "testdata/*"
+  max_file_size: 20000
+  max_files_per_pr: 100
+  verbose: true
+  dry_run: false
+  min_score_threshold: 6.0
+  critical_issues_limit: 5
