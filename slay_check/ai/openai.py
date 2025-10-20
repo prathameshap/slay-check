@@ -137,8 +137,18 @@ class OpenAIProvider(AIProvider):
     def _parse_response(self, content: str) -> ReviewResponse:
         """Parse OpenAI response into ReviewResponse."""
         try:
-            # Try to parse as JSON first
-            data = json.loads(content)
+            # Clean the content - remove markdown code blocks if present
+            cleaned_content = content.strip()
+            if cleaned_content.startswith("```json"):
+                cleaned_content = cleaned_content[7:]  # Remove ```json
+            if cleaned_content.startswith("```"):
+                cleaned_content = cleaned_content[3:]   # Remove ```
+            if cleaned_content.endswith("```"):
+                cleaned_content = cleaned_content[:-3]   # Remove trailing ```
+            cleaned_content = cleaned_content.strip()
+            
+            # Try to parse as JSON
+            data = json.loads(cleaned_content)
             
             issues = []
             for issue_data in data.get("issues", []):
@@ -161,7 +171,7 @@ class OpenAIProvider(AIProvider):
             )
             
             return ReviewResponse(
-                analysis=data.get("analysis", content),
+                analysis=data.get("analysis", cleaned_content),
                 score=float(data.get("score", 7.0)),
                 issues=issues,
                 suggestions=data.get("suggestions", []),
