@@ -72,9 +72,17 @@ class AnthropicProvider(AIProvider):
         prompt += "Code:\n```" + request.language + "\n" + request.code + "\n```\n\n"
         
         prompt += "Please analyze the code based on these criteria:\n"
+        prompt += "\nThings to consider:\n"
+        prompt += "1. Analyze the problem the code is solving\n"
+        prompt += "2. Algorithm used for the logic\n"
+        prompt += "3. Plausible best approaches for the code\n"
+        prompt += "4. Time and space complexity for the code written\n"
+        prompt += "5. Which would be the best approach for the current scenario\n"
+        prompt += "6. Risks for using the new approach\n"
         
+        # Add specific review criteria if enabled
         if request.criteria.get("analyze_problem", True):
-            prompt += "- Analyze the problem the code is solving\n"
+            prompt += "\n- Analyze the problem the code is solving\n"
         if request.criteria.get("algorithm_analysis", True):
             prompt += "- Analyze the algorithm used for the logic\n"
         if request.criteria.get("best_approaches", True):
