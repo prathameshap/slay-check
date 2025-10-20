@@ -2,60 +2,37 @@
 
 Thank you for your interest in contributing to Slay Check! This document provides guidelines for contributing to the project.
 
-## Table of Contents
-
-- [Code of Conduct](#code-of-conduct)
-- [Getting Started](#getting-started)
-- [Development Setup](#development-setup)
-- [Contributing Process](#contributing-process)
-- [Code Style Guidelines](#code-style-guidelines)
-- [Testing Guidelines](#testing-guidelines)
-- [Documentation Guidelines](#documentation-guidelines)
-- [Release Process](#release-process)
-
-## Code of Conduct
-
-This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). By participating, you agree to uphold this code.
-
-## Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Python 3.11 or later
+- Python 3.11+
 - Git
-- pip (Python package manager)
-- Docker (for testing)
+- AI provider API key (for testing)
 
 ### Development Setup
 
-1. **Fork the repository**
-   ```bash
-   git clone https://github.com/your-username/slay-check.git
-   cd slay-check
-   ```
+```bash
+# Fork and clone
+git clone https://github.com/your-username/slay-check.git
+cd slay-check
 
-2. **Set up development environment**
-   ```bash
-   pip install -e .
-   pip install -r requirements-dev.txt  # If available
-   ```
+# Install in development mode
+pip install -e .
 
-3. **Run tests**
-   ```bash
-   pytest
-   ```
+# Set up environment
+export SLAY_CHECK_AI_TOKEN="your-test-token"
+export SLAY_CHECK_GITHUB_TOKEN="your-test-token"
 
-4. **Set up environment variables**
-   ```bash
-   export SLAY_CHECK_AI_TOKEN="your-test-token"
-   export SLAY_CHECK_GITHUB_TOKEN="your-test-token"
-   ```
+# Run tests
+pytest
+```
 
-## Contributing Process
+## 📋 Contributing Process
 
 ### 1. Create an Issue
 
-Before starting work, please create an issue to discuss:
+Before starting work, create an issue to discuss:
 - Bug reports
 - Feature requests
 - Performance improvements
@@ -82,11 +59,8 @@ pytest
 # Run tests with coverage
 pytest --cov=slay_check
 
-# Run specific test file
-pytest tests/test_config.py
-
 # Test CLI
-slay-check --help
+python -m slay_check.cli --help
 
 # Test GitHub Action
 python -m slay_check.github_action --help
@@ -123,7 +97,7 @@ Create a pull request with:
 - Screenshots (if applicable)
 - Test results
 
-## Code Style Guidelines
+## 🎨 Code Style Guidelines
 
 ### Python Style
 
@@ -165,8 +139,6 @@ except Exception as e:
 def process_file(filename: str) -> Result:
     """Process a file and return the result.
     
-    Handles various file formats and returns an error if processing fails.
-    
     Args:
         filename: The path to the file to process
         
@@ -176,16 +148,11 @@ def process_file(filename: str) -> Result:
     Raises:
         ValueError: If the file cannot be processed
         FileNotFoundError: If the file does not exist
-        
-    Example:
-        >>> result = process_file("example.py")
-        >>> print(result.success)
-        True
     """
     # implementation
 ```
 
-## Testing Guidelines
+## 🧪 Testing Guidelines
 
 ### Unit Tests
 
@@ -221,11 +188,6 @@ def mock_ai_provider():
         confidence=0.8
     )
     return provider
-
-def test_review_with_mock_provider(mock_ai_provider):
-    """Test review with mocked AI provider."""
-    result = review_code("test.py", mock_ai_provider)
-    assert result.score == 8.5
 ```
 
 ### Integration Tests
@@ -242,13 +204,7 @@ def test_review_pull_request():
     pass
 ```
 
-### Test Data
-
-- Use realistic test data
-- Include edge cases
-- Use fixtures for complex data
-
-## Documentation Guidelines
+## 📚 Documentation Guidelines
 
 ### README Updates
 
@@ -271,7 +227,7 @@ def test_review_pull_request():
 - Include default values
 - Include validation rules
 
-## Release Process
+## 🏷️ Release Process
 
 ### Versioning
 
@@ -289,16 +245,7 @@ We follow [Semantic Versioning](https://semver.org/):
 - [ ] Release notes prepared
 - [ ] GitHub release created
 
-### Creating a Release
-
-1. Update version in `pyproject.toml`
-2. Update changelog
-3. Create release branch
-4. Create GitHub release
-5. Tag release
-6. Update documentation
-
-## Areas for Contribution
+## 🎯 Areas for Contribution
 
 ### High Priority
 
@@ -323,13 +270,12 @@ We follow [Semantic Versioning](https://semver.org/):
 - **Notifications**: Slack/email notifications
 - **Custom Rules**: User-defined review rules
 
-## Getting Help
+## 🆘 Getting Help
 
-- **Issues**: [GitHub Issues](https://github.com/YOUR_USERNAME/slay-check/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/YOUR_USERNAME/slay-check/discussions)
-- **Discord**: [Slay Check Discord](https://discord.gg/slay-check)
+- **Issues**: [GitHub Issues](https://github.com/prathameshap/slay-check/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/prathameshap/slay-check/discussions)
 
-## Recognition
+## 🏆 Recognition
 
 Contributors will be recognized in:
 - README.md contributors section

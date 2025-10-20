@@ -1,6 +1,6 @@
-# Slay Check Setup Guide
+# Setup Guide
 
-This guide will help you set up Slay Check for AI-powered code reviews in your GitHub repository.
+Complete installation and configuration guide for Slay Check.
 
 ## Prerequisites
 
@@ -8,17 +8,7 @@ This guide will help you set up Slay Check for AI-powered code reviews in your G
 - AI provider API key (OpenAI, Anthropic, or Google AI)
 - GitHub personal access token (for private repositories)
 
-## Step 1: Choose Your Setup Method
-
-### Option A: Use Main Repository (Recommended for most users)
-
-This is the easiest setup - just install from the main repository.
-
-### Option B: Use Your Own Fork (Recommended for customization)
-
-If you want to customize Slay Check or contribute back, fork the repository first.
-
-## Step 2: Get AI Provider API Key
+## Step 1: Get AI Provider API Key
 
 ### OpenAI
 1. Go to [OpenAI Platform](https://platform.openai.com/)
@@ -38,7 +28,7 @@ If you want to customize Slay Check or contribute back, fork the repository firs
 3. Click **Create API Key**
 4. Copy the key
 
-## Step 3: Set Up Repository Secrets
+## Step 2: Set Up Repository Secrets
 
 1. Go to your repository on GitHub
 2. Click **Settings** → **Secrets and variables** → **Actions**
@@ -50,7 +40,7 @@ If you want to customize Slay Check or contribute back, fork the repository firs
 | `SLAY_CHECK_AI_TOKEN` | Your AI API key | OpenAI, Anthropic, or Google AI key |
 | `SLAY_CHECK_TOKEN` | Your GitHub PAT | Only needed for private repositories |
 
-## Step 4: Create GitHub Actions Workflow
+## Step 3: Create GitHub Actions Workflow
 
 Create `.github/workflows/slay-check.yml` in your repository:
 
@@ -138,7 +128,7 @@ jobs:
           python -m slay_check.github_action
 ```
 
-## Step 5: Configure Slay Check (Optional)
+## Step 4: Configure Slay Check (Optional)
 
 Create `slay-check.yaml` in your repository root to customize behavior:
 
@@ -179,7 +169,7 @@ min_score_threshold: 6.0
 critical_issues_limit: 3
 ```
 
-## Step 6: Test Your Setup
+## Step 5: Test Your Setup
 
 1. Create a test pull request in your repository
 2. Check the **Actions** tab to see Slay Check running
