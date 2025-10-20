@@ -1,12 +1,10 @@
-name: Slay Check - AI Code Review
+name: Slay Check - Debug Mode
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-  pull_request_target:
-    types: [opened, synchronize, reopened]
 
 jobs:
-  slay-check:
+  slay-check-debug:
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false
     
@@ -21,31 +19,31 @@ jobs:
         with:
           python-version: '3.11'
           
+      - name: Debug Environment
+        run: |
+          echo "Repository: ${{ github.repository }}"
+          echo "PR Number: ${{ github.event.pull_request.number }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "AI Token Set: ${{ secrets.SLAY_CHECK_AI_TOKEN != '' }}"
+          echo "GitHub Token Set: ${{ secrets.GITHUB_TOKEN != '' }}"
+          
       - name: Install Slay Check
         run: |
           pip install git+https://github.com/prathameshap/slay-check.git
           
-      - name: Run Slay Check
+      - name: Test Slay Check Import
+        run: |
+          python -c "import slay_check; print('Slay Check imported successfully')"
+          
+      - name: Run Slay Check (Debug)
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
-          SLAY_CHECK_AI_PROVIDER: ${{ vars.SLAY_CHECK_AI_PROVIDER || 'openai' }}
+          SLAY_CHECK_AI_PROVIDER: openai
           SLAY_CHECK_AI_TOKEN: ${{ secrets.SLAY_CHECK_AI_TOKEN }}
           SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SLAY_CHECK_VERBOSE: ${{ vars.SLAY_CHECK_VERBOSE || 'false' }}
-          SLAY_CHECK_DRY_RUN: ${{ vars.SLAY_CHECK_DRY_RUN || 'false' }}
+          SLAY_CHECK_VERBOSE: true
+          SLAY_CHECK_DRY_RUN: true
         run: |
           python -m slay_check.github_action
-          
-      - name: Comment on PR
-        if: failure()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '❌ **Slay Check Review Failed**\n\nPlease check the [workflow logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.'
-            })
