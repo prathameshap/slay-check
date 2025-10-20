@@ -4,7 +4,7 @@
 development:
   ai_provider: openai
   ai_model: gpt-4o-mini  # Faster, cheaper model for development
-  ai_base_url: "https://api.openai.com/v1/"  # Default OpenAI endpoint
+  ai_base_url: "https://api.openai.com/v1/chat/completions"  # Default OpenAI endpoint
   review_criteria:
     analyze_problem: true
     algorithm_analysis: true
