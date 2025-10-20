@@ -36,7 +36,7 @@ git remote add upstream https://github.com/slay-check/slay-check.git
 ### 4. Set Up Development Environment
 
 ```bash
-make dev-setup
+pip install -e .
 ```
 
 ## Using Your Fork in GitHub Actions
@@ -69,16 +69,15 @@ jobs:
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          go-version: '1.21'
+          python-version: '3.11'
           
-      - name: Build Slay Check from fork
+      - name: Install Slay Check from fork
         run: |
           cd slay-check
-          go mod download
-          go build -o ../slay-check ./cmd/github-action
+          pip install -e .
           
       - name: Run Slay Check
         env:
@@ -87,7 +86,7 @@ jobs:
           SLAY_CHECK_AI_TOKEN: ${{ secrets.SLAY_CHECK_AI_TOKEN }}
           SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ./slay-check
+          python -m slay_check.github_action
 ```
 
 ### Method 2: Using Personal Access Token
@@ -117,16 +116,15 @@ jobs:
           path: slay-check
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          go-version: '1.21'
+          python-version: '3.11'
           
-      - name: Build Slay Check from fork
+      - name: Install Slay Check from fork
         run: |
           cd slay-check
-          go mod download
-          go build -o ../slay-check ./cmd/github-action
+          pip install -e .
           
       - name: Run Slay Check
         env:
@@ -135,7 +133,7 @@ jobs:
           SLAY_CHECK_AI_TOKEN: ${{ secrets.SLAY_CHECK_AI_TOKEN }}
           SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ./slay-check
+          python -m slay_check.github_action
 ```
 
 **Required Secret:** `PERSONAL_ACCESS_TOKEN` with `repo` scope.
@@ -158,73 +156,66 @@ Use a specific branch or tag from your fork:
 
 ### 1. Custom AI Provider
 
-Add your own AI provider in `internal/ai/custom.go`:
+Add your own AI provider in `slay_check/ai/custom.py`:
 
-```go
-package ai
+```python
+from typing import Dict, Any, Optional
+from .base import AIProvider, ReviewRequest, ReviewResponse, Issue, IssueType, Severity, Complexity
 
-import (
-    "context"
-    "fmt"
-)
-
-type CustomProvider struct {
-    apiKey string
-    baseURL string
-}
-
-func NewCustomProvider(apiKey string) *CustomProvider {
-    return &CustomProvider{
-        apiKey: apiKey,
-        baseURL: "https://api.custom-ai.com/v1",
-    }
-}
-
-func (p *CustomProvider) ReviewCode(ctx context.Context, request ReviewRequest) (*ReviewResponse, error) {
-    // Your custom implementation
-    return &ReviewResponse{
-        Analysis: "Custom AI analysis",
-        Score: 8.5,
-        Issues: []Issue{},
-    }, nil
-}
-
-func (p *CustomProvider) GetName() string {
-    return "custom"
-}
-
-func (p *CustomProvider) IsAvailable() bool {
-    return p.apiKey != ""
-}
+class CustomProvider(AIProvider):
+    """Custom AI provider for code review."""
+    
+    def __init__(self, api_key: str, base_url: str = "https://api.custom-ai.com/v1"):
+        self.api_key = api_key
+        self.base_url = base_url
+    
+    def get_name(self) -> str:
+        return "custom"
+    
+    def is_available(self) -> bool:
+        return bool(self.api_key)
+    
+    def review_code(self, request: ReviewRequest) -> ReviewResponse:
+        # Your custom implementation
+        return ReviewResponse(
+            analysis="Custom AI analysis",
+            score=8.5,
+            issues=[],
+            suggestions=[],
+            complexity=Complexity(),
+            confidence=0.8
+        )
 ```
 
 ### 2. Custom Review Criteria
 
-Modify `internal/review/engine.go` to add custom criteria:
+Modify `slay_check/review.py` to add custom criteria:
 
-```go
-// Add custom review logic
-func (e *Engine) customReview(file PullRequestFile, pr *github.PullRequest) (*FileReview, error) {
-    // Your custom review logic
-    return &FileReview{
-        Filename: file.Filename,
-        Score: 9.0,
-        Analysis: "Custom analysis based on your rules",
-    }, nil
-}
+```python
+def custom_review(self, file_info: PullRequestFileInfo, pr_info: PullRequestInfo) -> FileReview:
+    """Custom review logic."""
+    # Your custom review logic
+    return FileReview(
+        filename=file_info.filename,
+        language=self._detect_language(file_info.filename),
+        score=9.0,
+        issues=[],
+        suggestions=[],
+        complexity=None,
+        analysis="Custom analysis based on your rules"
+    )
 ```
 
 ### 3. Custom Configuration
 
-Add custom configuration options in `internal/config/config.go`:
+Add custom configuration options in `slay_check/config.py`:
 
-```go
-type Config struct {
-    // ... existing fields ...
-    CustomRules    []string `mapstructure:"custom_rules"`
-    TeamStandards  bool     `mapstructure:"team_standards"`
-    // ... more custom fields ...
-}
+```python
+class Config(BaseModel):
+    # ... existing fields ...
+    custom_rules: List[str] = []
+    team_standards: bool = False
+    # ... more custom fields ...
 ```
 
 ## Updating Your Fork
@@ -320,16 +311,16 @@ token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 repository: YOUR_USERNAME/slay-check  # Make sure this is correct
 ```
 
-#### 3. Build Failures
+#### 3. Installation Failures
 
-**Error:** Build fails in GitHub Actions
+**Error:** Python installation fails
 
-**Solution:** Check Go version compatibility and dependencies:
+**Solution:** Check Python version compatibility and dependencies:
 ```yaml
-- name: Set up Go
-  uses: actions/setup-go@v4
+- name: Set up Python
+  uses: actions/setup-python@v4
   with:
-    go-version: '1.21'  # Match your fork's Go version
+    python-version: '3.11'  # Match your fork's Python version
 ```
 
 #### 4. Token Issues

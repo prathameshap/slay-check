@@ -21,9 +21,9 @@ This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.
 
 ### Prerequisites
 
-- Go 1.21 or later
+- Python 3.11 or later
 - Git
-- Make (optional, for build scripts)
+- pip (Python package manager)
 - Docker (for testing)
 
 ### Development Setup
@@ -36,13 +36,13 @@ This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.
 
 2. **Set up development environment**
    ```bash
-   go mod download
-   go build ./...
+   pip install -e .
+   pip install -r requirements-dev.txt  # If available
    ```
 
 3. **Run tests**
    ```bash
-   go test ./...
+   pytest
    ```
 
 4. **Set up environment variables**
@@ -77,20 +77,19 @@ Follow the [Code Style Guidelines](#code-style-guidelines) and [Testing Guidelin
 
 ```bash
 # Run all tests
-go test ./...
+pytest
 
 # Run tests with coverage
-go test -cover ./...
+pytest --cov=slay_check
 
-# Run integration tests
-go test -tags=integration ./...
+# Run specific test file
+pytest tests/test_config.py
 
 # Test CLI
-go build -o slay-check ./cmd/slay-check
-./slay-check --help
+slay-check --help
 
 # Test GitHub Action
-go build -o slay-check ./cmd/github-action
+python -m slay_check.github_action --help
 ```
 
 ### 5. Update Documentation
@@ -126,52 +125,64 @@ Create a pull request with:
 
 ## Code Style Guidelines
 
-### Go Style
+### Python Style
 
-- Follow [Effective Go](https://golang.org/doc/effective_go.html)
-- Use `gofmt` for formatting
-- Use `golint` for linting
-- Use `go vet` for static analysis
+- Follow [PEP 8](https://pep8.org/)
+- Use `black` for formatting
+- Use `flake8` for linting
+- Use `mypy` for type checking
 
 ### Naming Conventions
 
 - Use descriptive names
-- Use camelCase for variables and functions
-- Use PascalCase for exported types and functions
-- Use snake_case for configuration keys
+- Use snake_case for variables and functions
+- Use PascalCase for classes
+- Use UPPER_CASE for constants
 
 ### Error Handling
 
-```go
-// Good
-if err != nil {
-    return fmt.Errorf("failed to process file %s: %w", filename, err)
-}
+```python
+# Good
+try:
+    result = process_file(filename)
+except FileNotFoundError as e:
+    raise ValueError(f"Failed to process file {filename}: {e}") from e
 
-// Bad
-if err != nil {
-    return err
-}
+# Bad
+try:
+    result = process_file(filename)
+except Exception as e:
+    return None
 ```
 
 ### Documentation
 
-- Document all exported functions
-- Use Go doc comments
-- Include examples for complex functions
+- Document all public functions and classes
+- Use docstrings following PEP 257
+- Include type hints for all parameters and return values
 
-```go
-// ProcessFile processes a file and returns the result.
-// It handles various file formats and returns an error if processing fails.
-//
-// Example:
-//   result, err := ProcessFile("example.go")
-//   if err != nil {
-//       log.Fatal(err)
-//   }
-func ProcessFile(filename string) (*Result, error) {
-    // implementation
-}
+```python
+def process_file(filename: str) -> Result:
+    """Process a file and return the result.
+    
+    Handles various file formats and returns an error if processing fails.
+    
+    Args:
+        filename: The path to the file to process
+        
+    Returns:
+        A Result object containing the processed data
+        
+    Raises:
+        ValueError: If the file cannot be processed
+        FileNotFoundError: If the file does not exist
+        
+    Example:
+        >>> result = process_file("example.py")
+        >>> print(result.success)
+        True
+    """
+    # implementation
 ```
 
 ## Testing Guidelines
@@ -180,44 +191,41 @@ func ProcessFile(filename string) (*Result, error) {
 
 - Write tests for all new functionality
 - Aim for >80% code coverage
-- Use table-driven tests where appropriate
+- Use pytest fixtures for test data
 - Mock external dependencies
 
-```go
-func TestProcessFile(t *testing.T) {
-    tests := []struct {
-        name     string
-        filename string
-        want     *Result
-        wantErr  bool
-    }{
-        {
-            name:     "valid file",
-            filename: "test.go",
-            want:     &Result{Success: true},
-            wantErr:  false,
-        },
-        {
-            name:     "invalid file",
-            filename: "nonexistent.go",
-            want:     nil,
-            wantErr:  true,
-        },
-    }
+```python
+import pytest
+from unittest.mock import Mock, patch
 
-    for _, tt := range tests {
-        t.Run(tt.name, func(t *testing.T) {
-            got, err := ProcessFile(tt.filename)
-            if (err != nil) != tt.wantErr {
-                t.Errorf("ProcessFile() error = %v, wantErr %v", err, tt.wantErr)
-                return
-            }
-            if !reflect.DeepEqual(got, tt.want) {
-                t.Errorf("ProcessFile() = %v, want %v", got, tt.want)
-            }
-        })
-    }
-}
+def test_process_file():
+    """Test file processing functionality."""
+    # Test with valid file
+    result = process_file("test.py")
+    assert result.success is True
+    
+    # Test with invalid file
+    with pytest.raises(ValueError):
+        process_file("nonexistent.py")
+
+@pytest.fixture
+def mock_ai_provider():
+    """Mock AI provider for testing."""
+    provider = Mock()
+    provider.review_code.return_value = ReviewResponse(
+        analysis="Test analysis",
+        score=8.5,
+        issues=[],
+        suggestions=[],
+        complexity=Complexity(),
+        confidence=0.8
+    )
+    return provider
+
+def test_review_with_mock_provider(mock_ai_provider):
+    """Test review with mocked AI provider."""
+    result = review_code("test.py", mock_ai_provider)
+    assert result.score == 8.5
 ```
 
 ### Integration Tests
@@ -226,12 +234,12 @@ func TestProcessFile(t *testing.T) {
 - Test GitHub API integration
 - Test end-to-end workflows
 
-```go
-//go:build integration
-
-func TestReviewPullRequest(t *testing.T) {
-    // Integration test implementation
-}
+```python
+@pytest.mark.integration
+def test_review_pull_request():
+    """Integration test for pull request review."""
+    # Integration test implementation
+    pass
 ```
 
 ### Test Data
@@ -277,13 +285,13 @@ We follow [Semantic Versioning](https://semver.org/):
 - [ ] All tests pass
 - [ ] Documentation updated
 - [ ] Changelog updated
-- [ ] Version bumped
+- [ ] Version bumped in pyproject.toml
 - [ ] Release notes prepared
 - [ ] GitHub release created
 
 ### Creating a Release
 
-1. Update version in `go.mod`
+1. Update version in `pyproject.toml`
 2. Update changelog
 3. Create release branch
 4. Create GitHub release
@@ -317,8 +325,8 @@ We follow [Semantic Versioning](https://semver.org/):
 
 ## Getting Help
 
-- **Issues**: [GitHub Issues](https://github.com/slay-check/slay-check/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/slay-check/slay-check/discussions)
+- **Issues**: [GitHub Issues](https://github.com/YOUR_USERNAME/slay-check/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/YOUR_USERNAME/slay-check/discussions)
 - **Discord**: [Slay Check Discord](https://discord.gg/slay-check)
 
 ## Recognition

@@ -30,23 +30,24 @@ jobs:
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          go-version: '1.21'
+          python-version: '3.11'
           
-      - name: Build and run Slay Check
+      - name: Install Slay Check from fork
         run: |
           cd slay-check
-          go mod download
-          go build -o ../slay-check ./cmd/github-action
-          cd ..
-          ./slay-check
+          pip install -e .
+          
+      - name: Run Slay Check
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
           SLAY_CHECK_AI_TOKEN: ${{ secrets.SLAY_CHECK_AI_TOKEN }}
           SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python -m slay_check.github_action
 ```
 
 ## Advanced Fork Usage
@@ -76,23 +77,24 @@ jobs:
           path: slay-check
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          go-version: '1.21'
+          python-version: '3.11'
           
-      - name: Build and run Slay Check
+      - name: Install Slay Check from fork
         run: |
           cd slay-check
-          go mod download
-          go build -o ../slay-check ./cmd/github-action
-          cd ..
-          ./slay-check
+          pip install -e .
+          
+      - name: Run Slay Check
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
           SLAY_CHECK_AI_TOKEN: ${{ secrets.SLAY_CHECK_AI_TOKEN }}
           SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python -m slay_check.github_action
 ```
 
 ### 2. Using Specific Branch
@@ -121,23 +123,24 @@ jobs:
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          go-version: '1.21'
+          python-version: '3.11'
           
-      - name: Build and run Slay Check
+      - name: Install Slay Check from fork
         run: |
           cd slay-check
-          go mod download
-          go build -o ../slay-check ./cmd/github-action
-          cd ..
-          ./slay-check
+          pip install -e .
+          
+      - name: Run Slay Check
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
           SLAY_CHECK_AI_TOKEN: ${{ secrets.SLAY_CHECK_AI_TOKEN }}
           SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python -m slay_check.github_action
 ```
 
 ### 3. Using Specific Tag/Release
@@ -166,23 +169,24 @@ jobs:
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          go-version: '1.21'
+          python-version: '3.11'
           
-      - name: Build and run Slay Check
+      - name: Install Slay Check from fork
         run: |
           cd slay-check
-          go mod download
-          go build -o ../slay-check ./cmd/github-action
-          cd ..
-          ./slay-check
+          pip install -e .
+          
+      - name: Run Slay Check
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
           SLAY_CHECK_AI_TOKEN: ${{ secrets.SLAY_CHECK_AI_TOKEN }}
           SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python -m slay_check.github_action
 ```
 
 ## Conditional Fork Usage
@@ -212,23 +216,24 @@ jobs:
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          go-version: '1.21'
+          python-version: '3.11'
           
-      - name: Build and run Slay Check
+      - name: Install Slay Check from fork
         run: |
           cd slay-check
-          go mod download
-          go build -o ../slay-check ./cmd/github-action
-          cd ..
-          ./slay-check
+          pip install -e .
+          
+      - name: Run Slay Check
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
           SLAY_CHECK_AI_TOKEN: ${{ secrets.SLAY_CHECK_AI_TOKEN }}
           SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python -m slay_check.github_action
 ```
 
 ### 2. Label-Based Forks
@@ -256,23 +261,24 @@ jobs:
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          go-version: '1.21'
+          python-version: '3.11'
           
-      - name: Build and run Slay Check
+      - name: Install Slay Check from fork
         run: |
           cd slay-check
-          go mod download
-          go build -o ../slay-check ./cmd/github-action
-          cd ..
-          ./slay-check
+          pip install -e .
+          
+      - name: Run Slay Check
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
           SLAY_CHECK_AI_TOKEN: ${{ secrets.SLAY_CHECK_AI_TOKEN }}
           SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python -m slay_check.github_action
 ```
 
 ### 3. File Path-Based Forks
@@ -300,23 +306,24 @@ jobs:
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          go-version: '1.21'
+          python-version: '3.11'
           
-      - name: Build and run Slay Check
+      - name: Install Slay Check from fork
         run: |
           cd slay-check
-          go mod download
-          go build -o ../slay-check ./cmd/github-action
-          cd ..
-          ./slay-check
+          pip install -e .
+          
+      - name: Run Slay Check
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
           SLAY_CHECK_AI_TOKEN: ${{ secrets.SLAY_CHECK_AI_TOKEN }}
           SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python -m slay_check.github_action
 ```
 
 ## Multi-Fork Usage
@@ -347,24 +354,25 @@ jobs:
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          go-version: '1.21'
+          python-version: '3.11'
           
-      - name: Build and run Security Slay Check
+      - name: Install Slay Check from fork
         run: |
           cd slay-check
-          go mod download
-          go build -o ../slay-check ./cmd/github-action
-          cd ..
-          ./slay-check
+          pip install -e .
+          
+      - name: Run Security Slay Check
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
           SLAY_CHECK_AI_TOKEN: ${{ secrets.SLAY_CHECK_AI_TOKEN }}
           SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLAY_CHECK_AI_PROVIDER: anthropic  # Use Claude for security
+        run: |
+          python -m slay_check.github_action
 
   performance-review:
     runs-on: ubuntu-latest
@@ -383,24 +391,25 @@ jobs:
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          go-version: '1.21'
+          python-version: '3.11'
           
-      - name: Build and run Performance Slay Check
+      - name: Install Slay Check from fork
         run: |
           cd slay-check
-          go mod download
-          go build -o ../slay-check ./cmd/github-action
-          cd ..
-          ./slay-check
+          pip install -e .
+          
+      - name: Run Performance Slay Check
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
           SLAY_CHECK_AI_TOKEN: ${{ secrets.SLAY_CHECK_AI_TOKEN }}
           SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLAY_CHECK_AI_PROVIDER: openai  # Use GPT-4 for performance
+        run: |
+          python -m slay_check.github_action
 
   general-review:
     runs-on: ubuntu-latest
@@ -419,23 +428,24 @@ jobs:
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          go-version: '1.21'
+          python-version: '3.11'
           
-      - name: Build and run General Slay Check
+      - name: Install Slay Check from fork
         run: |
           cd slay-check
-          go mod download
-          go build -o ../slay-check ./cmd/github-action
-          cd ..
-          ./slay-check
+          pip install -e .
+          
+      - name: Run General Slay Check
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
           SLAY_CHECK_AI_TOKEN: ${{ secrets.SLAY_CHECK_AI_TOKEN }}
           SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python -m slay_check.github_action
 ```
 
 ## Error Handling and Fallbacks
@@ -475,23 +485,24 @@ jobs:
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          go-version: '1.21'
+          python-version: '3.11'
           
-      - name: Build and run Slay Check
+      - name: Install Slay Check
         run: |
           cd slay-check
-          go mod download
-          go build -o ../slay-check ./cmd/github-action
-          cd ..
-          ./slay-check
+          pip install -e .
+          
+      - name: Run Slay Check
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
           SLAY_CHECK_AI_TOKEN: ${{ secrets.SLAY_CHECK_AI_TOKEN }}
           SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python -m slay_check.github_action
 ```
 
 ## Configuration Examples
@@ -521,27 +532,28 @@ jobs:
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          go-version: '1.21'
+          python-version: '3.11'
           
       - name: Copy custom configuration
         run: |
           cp slay-check-custom.yaml slay-check/slay-check.yaml
           
-      - name: Build and run Slay Check
+      - name: Install Slay Check from fork
         run: |
           cd slay-check
-          go mod download
-          go build -o ../slay-check ./cmd/github-action
-          cd ..
-          ./slay-check
+          pip install -e .
+          
+      - name: Run Slay Check
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
           SLAY_CHECK_AI_TOKEN: ${{ secrets.SLAY_CHECK_AI_TOKEN }}
           SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python -m slay_check.github_action
 ```
 
 ### 2. Environment-Specific Configuration
@@ -569,18 +581,17 @@ jobs:
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          go-version: '1.21'
+          python-version: '3.11'
           
-      - name: Build and run Slay Check
+      - name: Install Slay Check from fork
         run: |
           cd slay-check
-          go mod download
-          go build -o ../slay-check ./cmd/github-action
-          cd ..
-          ./slay-check
+          pip install -e .
+          
+      - name: Run Slay Check
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -589,6 +600,8 @@ jobs:
           SLAY_CHECK_AI_PROVIDER: ${{ github.ref == 'refs/heads/main' && 'openai' || 'anthropic' }}
           SLAY_CHECK_VERBOSE: ${{ github.ref == 'refs/heads/main' && 'false' || 'true' }}
           SLAY_CHECK_DRY_RUN: ${{ github.ref == 'refs/heads/main' && 'false' || 'true' }}
+        run: |
+          python -m slay_check.github_action
 ```
 
 ## Troubleshooting
@@ -605,12 +618,12 @@ jobs:
 - Check repository name spelling
 - Verify token has `repo` scope for private repositories
 
-#### 2. Build Failures
+#### 2. Installation Failures
 
-**Problem:** Go build fails
+**Problem:** Python installation fails
 
 **Solutions:**
-- Check Go version compatibility
+- Check Python version compatibility (3.11+)
 - Ensure all dependencies are available
 - Verify the fork has the correct structure
 - Check for syntax errors in custom code

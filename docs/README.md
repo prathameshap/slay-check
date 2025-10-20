@@ -1,11 +1,11 @@
 # Slay Check - AI Code Review Tool
 
-A high-performance, modular AI code review tool designed for GitHub Actions and local development. Built with Go for optimal speed and memory efficiency.
+A high-performance, modular AI code review tool designed for GitHub Actions and local development. Built with Python for excellent AI ecosystem support and rapid development.
 
 ## 🚀 Features
 
 - **🤖 Multi-AI Provider Support**: OpenAI, Anthropic, Google AI, and more
-- **⚡ High Performance**: Built with Go for optimal speed and memory efficiency
+- **⚡ Fast Development**: Built with Python for rapid development and maintenance
 - **🔧 Configurable Review Criteria**: Customize review parameters via YAML
 - **🚀 GitHub Actions Ready**: Seamless integration with GitHub workflows
 - **💻 CLI Support**: Run reviews locally during development
@@ -47,15 +47,14 @@ jobs:
         with:
           fetch-depth: 0
           
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          go-version: '1.21'
+          python-version: '3.11'
           
-      - name: Build Slay Check
+      - name: Install Slay Check
         run: |
-          go mod download
-          go build -o slay-check ./cmd/github-action
+          pip install git+https://github.com/YOUR_USERNAME/slay-check.git
           
       - name: Run Slay Check
         env:
@@ -64,7 +63,7 @@ jobs:
           SLAY_CHECK_AI_TOKEN: ${{ secrets.SLAY_CHECK_AI_TOKEN }}
           SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ./slay-check
+          python -m slay_check.github_action
 ```
 
 2. **Add secrets** to your repository:
@@ -89,7 +88,7 @@ review_criteria:
 
 ```bash
 # Install
-go install github.com/slay-check/slay-check@latest
+pip install git+https://github.com/YOUR_USERNAME/slay-check.git
 
 # Initialize configuration
 slay-check config init
@@ -106,20 +105,20 @@ slay-check review --pr 123 --repo owner/repo
 ### From Source
 
 ```bash
-git clone https://github.com/slay-check/slay-check.git
+git clone https://github.com/YOUR_USERNAME/slay-check.git
 cd slay-check
-go build -o slay-check ./cmd/slay-check
+pip install -e .
 ```
 
-### Using Go Install
+### Using pip
 
 ```bash
-go install github.com/slay-check/slay-check@latest
+pip install git+https://github.com/YOUR_USERNAME/slay-check.git
 ```
 
 ### Using GitHub Releases
 
-Download the latest release from [GitHub Releases](https://github.com/slay-check/slay-check/releases).
+Download the latest release from [GitHub Releases](https://github.com/YOUR_USERNAME/slay-check/releases).
 
 ## ⚙️ Configuration
 
@@ -129,7 +128,7 @@ Create `slay-check.yaml` in your repository root or home directory:
 
 ```yaml
 # AI Provider Configuration
-ai_provider: openai  # Options: openai, anthropic
+ai_provider: openai  # Options: openai, anthropic, google
 ai_token: ""  # Set via environment variable SLAY_CHECK_AI_TOKEN
 
 # GitHub Configuration  
@@ -157,6 +156,8 @@ exclude_patterns:
   - "*.log"                   # Exclude log files
   - "*.tmp"                   # Exclude temporary files
   - "testdata/*"              # Exclude test data
+  - "__pycache__/*"           # Exclude Python cache
+  - "*.pyc"                   # Exclude Python bytecode
 
 # Performance Limits
 max_file_size: 10000          # Maximum lines per file to review
@@ -247,26 +248,41 @@ ai_token: "sk-ant-..."
 - `claude-3-opus-20240229`
 - `claude-3-haiku-20240307`
 
+### Google AI
+
+```yaml
+ai_provider: google
+ai_token: "your-google-ai-key"
+```
+
+**Models:**
+- `gemini-pro` (default)
+- `gemini-pro-vision`
+
 ### Adding Custom Providers
 
-You can extend the tool by implementing the `ai.Provider` interface:
+You can extend the tool by implementing the `AIProvider` interface:
 
-```go
-type CustomProvider struct {
-    // Your implementation
-}
+```python
+from slay_check.ai.base import AIProvider, ReviewRequest, ReviewResponse
 
-func (p *CustomProvider) ReviewCode(ctx context.Context, request ai.ReviewRequest) (*ai.ReviewResponse, error) {
-    // Your implementation
-}
-
-func (p *CustomProvider) GetName() string {
-    return "custom"
-}
-
-func (p *CustomProvider) IsAvailable() bool {
-    return true
-}
+class CustomProvider(AIProvider):
+    def get_name(self) -> str:
+        return "custom"
+    
+    def is_available(self) -> bool:
+        return True
+    
+    def review_code(self, request: ReviewRequest) -> ReviewResponse:
+        # Your implementation
+        return ReviewResponse(
+            analysis="Custom AI analysis",
+            score=8.5,
+            issues=[],
+            suggestions=[],
+            complexity=Complexity(),
+            confidence=0.8
+        )
 ```
 
 ## 📊 Performance
@@ -275,21 +291,21 @@ func (p *CustomProvider) IsAvailable() bool {
 
 | Language | Startup Time | Memory Usage | Execution Speed |
 |----------|-------------|--------------|-----------------|
-| **Go** | 20-100ms | 10-30MB | Very Fast |
-| Python | 200-1000ms | 50-150MB | Moderate |
+| **Python** | 200-1000ms | 50-150MB | Moderate |
+| Go | 20-100ms | 10-30MB | Very Fast |
 | Node.js | 100-500ms | 30-80MB | Fast |
 
 ### Performance Targets
 
-- **Startup Time**: <100ms
-- **Small PR** (1-5 files, <200 lines): <60 seconds
-- **Medium PR** (5-15 files, 200-1000 lines): <3 minutes
-- **Large PR** (15+ files, 1000+ lines): <8 minutes
-- **Memory Usage**: <300MB peak
+- **Startup Time**: <1 second
+- **Small PR** (1-5 files, <200 lines): <90 seconds
+- **Medium PR** (5-15 files, 200-1000 lines): <4 minutes
+- **Large PR** (15+ files, 1000+ lines): <12 minutes
+- **Memory Usage**: <500MB peak
 
 ### Optimization Features
 
-- **Parallel Processing**: Analyze multiple files simultaneously
+- **Async Processing**: Analyze multiple files simultaneously
 - **Chunking**: Split large files into smaller chunks for AI
 - **Caching**: Cache similar code patterns
 - **Incremental Analysis**: Only analyze changed lines
@@ -301,45 +317,51 @@ func (p *CustomProvider) IsAvailable() bool {
 
 ```
 slay-check/
-├── cmd/
-│   ├── slay-check/          # CLI application
-│   └── github-action/       # GitHub Action entry point
-├── internal/
-│   ├── ai/                  # AI provider implementations
-│   ├── cli/                 # CLI interface
-│   ├── config/              # Configuration management
-│   ├── github/              # GitHub API integration
-│   └── review/              # Review engine
+├── slay_check/              # Python package
+│   ├── __init__.py
+│   ├── cli.py               # CLI interface
+│   ├── config.py            # Configuration management
+│   ├── github.py            # GitHub API integration
+│   ├── review.py            # Review engine
+│   ├── github_action.py     # GitHub Action entry point
+│   └── ai/                  # AI provider implementations
+│       ├── __init__.py
+│       ├── base.py          # Base AI provider interface
+│       ├── openai.py        # OpenAI implementation
+│       ├── anthropic.py     # Anthropic implementation
+│       └── google.py        # Google AI implementation
+├── tests/                   # Tests
 ├── config/                  # Configuration examples
 ├── docs/                    # Documentation
-├── tests/                   # Tests
+├── pyproject.toml          # Project configuration
+├── requirements.txt        # Dependencies
 └── .github/workflows/       # GitHub Actions
 ```
 
 ### Building
 
 ```bash
-# Build CLI
-go build -o slay-check ./cmd/slay-check
+# Install in development mode
+pip install -e .
 
-# Build GitHub Action
-go build -o slay-check ./cmd/github-action
+# Build package
+python -m build
 
-# Build all
-make build
+# Install from built package
+pip install dist/slay_check-*.whl
 ```
 
 ### Testing
 
 ```bash
 # Run tests
-go test ./...
+pytest
 
 # Run tests with coverage
-go test -cover ./...
+pytest --cov=slay_check
 
-# Run integration tests
-go test -tags=integration ./...
+# Run specific test file
+pytest tests/test_config.py
 ```
 
 ## 🤝 Contributing
@@ -356,8 +378,8 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for deta
 
 ### Code Style
 
-- Follow Go conventions
-- Use `gofmt` for formatting
+- Follow Python conventions (PEP 8)
+- Use `black` for formatting
 - Add tests for new features
 - Update documentation
 
@@ -367,14 +389,15 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ## 🆘 Support
 
-- **Issues**: [GitHub Issues](https://github.com/slay-check/slay-check/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/slay-check/slay-check/discussions)
-- **Documentation**: [GitHub Wiki](https://github.com/slay-check/slay-check/wiki)
+- **Issues**: [GitHub Issues](https://github.com/YOUR_USERNAME/slay-check/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/YOUR_USERNAME/slay-check/discussions)
+- **Documentation**: [GitHub Wiki](https://github.com/YOUR_USERNAME/slay-check/wiki)
 
 ## 🙏 Acknowledgments
 
-- Built with [Go](https://golang.org/)
+- Built with [Python](https://python.org/)
 - Uses [GitHub API](https://docs.github.com/en/rest)
 - Supports [OpenAI API](https://platform.openai.com/)
 - Supports [Anthropic API](https://docs.anthropic.com/)
+- Supports [Google AI API](https://ai.google.dev/)
 - Inspired by modern code review practices

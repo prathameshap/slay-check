@@ -4,25 +4,25 @@ This guide covers how to use Slay Check for local development and testing.
 
 ## Prerequisites
 
-- Go 1.21 or later
+- Python 3.11 or later
 - Git
-- AI provider API token (OpenAI, Anthropic, etc.)
+- AI provider API token (OpenAI, Anthropic, Google AI)
 - GitHub personal access token (for PR reviews)
 
 ## Installation
 
-### Option 1: Build from Source
+### Option 1: Install from GitHub
 
 ```bash
-git clone https://github.com/slay-check/slay-check.git
-cd slay-check
-go build -o slay-check ./cmd/slay-check
+pip install git+https://github.com/YOUR_USERNAME/slay-check.git
 ```
 
-### Option 2: Install via Go
+### Option 2: Build from Source
 
 ```bash
-go install github.com/slay-check/slay-check@latest
+git clone https://github.com/YOUR_USERNAME/slay-check.git
+cd slay-check
+pip install -e .
 ```
 
 ## Configuration
@@ -69,6 +69,8 @@ exclude_patterns:
   - "*.txt"
   - "vendor/*"
   - "testdata/*"
+  - "__pycache__/*"
+  - "*.pyc"
 
 max_file_size: 5000
 max_files_per_pr: 20
@@ -161,6 +163,8 @@ exclude_patterns:
   - "*.txt"
   - "vendor/*"
   - "testdata/*"
+  - "__pycache__/*"
+  - "*.pyc"
 max_file_size: 5000
 max_files_per_pr: 20
 verbose: true
@@ -188,6 +192,8 @@ exclude_patterns:
   - "node_modules/*"
   - "*.min.js"
   - "*.min.css"
+  - "__pycache__/*"
+  - "*.pyc"
 max_file_size: 10000
 max_files_per_pr: 50
 verbose: false
@@ -213,6 +219,8 @@ exclude_patterns:
   - "*.txt"
   - "vendor/*"
   - "testdata/*"
+  - "__pycache__/*"
+  - "*.pyc"
 max_file_size: 15000
 max_files_per_pr: 30
 verbose: true
@@ -246,6 +254,7 @@ export SLAY_CHECK_GITHUB_TOKEN="your-token"
 Check your `ai_provider` setting in `slay-check.yaml`. Supported providers:
 - `openai`
 - `anthropic`
+- `google`
 
 #### 4. "No files to review"
 
