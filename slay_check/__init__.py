@@ -10,6 +10,6 @@ __email__ = "team@slay-check.dev"
 
 from slay_check.config import Config
 from slay_check.review import ReviewEngine
-from slay_check.github import GitHubClient
+from slay_check.github_client import GitHubClient
 
 __all__ = ["Config", "ReviewEngine", "GitHubClient"]

@@ -13,7 +13,7 @@ from rich.text import Text
 
 from .config import Config
 from .review import ReviewEngine
-from .github import GitHubClient
+from .github_client import GitHubClient
 
 
 console = Console()

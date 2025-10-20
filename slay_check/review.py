@@ -9,7 +9,7 @@ from pathlib import Path
 import re
 
 from .config import Config
-from .github import GitHubClient, PullRequestInfo, PullRequestFileInfo, ReviewComment
+from .github_client import GitHubClient, PullRequestInfo, PullRequestFileInfo, ReviewComment
 from .ai.base import ReviewRequest, ReviewResponse, Issue, IssueType, Severity
 from .ai.openai import OpenAIProvider
 from .ai.anthropic import AnthropicProvider
