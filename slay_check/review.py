@@ -291,24 +291,35 @@ class ReviewEngine:
             print("Dry run mode - no comments posted")
             return
         
-        comments = []
-        
-        for file_review in result.files:
-            for issue in file_review.issues:
-                if issue.line:
-                    comment = ReviewComment(
-                        path=file_review.filename,
-                        line=issue.line,
-                        body=f"**{issue.severity.title()} {issue.type.title()} Issue**\n\n{issue.message}\n\n**Suggestion:** {issue.suggestion or 'No suggestion provided'}",
-                        severity=issue.severity,
-                        issue_type=issue.type
-                    )
-                    comments.append(comment)
-        
-        if comments:
-            self.github_client.post_review_comments(repo, pr_number, comments)
-        
-        # Post overall review
-        self.github_client.create_review(
-            repo, pr_number, result.summary, "COMMENT"
-        )
+        try:
+            comments = []
+            
+            for file_review in result.files:
+                for issue in file_review.issues:
+                    if issue.line:
+                        comment = ReviewComment(
+                            path=file_review.filename,
+                            line=issue.line,
+                            body=f"**{issue.severity.title()} {issue.type.title()} Issue**\n\n{issue.message}\n\n**Suggestion:** {issue.suggestion or 'No suggestion provided'}",
+                            severity=issue.severity,
+                            issue_type=issue.type
+                        )
+                        comments.append(comment)
+            
+            if comments:
+                print(f"Posting {len(comments)} review comments...")
+                self.github_client.post_review_comments(repo, pr_number, comments)
+                print("Review comments posted successfully")
+            else:
+                print("No line-specific issues found to comment on")
+            
+            # Post overall review summary
+            print("Posting overall review summary...")
+            self.github_client.create_review(
+                repo, pr_number, result.summary, "COMMENT"
+            )
+            print("Overall review summary posted successfully")
+            
+        except Exception as e:
+            print(f"Error posting comments: {e}")
+            raise

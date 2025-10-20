@@ -109,6 +109,8 @@ class GitHubClient:
     def post_review_comments(self, repo: str, pr_number: int, comments: List[ReviewComment]) -> None:
         """Post review comments to a pull request."""
         try:
+            print(f"Posting {len(comments)} comments to PR #{pr_number} in {repo}")
+            
             # Parse repository name
             owner, repo_name = repo.split("/", 1)
             
@@ -119,13 +121,18 @@ class GitHubClient:
             pr = repository.get_pull(pr_number)
             
             # Post comments
-            for comment in comments:
-                pr.create_review_comment(
-                    body=comment.body,
-                    commit=pr.head.sha,
-                    path=comment.path,
-                    line=comment.line
-                )
+            for i, comment in enumerate(comments, 1):
+                try:
+                    pr.create_review_comment(
+                        body=comment.body,
+                        commit=pr.head.sha,
+                        path=comment.path,
+                        line=comment.line
+                    )
+                    print(f"Posted comment {i}/{len(comments)} on {comment.path}:{comment.line}")
+                except Exception as e:
+                    print(f"Failed to post comment {i} on {comment.path}:{comment.line}: {e}")
+                    continue
                 
         except Exception as e:
             raise Exception(f"Failed to post review comments: {str(e)}")
@@ -133,6 +140,8 @@ class GitHubClient:
     def create_review(self, repo: str, pr_number: int, body: str, event: str = "COMMENT") -> None:
         """Create a pull request review."""
         try:
+            print(f"Creating review for PR #{pr_number} in {repo}")
+            
             # Parse repository name
             owner, repo_name = repo.split("/", 1)
             
@@ -143,10 +152,11 @@ class GitHubClient:
             pr = repository.get_pull(pr_number)
             
             # Create review
-            pr.create_review(
+            review = pr.create_review(
                 body=body,
                 event=event
             )
+            print(f"Created review with ID: {review.id}")
             
         except Exception as e:
             raise Exception(f"Failed to create review: {str(e)}")
