@@ -314,11 +314,18 @@ class ReviewEngine:
                 print("No line-specific issues found to comment on")
             
             # Post overall review summary
-            print("Posting overall review summary...")
-            self.github_client.create_review(
-                repo, pr_number, result.summary, "COMMENT"
-            )
-            print("Overall review summary posted successfully")
+            if self.config.use_issue_comments:
+                print("Posting overall review summary as issue comment...")
+                self.github_client.create_issue_comment(
+                    repo, pr_number, result.summary
+                )
+                print("Overall review summary posted as issue comment successfully")
+            else:
+                print("Posting overall review summary as review...")
+                self.github_client.create_review(
+                    repo, pr_number, result.summary, "COMMENT"
+                )
+                print("Overall review summary posted as review successfully")
             
         except Exception as e:
             print(f"Error posting comments: {e}")

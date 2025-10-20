@@ -52,6 +52,7 @@ class Config(BaseModel):
     # Behavior
     verbose: bool = Field(default=False, description="Enable verbose logging")
     dry_run: bool = Field(default=False, description="Don't post comments")
+    use_issue_comments: bool = Field(default=True, description="Use issue comments instead of reviews (more visible)")
     
     # AI Configuration
     max_tokens: int = Field(default=4000, description="Maximum tokens for AI response")
@@ -94,6 +95,7 @@ class Config(BaseModel):
             "github_token": os.getenv("SLAY_CHECK_GITHUB_TOKEN"),
             "verbose": os.getenv("SLAY_CHECK_VERBOSE", "").lower() == "true",
             "dry_run": os.getenv("SLAY_CHECK_DRY_RUN", "").lower() == "true",
+            "use_issue_comments": os.getenv("SLAY_CHECK_USE_ISSUE_COMMENTS", "true").lower() == "true",
         }
         
         # Remove None values

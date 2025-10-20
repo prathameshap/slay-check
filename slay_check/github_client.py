@@ -161,6 +161,27 @@ class GitHubClient:
         except Exception as e:
             raise Exception(f"Failed to create review: {str(e)}")
     
+    def create_issue_comment(self, repo: str, pr_number: int, body: str) -> None:
+        """Create a regular issue comment (more visible than reviews)."""
+        try:
+            print(f"Creating issue comment for PR #{pr_number} in {repo}")
+            
+            # Parse repository name
+            owner, repo_name = repo.split("/", 1)
+            
+            # Get repository
+            repository = self.github.get_repo(repo)
+            
+            # Get pull request (PRs are also issues)
+            pr = repository.get_pull(pr_number)
+            
+            # Create issue comment
+            comment = pr.create_issue_comment(body)
+            print(f"Created issue comment with ID: {comment.id}")
+            
+        except Exception as e:
+            raise Exception(f"Failed to create issue comment: {str(e)}")
+    
     def get_file_content(self, repo: str, path: str, ref: str = "main") -> str:
         """Get file content from repository."""
         try:
