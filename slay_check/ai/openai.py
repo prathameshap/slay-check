@@ -101,6 +101,23 @@ class OpenAIProvider(AIProvider):
         if request.criteria.get("performance_review", True):
             prompt += "- Review for performance issues\n"
         
+        # Enhanced algorithm and complexity analysis instructions with prioritization
+        if request.criteria.get("algorithm_analysis", True) or request.criteria.get("complexity_analysis", True):
+            prompt += "\n\nALGORITHM & COMPLEXITY ANALYSIS (PRIORITY):\n"
+            prompt += "Focus on these critical aspects:\n"
+            prompt += "1. Algorithm identification and efficiency\n"
+            prompt += "2. Time complexity (Big O notation)\n"
+            prompt += "3. Space complexity (Big O notation)\n"
+            prompt += "4. Performance bottlenecks\n"
+            prompt += "5. Alternative approaches if current is inefficient\n"
+        
+        prompt += "\nREVIEW PRIORITIZATION:\n"
+        prompt += "Focus on the most critical issues first:\n"
+        prompt += "1. CRITICAL: Security vulnerabilities, bugs, performance issues\n"
+        prompt += "2. HIGH: Algorithm inefficiency, complexity problems\n"
+        prompt += "3. MEDIUM: Code style, best practices\n"
+        prompt += "4. LOW: Minor improvements, documentation\n"
+        
         prompt += "\nIMPORTANT: You MUST find specific issues in the code. Even if the code is good, look for:\n"
         prompt += "- Code style improvements\n"
         prompt += "- Performance optimizations\n"
