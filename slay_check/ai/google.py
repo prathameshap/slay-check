@@ -138,8 +138,16 @@ class GoogleAIProvider(AIProvider):
                 cleaned_content = cleaned_content[:-3]   # Remove trailing ```
             cleaned_content = cleaned_content.strip()
             
+            # Extract JSON from content (handle extra data after JSON)
+            json_start = cleaned_content.find('{')
+            json_end = cleaned_content.rfind('}') + 1
+            if json_start != -1 and json_end > json_start:
+                json_content = cleaned_content[json_start:json_end]
+            else:
+                json_content = cleaned_content
+            
             # Try to parse as JSON
-            data = json.loads(cleaned_content)
+            data = json.loads(json_content)
             
             issues = []
             for issue_data in data.get("issues", []):
