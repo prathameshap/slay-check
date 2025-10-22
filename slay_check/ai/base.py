@@ -19,6 +19,10 @@ class IssueType(str, Enum):
     ACCESSIBILITY = "accessibility"
     BEST_PRACTICE = "best_practice"
     DOCUMENTATION = "documentation"
+    SYNTAX = "syntax"
+    CONFIGURATION = "configuration"
+    LOGIC = "logic"
+    DESIGN = "design"
 
 
 class Severity(str, Enum):
