@@ -5,7 +5,7 @@ development:
   ai_provider: openai
   ai_model: gpt-4o-mini  # Faster, cheaper model for development
   ai_base_url: "https://api.openai.com/v1/"  # Default OpenAI endpoint
-  max_tokens: 2000        # Shorter responses for development
+  max_tokens: 2000        # Adequate for development analysis
   temperature: 0.2        # More strict for development
   review_criteria:
     analyze_problem: true
@@ -34,7 +34,7 @@ production:
   ai_provider: openai
   ai_model: gpt-4o  # Best OpenAI model for production
   ai_base_url: "https://api.openai.com/v1/"  # Default OpenAI endpoint
-  max_tokens: 4000        # Standard responses for production
+  max_tokens: 2000        # Adequate for production analysis
   temperature: 0.3        # Balanced strictness for production
   review_criteria:
     analyze_problem: true
@@ -69,7 +69,7 @@ security:
   ai_provider: openai       # Use OpenAI for security reviews
   ai_model: gpt-4o
   ai_base_url: "https://api.openai.com/v1/"  # Default OpenAI endpoint
-  max_tokens: 3000        # Detailed security analysis
+  max_tokens: 2000        # Adequate for security analysis
   temperature: 0.1        # Very strict for security
   review_criteria:
     analyze_problem: true
@@ -98,7 +98,7 @@ performance:
   ai_provider: openai
   ai_model: gpt-4o  # Good for performance analysis
   ai_base_url: "https://api.openai.com/v1/"  # Default OpenAI endpoint
-  max_tokens: 3500        # Detailed performance analysis
+  max_tokens: 2000        # Adequate for performance analysis
   temperature: 0.2        # Strict for performance
   review_criteria:
     analyze_problem: false
