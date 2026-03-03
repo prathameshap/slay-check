@@ -113,6 +113,7 @@ critical_issues_limit: 3
 - **[AI Response Control](docs/ai-response-control.md)** - Token limits & strictness
 - **[Repo issues & technical debt](docs/REPO_ISSUES.md)** - Known issues and contribution ideas
 - **[Rust conversion analysis](docs/RUST_CONVERSION_ANALYSIS.md)** - Why the project stays in Python
+- **[Project & milestones](docs/project-and-milestones.md)** - How maintainers configure the GitHub Project and milestones
 
 **Open source & project health:** Security and best-practice scores are tracked by [OpenSSF Scorecard](https://scorecard.dev/viewer/?uri=github.com/prathameshap/slay-check). Results run on every push to `main` and weekly; the badge above links to the latest report.
 
