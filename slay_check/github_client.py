@@ -195,10 +195,10 @@ class GitHubClient:
             file_content = repository.get_contents(path, ref=ref)
             
             # Decode content
-            if hasattr(file_content, 'decoded_content'):
-                return file_content.decoded_content.decode('utf-8')
+            if hasattr(file_content, "decoded_content"):
+                return file_content.decoded_content.decode("utf-8")
             else:
-                return file_content.content.decode('utf-8')
+                return file_content.content.decode("utf-8")
                 
         except Exception as e:
             raise Exception(f"Failed to get file content: {str(e)}")

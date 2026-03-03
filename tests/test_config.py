@@ -111,7 +111,7 @@ def test_config_save_load():
         dry_run=True
     )
     
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
         config_path = f.name
     
     try:

@@ -20,7 +20,7 @@ from .google import GoogleAIProvider
 
 __all__ = [
     "IssueType",
-    "Severity", 
+    "Severity",
     "Issue",
     "Complexity",
     "ReviewRequest",
@@ -28,5 +28,5 @@ __all__ = [
     "AIProvider",
     "OpenAIProvider",
     "AnthropicProvider",
-    "GoogleAIProvider"
+    "GoogleAIProvider",
 ]

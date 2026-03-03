@@ -165,8 +165,8 @@ class OpenAIProvider(AIProvider):
             cleaned_content = cleaned_content.strip()
             
             # Extract JSON from content (handle extra data after JSON)
-            json_start = cleaned_content.find('{')
-            json_end = cleaned_content.rfind('}') + 1
+            json_start = cleaned_content.find("{")
+            json_end = cleaned_content.rfind("}") + 1
             if json_start != -1 and json_end > json_start:
                 json_content = cleaned_content[json_start:json_end]
             else:
@@ -213,7 +213,7 @@ class OpenAIProvider(AIProvider):
             score = 7.0
             if "score" in content.lower():
                 import re
-                score_match = re.search(r'score[:\s]*(\d+\.?\d*)', content.lower())
+                score_match = re.search(r"score[:\s]*(\d+\.?\d*)", content.lower())
                 if score_match:
                     score = float(score_match.group(1))
             

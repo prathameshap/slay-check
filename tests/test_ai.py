@@ -14,13 +14,13 @@ from slay_check.ai.google import GoogleAIProvider
 def test_review_request():
     """Test ReviewRequest model."""
     request = ReviewRequest(
-        code="print('hello')",
+        code="print(\"hello\")",
         language="python",
         file_path="test.py",
         context="Test context"
     )
     
-    assert request.code == "print('hello')"
+    assert request.code == "print(\"hello\")"
     assert request.language == "python"
     assert request.file_path == "test.py"
     assert request.context == "Test context"
@@ -97,7 +97,7 @@ def test_google_provider():
     assert provider_empty.is_available() is False
 
 
-@patch('slay_check.ai.openai.AsyncOpenAI')
+@patch("slay_check.ai.openai.AsyncOpenAI")
 def test_openai_review_code(mock_openai):
     """Test OpenAI code review."""
     # Mock the OpenAI client
@@ -107,12 +107,12 @@ def test_openai_review_code(mock_openai):
     # Mock the response
     mock_response = Mock()
     mock_response.choices = [Mock()]
-    mock_response.choices[0].message.content = '{"analysis": "Test analysis", "score": 8.5, "issues": [], "suggestions": [], "complexity": {}, "confidence": 0.8}'
+    mock_response.choices[0].message.content = "{\"analysis\": \"Test analysis\", \"score\": 8.5, \"issues\": [], \"suggestions\": [], \"complexity\": {}, \"confidence\": 0.8}"
     mock_client.chat.completions.create.return_value = mock_response
     
     provider = OpenAIProvider("test-key")
     request = ReviewRequest(
-        code="print('hello')",
+        code="print(\"hello\")",
         language="python",
         file_path="test.py"
     )
@@ -124,7 +124,7 @@ def test_openai_review_code(mock_openai):
     assert response.confidence == 0.8
 
 
-@patch('slay_check.ai.anthropic.AsyncAnthropic')
+@patch("slay_check.ai.anthropic.AsyncAnthropic")
 def test_anthropic_review_code(mock_anthropic):
     """Test Anthropic code review."""
     # Mock the Anthropic client
@@ -134,12 +134,12 @@ def test_anthropic_review_code(mock_anthropic):
     # Mock the response
     mock_response = Mock()
     mock_response.content = [Mock()]
-    mock_response.content[0].text = '{"analysis": "Test analysis", "score": 8.5, "issues": [], "suggestions": [], "complexity": {}, "confidence": 0.8}'
+    mock_response.content[0].text = "{\"analysis\": \"Test analysis\", \"score\": 8.5, \"issues\": [], \"suggestions\": [], \"complexity\": {}, \"confidence\": 0.8}"
     mock_client.messages.create.return_value = mock_response
     
     provider = AnthropicProvider("test-key")
     request = ReviewRequest(
-        code="print('hello')",
+        code="print(\"hello\")",
         language="python",
         file_path="test.py"
     )
@@ -151,7 +151,7 @@ def test_anthropic_review_code(mock_anthropic):
     assert response.confidence == 0.8
 
 
-@patch('slay_check.ai.google.genai')
+@patch("slay_check.ai.google.genai")
 def test_google_review_code(mock_genai):
     """Test Google AI code review."""
     # Mock the Google AI client
@@ -160,12 +160,12 @@ def test_google_review_code(mock_genai):
     
     # Mock the response
     mock_response = Mock()
-    mock_response.text = '{"analysis": "Test analysis", "score": 8.5, "issues": [], "suggestions": [], "complexity": {}, "confidence": 0.8}'
+    mock_response.text = "{\"analysis\": \"Test analysis\", \"score\": 8.5, \"issues\": [], \"suggestions\": [], \"complexity\": {}, \"confidence\": 0.8}"
     mock_model.generate_content_async.return_value = mock_response
     
     provider = GoogleAIProvider("test-key")
     request = ReviewRequest(
-        code="print('hello')",
+        code="print(\"hello\")",
         language="python",
         file_path="test.py"
     )

@@ -39,9 +39,16 @@ class Config(BaseModel):
     # File Filtering
     exclude_patterns: List[str] = Field(
         default_factory=lambda: [
-            "*.md", "*.txt", "vendor/*", "node_modules/*", 
-            "*.min.js", "*.min.css", "*.lock", "*.log", 
-            "*.tmp", "testdata/*"
+            "*.md",
+            "*.txt",
+            "vendor/*",
+            "node_modules/*",
+            "*.min.js",
+            "*.min.css",
+            "*.lock",
+            "*.log",
+            "*.tmp",
+            "testdata/*",
         ]
     )
     
@@ -69,7 +76,7 @@ class Config(BaseModel):
         
         # Load from file if exists
         if config_path and Path(config_path).exists():
-            with open(config_path, 'r') as f:
+            with open(config_path, "r") as f:
                 config_data = yaml.safe_load(f) or {}
         
         # Load from default locations
@@ -82,7 +89,7 @@ class Config(BaseModel):
         
         for path in default_paths:
             if Path(path).exists():
-                with open(path, 'r') as f:
+                with open(path, "r") as f:
                     config_data = yaml.safe_load(f) or {}
                 break
         
@@ -111,7 +118,7 @@ class Config(BaseModel):
         # Create directory if it doesn't exist
         Path(config_path).parent.mkdir(parents=True, exist_ok=True)
         
-        with open(config_path, 'w') as f:
+        with open(config_path, "w") as f:
             yaml.dump(config_dict, f, default_flow_style=False, indent=2)
     
     def validate(self) -> None:

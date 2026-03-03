@@ -33,7 +33,7 @@ def test_config_show():
     """Test config show command."""
     runner = CliRunner()
     
-    with patch('slay_check.cli.Config.load') as mock_load:
+    with patch("slay_check.cli.Config.load") as mock_load:
         mock_config = Mock()
         mock_config.ai_provider = "openai"
         mock_config.review_criteria.analyze_problem = True
@@ -60,7 +60,7 @@ def test_review_local():
     """Test review local command."""
     runner = CliRunner()
     
-    with patch('slay_check.cli.Config.load') as mock_load:
+    with patch("slay_check.cli.Config.load") as mock_load:
         mock_config = Mock()
         mock_config.validate.return_value = None
         mock_config.verbose = False
@@ -77,8 +77,9 @@ def test_review_pr():
     """Test review PR command."""
     runner = CliRunner()
     
-    with patch('slay_check.cli.Config.load') as mock_load, \
-         patch('slay_check.cli.ReviewEngine') as mock_engine:
+    with patch("slay_check.cli.Config.load") as mock_load, patch(
+        "slay_check.cli.ReviewEngine"
+    ) as mock_engine:
         
         mock_config = Mock()
         mock_config.validate.return_value = None
