@@ -2,17 +2,29 @@
 OpenAI provider implementation for Slay Check.
 """
 
-import json
 import asyncio
-from typing import Dict, Any, Optional
+import json
+from typing import Any, Dict, Optional
+
 from openai import AsyncOpenAI
-from .base import AIProvider, ReviewRequest, ReviewResponse, Issue, IssueType, Severity, Complexity
+
+from .base import (
+    AIProvider,
+    Complexity,
+    Issue,
+    IssueType,
+    ReviewRequest,
+    ReviewResponse,
+    Severity,
+)
 
 
 class OpenAIProvider(AIProvider):
     """OpenAI provider for code review."""
 
-    def __init__(self, api_key: str, model: str = "gpt-4o", base_url: Optional[str] = None):
+    def __init__(
+        self, api_key: str, model: str = "gpt-4o", base_url: Optional[str] = None
+    ):
         # Allow custom base URL for OpenAI-compatible APIs
         if base_url:
             self.client = AsyncOpenAI(api_key=api_key, base_url=base_url)
@@ -42,15 +54,12 @@ class OpenAIProvider(AIProvider):
                 messages=[
                     {
                         "role": "system",
-                        "content": "You are an expert code reviewer. Analyze the provided code and give comprehensive feedback."
+                        "content": "You are an expert code reviewer. Analyze the provided code and give comprehensive feedback.",
                     },
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
+                    {"role": "user", "content": prompt},
                 ],
                 max_tokens=request.max_tokens or 4000,
-                temperature=request.temperature or 0.3
+                temperature=request.temperature or 0.3,
             )
 
             content = response.choices[0].message.content
@@ -63,7 +72,7 @@ class OpenAIProvider(AIProvider):
                 issues=[],
                 suggestions=[],
                 complexity=Complexity(),
-                confidence=0.0
+                confidence=0.0,
             )
 
     def _build_prompt(self, request: ReviewRequest) -> str:
@@ -102,7 +111,9 @@ class OpenAIProvider(AIProvider):
             prompt += "- Review for performance issues\n"
 
         # Enhanced algorithm and complexity analysis instructions with prioritization
-        if request.criteria.get("algorithm_analysis", True) or request.criteria.get("complexity_analysis", True):
+        if request.criteria.get("algorithm_analysis", True) or request.criteria.get(
+            "complexity_analysis", True
+        ):
             prompt += "\n\nALGORITHM & COMPLEXITY ANALYSIS (PRIORITY):\n"
             prompt += "Focus on these critical aspects:\n"
             prompt += "1. Algorithm identification and efficiency\n"
@@ -159,9 +170,9 @@ class OpenAIProvider(AIProvider):
             if cleaned_content.startswith("```json"):
                 cleaned_content = cleaned_content[7:]  # Remove ```json
             if cleaned_content.startswith("```"):
-                cleaned_content = cleaned_content[3:]   # Remove ```
+                cleaned_content = cleaned_content[3:]  # Remove ```
             if cleaned_content.endswith("```"):
-                cleaned_content = cleaned_content[:-3]   # Remove trailing ```
+                cleaned_content = cleaned_content[:-3]  # Remove trailing ```
             cleaned_content = cleaned_content.strip()
 
             # Extract JSON from content (handle extra data after JSON)
@@ -183,7 +194,7 @@ class OpenAIProvider(AIProvider):
                     line=issue_data.get("line"),
                     message=issue_data.get("message", ""),
                     suggestion=issue_data.get("suggestion"),
-                    confidence=issue_data.get("confidence", 0.7)
+                    confidence=issue_data.get("confidence", 0.7),
                 )
                 issues.append(issue)
 
@@ -192,7 +203,7 @@ class OpenAIProvider(AIProvider):
                 time_complexity=complexity_data.get("time_complexity"),
                 space_complexity=complexity_data.get("space_complexity"),
                 cyclomatic_complexity=complexity_data.get("cyclomatic_complexity"),
-                maintainability=complexity_data.get("maintainability")
+                maintainability=complexity_data.get("maintainability"),
             )
 
             return ReviewResponse(
@@ -201,7 +212,7 @@ class OpenAIProvider(AIProvider):
                 issues=issues,
                 suggestions=data.get("suggestions", []),
                 complexity=complexity,
-                confidence=float(data.get("confidence", 0.7))
+                confidence=float(data.get("confidence", 0.7)),
             )
 
         except (json.JSONDecodeError, ValueError, KeyError) as e:
@@ -213,6 +224,7 @@ class OpenAIProvider(AIProvider):
             score = 7.0
             if "score" in content.lower():
                 import re
+
                 score_match = re.search(r"score[:\s]*(\d+\.?\d*)", content.lower())
                 if score_match:
                     score = float(score_match.group(1))
@@ -224,5 +236,5 @@ class OpenAIProvider(AIProvider):
                 issues=[],  # No specific issues extracted
                 suggestions=[],  # No specific suggestions extracted
                 complexity=Complexity(),
-                confidence=0.5  # Lower confidence due to parsing failure
+                confidence=0.5,  # Lower confidence due to parsing failure
             )

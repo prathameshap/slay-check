@@ -2,11 +2,12 @@
 Tests for Slay Check CLI.
 """
 
-import pytest
 from unittest.mock import Mock, patch
+
+import pytest
 from click.testing import CliRunner
 
-from slay_check.cli import cli, review, config
+from slay_check.cli import cli, config, review
 
 
 def test_cli_version():

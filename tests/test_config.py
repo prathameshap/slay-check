@@ -2,10 +2,11 @@
 Tests for Slay Check configuration.
 """
 
-import pytest
-import tempfile
 import os
+import tempfile
 from pathlib import Path
+
+import pytest
 
 from slay_check.config import Config, ReviewCriteria
 
@@ -41,9 +42,7 @@ def test_review_criteria_defaults():
 def test_config_validation():
     """Test configuration validation."""
     config = Config(
-        ai_provider="openai",
-        ai_token="test-token",
-        github_token="github-token"
+        ai_provider="openai", ai_token="test-token", github_token="github-token"
     )
 
     # Should not raise
@@ -108,7 +107,7 @@ def test_config_save_load():
         ai_token="test-token",
         github_token="github-token",
         verbose=True,
-        dry_run=True
+        dry_run=True,
     )
 
     with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:

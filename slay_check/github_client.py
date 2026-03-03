@@ -2,7 +2,8 @@
 GitHub integration for Slay Check.
 """
 
-from typing import List, Optional, Dict, Any
+from typing import Any, Dict, List, Optional
+
 from github import Github
 from pydantic import BaseModel
 
@@ -84,7 +85,7 @@ class GitHubClient:
                     raw_url=file.raw_url,
                     blob_url=file.blob_url,
                     contents_url=file.contents_url,
-                    previous_filename=file.previous_filename
+                    previous_filename=file.previous_filename,
                 )
                 file_infos.append(file_info)
 
@@ -100,13 +101,15 @@ class GitHubClient:
                 repo=repo_name,
                 author=pr.user.login,
                 created_at=pr.created_at.isoformat(),
-                updated_at=pr.updated_at.isoformat()
+                updated_at=pr.updated_at.isoformat(),
             )
 
         except Exception as e:
             raise Exception(f"Failed to get pull request: {str(e)}")
 
-    def post_review_comments(self, repo: str, pr_number: int, comments: List[ReviewComment]) -> None:
+    def post_review_comments(
+        self, repo: str, pr_number: int, comments: List[ReviewComment]
+    ) -> None:
         """Post review comments to a pull request."""
         try:
             print(f"Posting {len(comments)} comments to PR #{pr_number} in {repo}")
@@ -127,17 +130,23 @@ class GitHubClient:
                         body=comment.body,
                         commit=pr.head.sha,
                         path=comment.path,
-                        line=comment.line
+                        line=comment.line,
                     )
-                    print(f"Posted comment {i}/{len(comments)} on {comment.path}:{comment.line}")
+                    print(
+                        f"Posted comment {i}/{len(comments)} on {comment.path}:{comment.line}"
+                    )
                 except Exception as e:
-                    print(f"Failed to post comment {i} on {comment.path}:{comment.line}: {e}")
+                    print(
+                        f"Failed to post comment {i} on {comment.path}:{comment.line}: {e}"
+                    )
                     continue
 
         except Exception as e:
             raise Exception(f"Failed to post review comments: {str(e)}")
 
-    def create_review(self, repo: str, pr_number: int, body: str, event: str = "COMMENT") -> None:
+    def create_review(
+        self, repo: str, pr_number: int, body: str, event: str = "COMMENT"
+    ) -> None:
         """Create a pull request review."""
         try:
             print(f"Creating review for PR #{pr_number} in {repo}")
@@ -152,10 +161,7 @@ class GitHubClient:
             pr = repository.get_pull(pr_number)
 
             # Create review
-            review = pr.create_review(
-                body=body,
-                event=event
-            )
+            review = pr.create_review(body=body, event=event)
             print(f"Created review with ID: {review.id}")
 
         except Exception as e:

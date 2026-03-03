@@ -2,25 +2,33 @@
 Tests for Slay Check AI providers.
 """
 
-import pytest
-from unittest.mock import Mock, patch
+from unittest.mock import AsyncMock, Mock, patch
 
-from slay_check.ai.base import ReviewRequest, ReviewResponse, Issue, IssueType, Severity, Complexity
-from slay_check.ai.openai import OpenAIProvider
+import pytest
+
 from slay_check.ai.anthropic import AnthropicProvider
+from slay_check.ai.base import (
+    Complexity,
+    Issue,
+    IssueType,
+    ReviewRequest,
+    ReviewResponse,
+    Severity,
+)
 from slay_check.ai.google import GoogleAIProvider
+from slay_check.ai.openai import OpenAIProvider
 
 
 def test_review_request():
     """Test ReviewRequest model."""
     request = ReviewRequest(
-        code="print(\"hello\")",
+        code='print("hello")',
         language="python",
         file_path="test.py",
-        context="Test context"
+        context="Test context",
     )
 
-    assert request.code == "print(\"hello\")"
+    assert request.code == 'print("hello")'
     assert request.language == "python"
     assert request.file_path == "test.py"
     assert request.context == "Test context"
@@ -34,14 +42,14 @@ def test_review_response():
         line=10,
         message="Test issue",
         suggestion="Fix it",
-        confidence=0.9
+        confidence=0.9,
     )
 
     complexity = Complexity(
         time_complexity="O(n)",
         space_complexity="O(1)",
         cyclomatic_complexity=3,
-        maintainability="good"
+        maintainability="good",
     )
 
     response = ReviewResponse(
@@ -50,7 +58,7 @@ def test_review_response():
         issues=[issue],
         suggestions=["Suggestion 1", "Suggestion 2"],
         complexity=complexity,
-        confidence=0.85
+        confidence=0.85,
     )
 
     assert response.analysis == "Test analysis"
@@ -107,14 +115,14 @@ def test_openai_review_code(mock_openai):
     # Mock the response
     mock_response = Mock()
     mock_response.choices = [Mock()]
-    mock_response.choices[0].message.content = "{\"analysis\": \"Test analysis\", \"score\": 8.5, \"issues\": [], \"suggestions\": [], \"complexity\": {}, \"confidence\": 0.8}"
-    mock_client.chat.completions.create.return_value = mock_response
+    mock_response.choices[0].message.content = (
+        '{"analysis": "Test analysis", "score": 8.5, "issues": [], "suggestions": [], "complexity": {}, "confidence": 0.8}'
+    )
+    mock_client.chat.completions.create = AsyncMock(return_value=mock_response)
 
     provider = OpenAIProvider("test-key")
     request = ReviewRequest(
-        code="print(\"hello\")",
-        language="python",
-        file_path="test.py"
+        code='print("hello")', language="python", file_path="test.py"
     )
 
     response = provider.review_code(request)
@@ -134,14 +142,14 @@ def test_anthropic_review_code(mock_anthropic):
     # Mock the response
     mock_response = Mock()
     mock_response.content = [Mock()]
-    mock_response.content[0].text = "{\"analysis\": \"Test analysis\", \"score\": 8.5, \"issues\": [], \"suggestions\": [], \"complexity\": {}, \"confidence\": 0.8}"
-    mock_client.messages.create.return_value = mock_response
+    mock_response.content[0].text = (
+        '{"analysis": "Test analysis", "score": 8.5, "issues": [], "suggestions": [], "complexity": {}, "confidence": 0.8}'
+    )
+    mock_client.messages.create = AsyncMock(return_value=mock_response)
 
     provider = AnthropicProvider("test-key")
     request = ReviewRequest(
-        code="print(\"hello\")",
-        language="python",
-        file_path="test.py"
+        code='print("hello")', language="python", file_path="test.py"
     )
 
     response = provider.review_code(request)
@@ -160,14 +168,12 @@ def test_google_review_code(mock_genai):
 
     # Mock the response
     mock_response = Mock()
-    mock_response.text = "{\"analysis\": \"Test analysis\", \"score\": 8.5, \"issues\": [], \"suggestions\": [], \"complexity\": {}, \"confidence\": 0.8}"
-    mock_model.generate_content_async.return_value = mock_response
+    mock_response.text = '{"analysis": "Test analysis", "score": 8.5, "issues": [], "suggestions": [], "complexity": {}, "confidence": 0.8}'
+    mock_model.generate_content_async = AsyncMock(return_value=mock_response)
 
     provider = GoogleAIProvider("test-key")
     request = ReviewRequest(
-        code="print(\"hello\")",
-        language="python",
-        file_path="test.py"
+        code='print("hello")', language="python", file_path="test.py"
     )
 
     response = provider.review_code(request)

@@ -4,7 +4,8 @@ Configuration management for Slay Check.
 
 import os
 from pathlib import Path
-from typing import Dict, List, Optional, Any
+from typing import Any, Dict, List, Optional
+
 import yaml
 from pydantic import BaseModel, Field
 
@@ -28,7 +29,9 @@ class Config(BaseModel):
     ai_provider: str = Field(default="openai", description="AI provider to use")
     ai_token: str = Field(default="", description="AI provider API token")
     ai_model: Optional[str] = Field(default="gpt-4o", description="AI model to use")
-    ai_base_url: Optional[str] = Field(default="https://api.openai.com/v1/", description="Custom API base URL")
+    ai_base_url: Optional[str] = Field(
+        default="https://api.openai.com/v1/", description="Custom API base URL"
+    )
 
     # GitHub Configuration
     github_token: str = Field(default="", description="GitHub personal access token")
@@ -59,7 +62,9 @@ class Config(BaseModel):
     # Behavior
     verbose: bool = Field(default=False, description="Enable verbose logging")
     dry_run: bool = Field(default=False, description="Don't post comments")
-    use_issue_comments: bool = Field(default=True, description="Use issue comments instead of reviews (more visible)")
+    use_issue_comments: bool = Field(
+        default=True, description="Use issue comments instead of reviews (more visible)"
+    )
 
     # AI Configuration
     max_tokens: int = Field(default=4000, description="Maximum tokens for AI response")
@@ -94,15 +99,26 @@ class Config(BaseModel):
                 break
 
         # Override with environment variables
+        _verbose_env = os.getenv("SLAY_CHECK_VERBOSE")
+        _dry_run_env = os.getenv("SLAY_CHECK_DRY_RUN")
+        _use_issue_comments_env = os.getenv("SLAY_CHECK_USE_ISSUE_COMMENTS")
         env_overrides = {
             "ai_provider": os.getenv("SLAY_CHECK_AI_PROVIDER"),
             "ai_token": os.getenv("SLAY_CHECK_AI_TOKEN"),
             "ai_model": os.getenv("SLAY_CHECK_AI_MODEL"),
             "ai_base_url": os.getenv("SLAY_CHECK_AI_BASE_URL"),
             "github_token": os.getenv("SLAY_CHECK_GITHUB_TOKEN"),
-            "verbose": os.getenv("SLAY_CHECK_VERBOSE", "").lower() == "true",
-            "dry_run": os.getenv("SLAY_CHECK_DRY_RUN", "").lower() == "true",
-            "use_issue_comments": os.getenv("SLAY_CHECK_USE_ISSUE_COMMENTS", "true").lower() == "true",
+            "verbose": (
+                _verbose_env.lower() == "true" if _verbose_env is not None else None
+            ),
+            "dry_run": (
+                _dry_run_env.lower() == "true" if _dry_run_env is not None else None
+            ),
+            "use_issue_comments": (
+                _use_issue_comments_env.lower() == "true"
+                if _use_issue_comments_env is not None
+                else None
+            ),
         }
 
         # Remove None values

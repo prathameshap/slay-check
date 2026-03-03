@@ -64,14 +64,20 @@ def main():
 
         # Check if review passed thresholds
         if result.score < config.min_score_threshold:
-            print(f"Review failed: Score {result.score:.1f} below threshold {config.min_score_threshold}")
+            print(
+                f"Review failed: Score {result.score:.1f} below threshold {config.min_score_threshold}"
+            )
             sys.exit(1)
 
         # Count critical issues
-        critical_issues = sum(1 for issue in result.issues if issue.severity == "critical")
+        critical_issues = sum(
+            1 for issue in result.issues if issue.severity == "critical"
+        )
 
         if critical_issues > config.critical_issues_limit:
-            print(f"Review failed: {critical_issues} critical issues exceed limit {config.critical_issues_limit}")
+            print(
+                f"Review failed: {critical_issues} critical issues exceed limit {config.critical_issues_limit}"
+            )
             sys.exit(1)
 
         print("Review completed successfully!")

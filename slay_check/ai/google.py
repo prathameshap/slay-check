@@ -2,11 +2,21 @@
 Google AI provider implementation for Slay Check.
 """
 
-import json
 import asyncio
-from typing import Dict, Any, Optional
+import json
+from typing import Any, Dict, Optional
+
 import google.generativeai as genai
-from .base import AIProvider, ReviewRequest, ReviewResponse, Issue, IssueType, Severity, Complexity
+
+from .base import (
+    AIProvider,
+    Complexity,
+    Issue,
+    IssueType,
+    ReviewRequest,
+    ReviewResponse,
+    Severity,
+)
 
 
 class GoogleAIProvider(AIProvider):
@@ -44,7 +54,7 @@ class GoogleAIProvider(AIProvider):
                 issues=[],
                 suggestions=[],
                 complexity=Complexity(),
-                confidence=0.0
+                confidence=0.0,
             )
 
     def _build_prompt(self, request: ReviewRequest) -> str:
@@ -83,7 +93,9 @@ class GoogleAIProvider(AIProvider):
             prompt += "- Review for performance issues\n"
 
         # Enhanced algorithm and complexity analysis instructions with prioritization
-        if request.criteria.get("algorithm_analysis", True) or request.criteria.get("complexity_analysis", True):
+        if request.criteria.get("algorithm_analysis", True) or request.criteria.get(
+            "complexity_analysis", True
+        ):
             prompt += "\n\nALGORITHM & COMPLEXITY ANALYSIS (PRIORITY):\n"
             prompt += "Focus on these critical aspects:\n"
             prompt += "1. Algorithm identification and efficiency\n"
@@ -133,9 +145,9 @@ class GoogleAIProvider(AIProvider):
             if cleaned_content.startswith("```json"):
                 cleaned_content = cleaned_content[7:]  # Remove ```json
             if cleaned_content.startswith("```"):
-                cleaned_content = cleaned_content[3:]   # Remove ```
+                cleaned_content = cleaned_content[3:]  # Remove ```
             if cleaned_content.endswith("```"):
-                cleaned_content = cleaned_content[:-3]   # Remove trailing ```
+                cleaned_content = cleaned_content[:-3]  # Remove trailing ```
             cleaned_content = cleaned_content.strip()
 
             # Extract JSON from content (handle extra data after JSON)
@@ -157,7 +169,7 @@ class GoogleAIProvider(AIProvider):
                     line=issue_data.get("line"),
                     message=issue_data.get("message", ""),
                     suggestion=issue_data.get("suggestion"),
-                    confidence=issue_data.get("confidence", 0.7)
+                    confidence=issue_data.get("confidence", 0.7),
                 )
                 issues.append(issue)
 
@@ -166,7 +178,7 @@ class GoogleAIProvider(AIProvider):
                 time_complexity=complexity_data.get("time_complexity"),
                 space_complexity=complexity_data.get("space_complexity"),
                 cyclomatic_complexity=complexity_data.get("cyclomatic_complexity"),
-                maintainability=complexity_data.get("maintainability")
+                maintainability=complexity_data.get("maintainability"),
             )
 
             return ReviewResponse(
@@ -175,7 +187,7 @@ class GoogleAIProvider(AIProvider):
                 issues=issues,
                 suggestions=data.get("suggestions", []),
                 complexity=complexity,
-                confidence=float(data.get("confidence", 0.7))
+                confidence=float(data.get("confidence", 0.7)),
             )
 
         except (json.JSONDecodeError, ValueError, KeyError):
@@ -186,5 +198,5 @@ class GoogleAIProvider(AIProvider):
                 issues=[],
                 suggestions=[],
                 complexity=Complexity(),
-                confidence=0.7
+                confidence=0.7,
             )

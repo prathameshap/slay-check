@@ -5,16 +5,16 @@ CLI interface for Slay Check.
 import os
 import sys
 from typing import Optional
+
 import click
 from rich.console import Console
-from rich.table import Table
 from rich.panel import Panel
+from rich.table import Table
 from rich.text import Text
 
 from .config import Config
-from .review import ReviewEngine
 from .github_client import GitHubClient
-
+from .review import ReviewEngine
 
 console = Console()
 
@@ -61,13 +61,27 @@ def show_config():
 
         table.add_row("AI Provider", config.ai_provider)
         table.add_row("Review Criteria", "")
-        table.add_row("  - Analyze Problem", str(config.review_criteria.analyze_problem))
-        table.add_row("  - Algorithm Analysis", str(config.review_criteria.algorithm_analysis))
-        table.add_row("  - Best Approaches", str(config.review_criteria.best_approaches))
-        table.add_row("  - Complexity Analysis", str(config.review_criteria.complexity_analysis))
-        table.add_row("  - Risk Assessment", str(config.review_criteria.risk_assessment))
-        table.add_row("  - Security Review", str(config.review_criteria.security_review))
-        table.add_row("  - Performance Review", str(config.review_criteria.performance_review))
+        table.add_row(
+            "  - Analyze Problem", str(config.review_criteria.analyze_problem)
+        )
+        table.add_row(
+            "  - Algorithm Analysis", str(config.review_criteria.algorithm_analysis)
+        )
+        table.add_row(
+            "  - Best Approaches", str(config.review_criteria.best_approaches)
+        )
+        table.add_row(
+            "  - Complexity Analysis", str(config.review_criteria.complexity_analysis)
+        )
+        table.add_row(
+            "  - Risk Assessment", str(config.review_criteria.risk_assessment)
+        )
+        table.add_row(
+            "  - Security Review", str(config.review_criteria.security_review)
+        )
+        table.add_row(
+            "  - Performance Review", str(config.review_criteria.performance_review)
+        )
         table.add_row("Max File Size", str(config.max_file_size))
         table.add_row("Max Files Per PR", str(config.max_files_per_pr))
         table.add_row("Verbose", str(config.verbose))
@@ -85,7 +99,9 @@ def show_config():
 @click.option("--local", is_flag=True, help="Review local changes (git diff)")
 @click.option("--verbose", is_flag=True, help="Enable verbose output")
 @click.option("--dry-run", is_flag=True, help="Don't post comments, just show results")
-def review(pr: Optional[int], repo: Optional[str], local: bool, verbose: bool, dry_run: bool):
+def review(
+    pr: Optional[int], repo: Optional[str], local: bool, verbose: bool, dry_run: bool
+):
     """Review code changes"""
     try:
         # Load configuration
@@ -97,16 +113,19 @@ def review(pr: Optional[int], repo: Optional[str], local: bool, verbose: bool, d
         if dry_run:
             config.dry_run = True
 
+        if not local and not (pr and repo):
+            console.print(
+                "[red]Please specify either --pr and --repo for pull request review or --local for local changes[/red]"
+            )
+            sys.exit(1)
+
         # Validate configuration
         config.validate()
 
         if local:
             review_local_changes(config)
-        elif pr and repo:
-            review_pull_request(config, repo, pr)
         else:
-            console.print("[red]Please specify either --pr and --repo for pull request review or --local for local changes[/red]")
-            sys.exit(1)
+            review_pull_request(config, repo, pr)
 
     except Exception as e:
         console.print(f"[red]Error: {e}[/red]")
@@ -157,7 +176,7 @@ def review_pull_request(config: Config, repo: str, pr_number: int):
                 file_review.filename,
                 file_review.language,
                 f"{file_review.score:.1f}",
-                str(len(file_review.issues))
+                str(len(file_review.issues)),
             )
 
         console.print(table)

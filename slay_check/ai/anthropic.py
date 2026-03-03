@@ -2,17 +2,32 @@
 Anthropic provider implementation for Slay Check.
 """
 
-import json
 import asyncio
-from typing import Dict, Any, Optional
+import json
+from typing import Any, Dict, Optional
+
 from anthropic import AsyncAnthropic
-from .base import AIProvider, ReviewRequest, ReviewResponse, Issue, IssueType, Severity, Complexity
+
+from .base import (
+    AIProvider,
+    Complexity,
+    Issue,
+    IssueType,
+    ReviewRequest,
+    ReviewResponse,
+    Severity,
+)
 
 
 class AnthropicProvider(AIProvider):
     """Anthropic provider for code review."""
 
-    def __init__(self, api_key: str, model: str = "claude-3-sonnet-20240229", base_url: Optional[str] = None):
+    def __init__(
+        self,
+        api_key: str,
+        model: str = "claude-3-sonnet-20240229",
+        base_url: Optional[str] = None,
+    ):
         # Allow custom base URL for Anthropic-compatible APIs
         if base_url:
             self.client = AsyncAnthropic(api_key=api_key, base_url=base_url)
@@ -40,12 +55,7 @@ class AnthropicProvider(AIProvider):
             response = await self.client.messages.create(
                 model=self.model,
                 max_tokens=request.max_tokens or 4000,
-                messages=[
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
-                ]
+                messages=[{"role": "user", "content": prompt}],
             )
 
             content = response.content[0].text
@@ -58,7 +68,7 @@ class AnthropicProvider(AIProvider):
                 issues=[],
                 suggestions=[],
                 complexity=Complexity(),
-                confidence=0.0
+                confidence=0.0,
             )
 
     def _build_prompt(self, request: ReviewRequest) -> str:
@@ -97,7 +107,9 @@ class AnthropicProvider(AIProvider):
             prompt += "- Review for performance issues\n"
 
         # Enhanced algorithm and complexity analysis instructions with prioritization
-        if request.criteria.get("algorithm_analysis", True) or request.criteria.get("complexity_analysis", True):
+        if request.criteria.get("algorithm_analysis", True) or request.criteria.get(
+            "complexity_analysis", True
+        ):
             prompt += "\n\nALGORITHM & COMPLEXITY ANALYSIS (PRIORITY):\n"
             prompt += "Focus on these critical aspects:\n"
             prompt += "1. Algorithm identification and efficiency\n"
@@ -147,9 +159,9 @@ class AnthropicProvider(AIProvider):
             if cleaned_content.startswith("```json"):
                 cleaned_content = cleaned_content[7:]  # Remove ```json
             if cleaned_content.startswith("```"):
-                cleaned_content = cleaned_content[3:]   # Remove ```
+                cleaned_content = cleaned_content[3:]  # Remove ```
             if cleaned_content.endswith("```"):
-                cleaned_content = cleaned_content[:-3]   # Remove trailing ```
+                cleaned_content = cleaned_content[:-3]  # Remove trailing ```
             cleaned_content = cleaned_content.strip()
 
             # Extract JSON from content (handle extra data after JSON)
@@ -171,7 +183,7 @@ class AnthropicProvider(AIProvider):
                     line=issue_data.get("line"),
                     message=issue_data.get("message", ""),
                     suggestion=issue_data.get("suggestion"),
-                    confidence=issue_data.get("confidence", 0.7)
+                    confidence=issue_data.get("confidence", 0.7),
                 )
                 issues.append(issue)
 
@@ -180,7 +192,7 @@ class AnthropicProvider(AIProvider):
                 time_complexity=complexity_data.get("time_complexity"),
                 space_complexity=complexity_data.get("space_complexity"),
                 cyclomatic_complexity=complexity_data.get("cyclomatic_complexity"),
-                maintainability=complexity_data.get("maintainability")
+                maintainability=complexity_data.get("maintainability"),
             )
 
             return ReviewResponse(
@@ -189,7 +201,7 @@ class AnthropicProvider(AIProvider):
                 issues=issues,
                 suggestions=data.get("suggestions", []),
                 complexity=complexity,
-                confidence=float(data.get("confidence", 0.7))
+                confidence=float(data.get("confidence", 0.7)),
             )
 
         except (json.JSONDecodeError, ValueError, KeyError):
@@ -200,5 +212,5 @@ class AnthropicProvider(AIProvider):
                 issues=[],
                 suggestions=[],
                 complexity=Complexity(),
-                confidence=0.7
+                confidence=0.7,
             )

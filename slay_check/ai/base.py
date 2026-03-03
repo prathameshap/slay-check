@@ -3,13 +3,15 @@ Base AI provider interface for Slay Check.
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Optional, Dict, Any
-from pydantic import BaseModel
 from enum import Enum
+from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel
 
 
 class IssueType(str, Enum):
     """Types of issues that can be found."""
+
     BUG = "bug"
     SECURITY = "security"
     PERFORMANCE = "performance"
@@ -27,6 +29,7 @@ class IssueType(str, Enum):
 
 class Severity(str, Enum):
     """Severity levels for issues."""
+
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -35,6 +38,7 @@ class Severity(str, Enum):
 
 class Issue(BaseModel):
     """An issue found during code review."""
+
     type: IssueType
     severity: Severity
     line: Optional[int] = None
@@ -45,6 +49,7 @@ class Issue(BaseModel):
 
 class Complexity(BaseModel):
     """Complexity analysis results."""
+
     time_complexity: Optional[str] = None
     space_complexity: Optional[str] = None
     cyclomatic_complexity: Optional[int] = None
@@ -53,6 +58,7 @@ class Complexity(BaseModel):
 
 class ReviewRequest(BaseModel):
     """Request for code review."""
+
     code: str
     language: str
     file_path: str
@@ -64,6 +70,7 @@ class ReviewRequest(BaseModel):
 
 class ReviewResponse(BaseModel):
     """Response from code review."""
+
     analysis: str
     score: float
     issues: List[Issue]

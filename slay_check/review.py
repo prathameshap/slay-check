@@ -3,25 +3,32 @@ Review engine for Slay Check.
 """
 
 import asyncio
-import time
-from typing import List, Dict, Any, Optional
-from pathlib import Path
 import re
+import time
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
-from .config import Config
-from .github_client import GitHubClient, PullRequestInfo, PullRequestFileInfo
-from .ai.base import ReviewRequest, ReviewResponse, Issue, IssueType, Severity
-from .ai.openai import OpenAIProvider
 from .ai.anthropic import AnthropicProvider
+from .ai.base import Issue, IssueType, ReviewRequest, ReviewResponse, Severity
 from .ai.google import GoogleAIProvider
+from .ai.openai import OpenAIProvider
+from .config import Config
+from .github_client import GitHubClient, PullRequestFileInfo, PullRequestInfo
 
 
 class FileReview:
     """Review result for a single file."""
 
-    def __init__(self, filename: str, language: str, score: float,
-                 issues: List[Issue], suggestions: List[str],
-                 complexity: Any, analysis: str):
+    def __init__(
+        self,
+        filename: str,
+        language: str,
+        score: float,
+        issues: List[Issue],
+        suggestions: List[str],
+        complexity: Any,
+        analysis: str,
+    ):
         self.filename = filename
         self.language = language
         self.score = score
@@ -34,8 +41,15 @@ class FileReview:
 class ReviewResult:
     """Result of a code review."""
 
-    def __init__(self, pull_request: PullRequestInfo, files: List[FileReview],
-                 issues: List[Issue], score: float, summary: str, duration: float):
+    def __init__(
+        self,
+        pull_request: PullRequestInfo,
+        files: List[FileReview],
+        issues: List[Issue],
+        score: float,
+        summary: str,
+        duration: float,
+    ):
         self.pull_request = pull_request
         self.files = files
         self.issues = issues
@@ -58,18 +72,17 @@ class ReviewEngine:
             return OpenAIProvider(
                 api_key=self.config.ai_token,
                 model=self.config.ai_model or "gpt-4o",
-                base_url=self.config.ai_base_url
+                base_url=self.config.ai_base_url,
             )
         elif self.config.ai_provider == "anthropic":
             return AnthropicProvider(
                 api_key=self.config.ai_token,
                 model=self.config.ai_model or "claude-3-sonnet-20240229",
-                base_url=self.config.ai_base_url
+                base_url=self.config.ai_base_url,
             )
         elif self.config.ai_provider == "google":
             return GoogleAIProvider(
-                api_key=self.config.ai_token,
-                model=self.config.ai_model or "gemini-pro"
+                api_key=self.config.ai_token, model=self.config.ai_model or "gemini-pro"
             )
         else:
             raise ValueError(f"Unsupported AI provider: {self.config.ai_provider}")
@@ -91,7 +104,7 @@ class ReviewEngine:
                 issues=[],
                 score=0.0,
                 summary="No files to review after filtering",
-                duration=time.time() - start_time
+                duration=time.time() - start_time,
             )
 
         # Review each file
@@ -125,10 +138,12 @@ class ReviewEngine:
             issues=all_issues,
             score=overall_score,
             summary=summary,
-            duration=duration
+            duration=duration,
         )
 
-    def _filter_files(self, files: List[PullRequestFileInfo]) -> List[PullRequestFileInfo]:
+    def _filter_files(
+        self, files: List[PullRequestFileInfo]
+    ) -> List[PullRequestFileInfo]:
         """Filter files based on configuration."""
         filtered = []
 
@@ -149,11 +164,13 @@ class ReviewEngine:
 
         # Limit number of files
         if len(filtered) > self.config.max_files_per_pr:
-            filtered = filtered[:self.config.max_files_per_pr]
+            filtered = filtered[: self.config.max_files_per_pr]
 
         return filtered
 
-    def _review_file(self, file_info: PullRequestFileInfo, pr_info: PullRequestInfo) -> FileReview:
+    def _review_file(
+        self, file_info: PullRequestFileInfo, pr_info: PullRequestInfo
+    ) -> FileReview:
         """Review a single file."""
         # Detect language
         language = self._detect_language(file_info.filename)
@@ -169,7 +186,7 @@ class ReviewEngine:
                 issues=[],
                 suggestions=["No code changes detected"],
                 complexity=None,
-                analysis="No code changes to review"
+                analysis="No code changes to review",
             )
 
         # Prepare review request
@@ -188,7 +205,7 @@ class ReviewEngine:
                 "performance_review": self.config.review_criteria.performance_review,
             },
             max_tokens=self.config.max_tokens,
-            temperature=self.config.temperature
+            temperature=self.config.temperature,
         )
 
         # Get AI review
@@ -198,10 +215,14 @@ class ReviewEngine:
         response = self.ai_provider.review_code(request)
 
         if self.config.verbose:
-            print(f"AI Response - Score: {response.score:.1f}, Issues: {len(response.issues)}")
+            print(
+                f"AI Response - Score: {response.score:.1f}, Issues: {len(response.issues)}"
+            )
             if response.issues:
                 for i, issue in enumerate(response.issues, 1):
-                    print(f"  Issue {i}: {issue.severity} {issue.type} - {issue.message}")
+                    print(
+                        f"  Issue {i}: {issue.severity} {issue.type} - {issue.message}"
+                    )
             else:
                 print("  No specific issues found by AI")
 
@@ -212,7 +233,7 @@ class ReviewEngine:
             issues=response.issues,
             suggestions=response.suggestions,
             complexity=response.complexity,
-            analysis=response.analysis
+            analysis=response.analysis,
         )
 
     def _detect_language(self, filename: str) -> str:
@@ -264,8 +285,9 @@ class ReviewEngine:
 
         return "\n".join(code_lines)
 
-    def _generate_summary(self, file_reviews: List[FileReview],
-                         issues: List[Issue], score: float) -> str:
+    def _generate_summary(
+        self, file_reviews: List[FileReview], issues: List[Issue], score: float
+    ) -> str:
         """Generate a summary of the review."""
         summary = f"## Code Review Summary\n\n"
         summary += f"**Overall Score:** {score:.1f}/10\n\n"
@@ -277,7 +299,9 @@ class ReviewEngine:
 
             severity_count = {}
             for issue in issues:
-                severity_count[issue.severity] = severity_count.get(issue.severity, 0) + 1
+                severity_count[issue.severity] = (
+                    severity_count.get(issue.severity, 0) + 1
+                )
 
             for severity, count in severity_count.items():
                 summary += f"- **{severity.title()}:** {count}\n"
@@ -322,7 +346,9 @@ class ReviewEngine:
 
         return body
 
-    def post_review_comments(self, repo: str, pr_number: int, result: ReviewResult) -> None:
+    def post_review_comments(
+        self, repo: str, pr_number: int, result: ReviewResult
+    ) -> None:
         """Post review as a single comment (checkstyle-style: one comment with full feedback)."""
         if self.config.dry_run:
             print("Dry run mode - no comments posted")
