@@ -74,17 +74,17 @@ class ReviewResponse(BaseModel):
 
 class AIProvider(ABC):
     """Abstract base class for AI providers."""
-    
+
     @abstractmethod
     def get_name(self) -> str:
         """Get the name of the AI provider."""
         pass
-    
+
     @abstractmethod
     def is_available(self) -> bool:
         """Check if the AI provider is available."""
         pass
-    
+
     @abstractmethod
     def review_code(self, request: ReviewRequest) -> ReviewResponse:
         """Review code and return analysis."""

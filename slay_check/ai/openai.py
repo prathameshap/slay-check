@@ -11,7 +11,7 @@ from .base import AIProvider, ReviewRequest, ReviewResponse, Issue, IssueType, S
 
 class OpenAIProvider(AIProvider):
     """OpenAI provider for code review."""
-    
+
     def __init__(self, api_key: str, model: str = "gpt-4o", base_url: Optional[str] = None):
         # Allow custom base URL for OpenAI-compatible APIs
         if base_url:
@@ -21,21 +21,21 @@ class OpenAIProvider(AIProvider):
         self.model = model
         self.api_key = api_key
         self.base_url = base_url
-    
+
     def get_name(self) -> str:
         return "openai"
-    
+
     def is_available(self) -> bool:
         return bool(self.api_key)
-    
+
     def review_code(self, request: ReviewRequest) -> ReviewResponse:
         """Review code using OpenAI."""
         return asyncio.run(self._review_code_async(request))
-    
+
     async def _review_code_async(self, request: ReviewRequest) -> ReviewResponse:
         """Async implementation of code review."""
         prompt = self._build_prompt(request)
-        
+
         try:
             response = await self.client.chat.completions.create(
                 model=self.model,
@@ -52,10 +52,10 @@ class OpenAIProvider(AIProvider):
                 max_tokens=request.max_tokens or 4000,
                 temperature=request.temperature or 0.3
             )
-            
+
             content = response.choices[0].message.content
             return self._parse_response(content)
-            
+
         except Exception as e:
             return ReviewResponse(
                 analysis=f"Error during review: {str(e)}",
@@ -65,17 +65,17 @@ class OpenAIProvider(AIProvider):
                 complexity=Complexity(),
                 confidence=0.0
             )
-    
+
     def _build_prompt(self, request: ReviewRequest) -> str:
         """Build the prompt for code review."""
         prompt = f"Please review the following {request.language} code:\n\n"
         prompt += f"File: {request.file_path}\n\n"
-        
+
         if request.context:
             prompt += f"Context: {request.context}\n\n"
-        
+
         prompt += "Code:\n```" + request.language + "\n" + request.code + "\n```\n\n"
-        
+
         prompt += "Please analyze the code based on these criteria:\n"
         prompt += "\nThings to consider:\n"
         prompt += "1. Analyze the problem the code is solving\n"
@@ -84,7 +84,7 @@ class OpenAIProvider(AIProvider):
         prompt += "4. Time and space complexity for the code written\n"
         prompt += "5. Which would be the best approach for the current scenario\n"
         prompt += "6. Risks for using the new approach\n"
-        
+
         # Add specific review criteria if enabled
         if request.criteria.get("analyze_problem", True):
             prompt += "\n- Analyze the problem the code is solving\n"
@@ -100,7 +100,7 @@ class OpenAIProvider(AIProvider):
             prompt += "- Review for security vulnerabilities\n"
         if request.criteria.get("performance_review", True):
             prompt += "- Review for performance issues\n"
-        
+
         # Enhanced algorithm and complexity analysis instructions with prioritization
         if request.criteria.get("algorithm_analysis", True) or request.criteria.get("complexity_analysis", True):
             prompt += "\n\nALGORITHM & COMPLEXITY ANALYSIS (PRIORITY):\n"
@@ -110,14 +110,14 @@ class OpenAIProvider(AIProvider):
             prompt += "3. Space complexity (Big O notation)\n"
             prompt += "4. Performance bottlenecks\n"
             prompt += "5. Alternative approaches if current is inefficient\n"
-        
+
         prompt += "\nREVIEW PRIORITIZATION:\n"
         prompt += "Focus on the most critical issues first:\n"
         prompt += "1. CRITICAL: Security vulnerabilities, bugs, performance issues\n"
         prompt += "2. HIGH: Algorithm inefficiency, complexity problems\n"
         prompt += "3. MEDIUM: Code style, best practices\n"
         prompt += "4. LOW: Minor improvements, documentation\n"
-        
+
         prompt += "\nIMPORTANT: You MUST find specific issues in the code. Even if the code is good, look for:\n"
         prompt += "- Code style improvements\n"
         prompt += "- Performance optimizations\n"
@@ -148,9 +148,9 @@ class OpenAIProvider(AIProvider):
   },
   "confidence": 0.85
 }"""
-        
+
         return prompt
-    
+
     def _parse_response(self, content: str) -> ReviewResponse:
         """Parse OpenAI response into ReviewResponse."""
         try:
@@ -163,7 +163,7 @@ class OpenAIProvider(AIProvider):
             if cleaned_content.endswith("```"):
                 cleaned_content = cleaned_content[:-3]   # Remove trailing ```
             cleaned_content = cleaned_content.strip()
-            
+
             # Extract JSON from content (handle extra data after JSON)
             json_start = cleaned_content.find("{")
             json_end = cleaned_content.rfind("}") + 1
@@ -171,10 +171,10 @@ class OpenAIProvider(AIProvider):
                 json_content = cleaned_content[json_start:json_end]
             else:
                 json_content = cleaned_content
-            
+
             # Try to parse as JSON
             data = json.loads(json_content)
-            
+
             issues = []
             for issue_data in data.get("issues", []):
                 issue = Issue(
@@ -186,7 +186,7 @@ class OpenAIProvider(AIProvider):
                     confidence=issue_data.get("confidence", 0.7)
                 )
                 issues.append(issue)
-            
+
             complexity_data = data.get("complexity", {})
             complexity = Complexity(
                 time_complexity=complexity_data.get("time_complexity"),
@@ -194,7 +194,7 @@ class OpenAIProvider(AIProvider):
                 cyclomatic_complexity=complexity_data.get("cyclomatic_complexity"),
                 maintainability=complexity_data.get("maintainability")
             )
-            
+
             return ReviewResponse(
                 analysis=data.get("analysis", cleaned_content),
                 score=float(data.get("score", 7.0)),
@@ -203,12 +203,12 @@ class OpenAIProvider(AIProvider):
                 complexity=complexity,
                 confidence=float(data.get("confidence", 0.7))
             )
-            
+
         except (json.JSONDecodeError, ValueError, KeyError) as e:
             # If JSON parsing fails, try to extract information from text
             print(f"JSON parsing failed: {e}")
             print(f"AI Response: {content[:500]}...")
-            
+
             # Try to extract score from text
             score = 7.0
             if "score" in content.lower():
@@ -216,7 +216,7 @@ class OpenAIProvider(AIProvider):
                 score_match = re.search(r"score[:\s]*(\d+\.?\d*)", content.lower())
                 if score_match:
                     score = float(score_match.group(1))
-            
+
             # Create a basic response with the raw analysis
             return ReviewResponse(
                 analysis=content,

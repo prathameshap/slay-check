@@ -10,7 +10,7 @@ from .base import (
     Complexity,
     ReviewRequest,
     ReviewResponse,
-    AIProvider
+    AIProvider,
 )
 
 # Import specific providers

@@ -9,7 +9,7 @@ from pydantic import BaseModel
 
 class PullRequestInfo(BaseModel):
     """Information about a pull request."""
-    
+
     number: int
     title: str
     body: Optional[str] = None
@@ -26,7 +26,7 @@ class PullRequestInfo(BaseModel):
 
 class PullRequestFileInfo(BaseModel):
     """Information about a file in a pull request."""
-    
+
     filename: str
     status: str
     additions: int
@@ -41,7 +41,7 @@ class PullRequestFileInfo(BaseModel):
 
 class ReviewComment(BaseModel):
     """A review comment to post."""
-    
+
     path: str
     line: int
     body: str
@@ -51,26 +51,26 @@ class ReviewComment(BaseModel):
 
 class GitHubClient:
     """GitHub client for Slay Check."""
-    
+
     def __init__(self, token: str):
         self.github = Github(token)
         self.token = token
-    
+
     def get_pull_request(self, repo: str, pr_number: int) -> PullRequestInfo:
         """Get pull request information."""
         try:
             # Parse repository name
             owner, repo_name = repo.split("/", 1)
-            
+
             # Get repository
             repository = self.github.get_repo(repo)
-            
+
             # Get pull request
             pr = repository.get_pull(pr_number)
-            
+
             # Get files
             files = list(pr.get_files())
-            
+
             # Convert files to our format
             file_infos = []
             for file in files:
@@ -87,7 +87,7 @@ class GitHubClient:
                     previous_filename=file.previous_filename
                 )
                 file_infos.append(file_info)
-            
+
             return PullRequestInfo(
                 number=pr.number,
                 title=pr.title,
@@ -102,24 +102,24 @@ class GitHubClient:
                 created_at=pr.created_at.isoformat(),
                 updated_at=pr.updated_at.isoformat()
             )
-            
+
         except Exception as e:
             raise Exception(f"Failed to get pull request: {str(e)}")
-    
+
     def post_review_comments(self, repo: str, pr_number: int, comments: List[ReviewComment]) -> None:
         """Post review comments to a pull request."""
         try:
             print(f"Posting {len(comments)} comments to PR #{pr_number} in {repo}")
-            
+
             # Parse repository name
             owner, repo_name = repo.split("/", 1)
-            
+
             # Get repository
             repository = self.github.get_repo(repo)
-            
+
             # Get pull request
             pr = repository.get_pull(pr_number)
-            
+
             # Post comments
             for i, comment in enumerate(comments, 1):
                 try:
@@ -133,76 +133,76 @@ class GitHubClient:
                 except Exception as e:
                     print(f"Failed to post comment {i} on {comment.path}:{comment.line}: {e}")
                     continue
-                
+
         except Exception as e:
             raise Exception(f"Failed to post review comments: {str(e)}")
-    
+
     def create_review(self, repo: str, pr_number: int, body: str, event: str = "COMMENT") -> None:
         """Create a pull request review."""
         try:
             print(f"Creating review for PR #{pr_number} in {repo}")
-            
+
             # Parse repository name
             owner, repo_name = repo.split("/", 1)
-            
+
             # Get repository
             repository = self.github.get_repo(repo)
-            
+
             # Get pull request
             pr = repository.get_pull(pr_number)
-            
+
             # Create review
             review = pr.create_review(
                 body=body,
                 event=event
             )
             print(f"Created review with ID: {review.id}")
-            
+
         except Exception as e:
             raise Exception(f"Failed to create review: {str(e)}")
-    
+
     def create_issue_comment(self, repo: str, pr_number: int, body: str) -> None:
         """Create a regular issue comment (more visible than reviews)."""
         try:
             print(f"Creating issue comment for PR #{pr_number} in {repo}")
-            
+
             # Parse repository name
             owner, repo_name = repo.split("/", 1)
-            
+
             # Get repository
             repository = self.github.get_repo(repo)
-            
+
             # Get pull request (PRs are also issues)
             pr = repository.get_pull(pr_number)
-            
+
             # Create issue comment
             comment = pr.create_issue_comment(body)
             print(f"Created issue comment with ID: {comment.id}")
-            
+
         except Exception as e:
             raise Exception(f"Failed to create issue comment: {str(e)}")
-    
+
     def get_file_content(self, repo: str, path: str, ref: str = "main") -> str:
         """Get file content from repository."""
         try:
             # Parse repository name
             owner, repo_name = repo.split("/", 1)
-            
+
             # Get repository
             repository = self.github.get_repo(repo)
-            
+
             # Get file content
             file_content = repository.get_contents(path, ref=ref)
-            
+
             # Decode content
             if hasattr(file_content, "decoded_content"):
                 return file_content.decoded_content.decode("utf-8")
             else:
                 return file_content.content.decode("utf-8")
-                
+
         except Exception as e:
             raise Exception(f"Failed to get file content: {str(e)}")
-    
+
     def is_available(self) -> bool:
         """Check if GitHub client is available."""
         return bool(self.token)

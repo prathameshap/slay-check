@@ -19,7 +19,7 @@ def test_review_request():
         file_path="test.py",
         context="Test context"
     )
-    
+
     assert request.code == "print(\"hello\")"
     assert request.language == "python"
     assert request.file_path == "test.py"
@@ -36,14 +36,14 @@ def test_review_response():
         suggestion="Fix it",
         confidence=0.9
     )
-    
+
     complexity = Complexity(
         time_complexity="O(n)",
         space_complexity="O(1)",
         cyclomatic_complexity=3,
         maintainability="good"
     )
-    
+
     response = ReviewResponse(
         analysis="Test analysis",
         score=8.5,
@@ -52,7 +52,7 @@ def test_review_response():
         complexity=complexity,
         confidence=0.85
     )
-    
+
     assert response.analysis == "Test analysis"
     assert response.score == 8.5
     assert len(response.issues) == 1
@@ -64,10 +64,10 @@ def test_review_response():
 def test_openai_provider():
     """Test OpenAI provider."""
     provider = OpenAIProvider("test-key", "gpt-4")
-    
+
     assert provider.get_name() == "openai"
     assert provider.is_available() is True
-    
+
     # Test with empty key
     provider_empty = OpenAIProvider("")
     assert provider_empty.is_available() is False
@@ -76,10 +76,10 @@ def test_openai_provider():
 def test_anthropic_provider():
     """Test Anthropic provider."""
     provider = AnthropicProvider("test-key", "claude-3-sonnet-20240229")
-    
+
     assert provider.get_name() == "anthropic"
     assert provider.is_available() is True
-    
+
     # Test with empty key
     provider_empty = AnthropicProvider("")
     assert provider_empty.is_available() is False
@@ -88,10 +88,10 @@ def test_anthropic_provider():
 def test_google_provider():
     """Test Google AI provider."""
     provider = GoogleAIProvider("test-key", "gemini-pro")
-    
+
     assert provider.get_name() == "google"
     assert provider.is_available() is True
-    
+
     # Test with empty key
     provider_empty = GoogleAIProvider("")
     assert provider_empty.is_available() is False
@@ -103,22 +103,22 @@ def test_openai_review_code(mock_openai):
     # Mock the OpenAI client
     mock_client = Mock()
     mock_openai.return_value = mock_client
-    
+
     # Mock the response
     mock_response = Mock()
     mock_response.choices = [Mock()]
     mock_response.choices[0].message.content = "{\"analysis\": \"Test analysis\", \"score\": 8.5, \"issues\": [], \"suggestions\": [], \"complexity\": {}, \"confidence\": 0.8}"
     mock_client.chat.completions.create.return_value = mock_response
-    
+
     provider = OpenAIProvider("test-key")
     request = ReviewRequest(
         code="print(\"hello\")",
         language="python",
         file_path="test.py"
     )
-    
+
     response = provider.review_code(request)
-    
+
     assert response.analysis == "Test analysis"
     assert response.score == 8.5
     assert response.confidence == 0.8
@@ -130,22 +130,22 @@ def test_anthropic_review_code(mock_anthropic):
     # Mock the Anthropic client
     mock_client = Mock()
     mock_anthropic.return_value = mock_client
-    
+
     # Mock the response
     mock_response = Mock()
     mock_response.content = [Mock()]
     mock_response.content[0].text = "{\"analysis\": \"Test analysis\", \"score\": 8.5, \"issues\": [], \"suggestions\": [], \"complexity\": {}, \"confidence\": 0.8}"
     mock_client.messages.create.return_value = mock_response
-    
+
     provider = AnthropicProvider("test-key")
     request = ReviewRequest(
         code="print(\"hello\")",
         language="python",
         file_path="test.py"
     )
-    
+
     response = provider.review_code(request)
-    
+
     assert response.analysis == "Test analysis"
     assert response.score == 8.5
     assert response.confidence == 0.8
@@ -157,21 +157,21 @@ def test_google_review_code(mock_genai):
     # Mock the Google AI client
     mock_model = Mock()
     mock_genai.GenerativeModel.return_value = mock_model
-    
+
     # Mock the response
     mock_response = Mock()
     mock_response.text = "{\"analysis\": \"Test analysis\", \"score\": 8.5, \"issues\": [], \"suggestions\": [], \"complexity\": {}, \"confidence\": 0.8}"
     mock_model.generate_content_async.return_value = mock_response
-    
+
     provider = GoogleAIProvider("test-key")
     request = ReviewRequest(
         code="print(\"hello\")",
         language="python",
         file_path="test.py"
     )
-    
+
     response = provider.review_code(request)
-    
+
     assert response.analysis == "Test analysis"
     assert response.score == 8.5
     assert response.confidence == 0.8

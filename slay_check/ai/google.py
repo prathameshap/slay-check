@@ -11,32 +11,32 @@ from .base import AIProvider, ReviewRequest, ReviewResponse, Issue, IssueType, S
 
 class GoogleAIProvider(AIProvider):
     """Google AI provider for code review."""
-    
+
     def __init__(self, api_key: str, model: str = "gemini-pro"):
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel(model)
         self.api_key = api_key
         self.model_name = model
-    
+
     def get_name(self) -> str:
         return "google"
-    
+
     def is_available(self) -> bool:
         return bool(self.api_key)
-    
+
     def review_code(self, request: ReviewRequest) -> ReviewResponse:
         """Review code using Google AI."""
         return asyncio.run(self._review_code_async(request))
-    
+
     async def _review_code_async(self, request: ReviewRequest) -> ReviewResponse:
         """Async implementation of code review."""
         prompt = self._build_prompt(request)
-        
+
         try:
             response = await self.model.generate_content_async(prompt)
             content = response.text
             return self._parse_response(content)
-            
+
         except Exception as e:
             return ReviewResponse(
                 analysis=f"Error during review: {str(e)}",
@@ -46,17 +46,17 @@ class GoogleAIProvider(AIProvider):
                 complexity=Complexity(),
                 confidence=0.0
             )
-    
+
     def _build_prompt(self, request: ReviewRequest) -> str:
         """Build the prompt for code review."""
         prompt = f"Please review the following {request.language} code:\n\n"
         prompt += f"File: {request.file_path}\n\n"
-        
+
         if request.context:
             prompt += f"Context: {request.context}\n\n"
-        
+
         prompt += "Code:\n```" + request.language + "\n" + request.code + "\n```\n\n"
-        
+
         prompt += "Please analyze the code based on these criteria:\n"
         prompt += "\nThings to consider:\n"
         prompt += "1. Analyze the problem the code is solving\n"
@@ -65,7 +65,7 @@ class GoogleAIProvider(AIProvider):
         prompt += "4. Time and space complexity for the code written\n"
         prompt += "5. Which would be the best approach for the current scenario\n"
         prompt += "6. Risks for using the new approach\n"
-        
+
         # Add specific review criteria if enabled
         if request.criteria.get("analyze_problem", True):
             prompt += "\n- Analyze the problem the code is solving\n"
@@ -81,7 +81,7 @@ class GoogleAIProvider(AIProvider):
             prompt += "- Review for security vulnerabilities\n"
         if request.criteria.get("performance_review", True):
             prompt += "- Review for performance issues\n"
-        
+
         # Enhanced algorithm and complexity analysis instructions with prioritization
         if request.criteria.get("algorithm_analysis", True) or request.criteria.get("complexity_analysis", True):
             prompt += "\n\nALGORITHM & COMPLEXITY ANALYSIS (PRIORITY):\n"
@@ -91,14 +91,14 @@ class GoogleAIProvider(AIProvider):
             prompt += "3. Space complexity (Big O notation)\n"
             prompt += "4. Performance bottlenecks\n"
             prompt += "5. Alternative approaches if current is inefficient\n"
-        
+
         prompt += "\nREVIEW PRIORITIZATION:\n"
         prompt += "Focus on the most critical issues first:\n"
         prompt += "1. CRITICAL: Security vulnerabilities, bugs, performance issues\n"
         prompt += "2. HIGH: Algorithm inefficiency, complexity problems\n"
         prompt += "3. MEDIUM: Code style, best practices\n"
         prompt += "4. LOW: Minor improvements, documentation\n"
-        
+
         prompt += "\nPlease provide your analysis in JSON format with the following structure:\n"
         prompt += """{
   "analysis": "Detailed analysis of the code",
@@ -122,9 +122,9 @@ class GoogleAIProvider(AIProvider):
   },
   "confidence": 0.85
 }"""
-        
+
         return prompt
-    
+
     def _parse_response(self, content: str) -> ReviewResponse:
         """Parse Google AI response into ReviewResponse."""
         try:
@@ -137,7 +137,7 @@ class GoogleAIProvider(AIProvider):
             if cleaned_content.endswith("```"):
                 cleaned_content = cleaned_content[:-3]   # Remove trailing ```
             cleaned_content = cleaned_content.strip()
-            
+
             # Extract JSON from content (handle extra data after JSON)
             json_start = cleaned_content.find("{")
             json_end = cleaned_content.rfind("}") + 1
@@ -145,10 +145,10 @@ class GoogleAIProvider(AIProvider):
                 json_content = cleaned_content[json_start:json_end]
             else:
                 json_content = cleaned_content
-            
+
             # Try to parse as JSON
             data = json.loads(json_content)
-            
+
             issues = []
             for issue_data in data.get("issues", []):
                 issue = Issue(
@@ -160,7 +160,7 @@ class GoogleAIProvider(AIProvider):
                     confidence=issue_data.get("confidence", 0.7)
                 )
                 issues.append(issue)
-            
+
             complexity_data = data.get("complexity", {})
             complexity = Complexity(
                 time_complexity=complexity_data.get("time_complexity"),
@@ -168,7 +168,7 @@ class GoogleAIProvider(AIProvider):
                 cyclomatic_complexity=complexity_data.get("cyclomatic_complexity"),
                 maintainability=complexity_data.get("maintainability")
             )
-            
+
             return ReviewResponse(
                 analysis=data.get("analysis", cleaned_content),
                 score=float(data.get("score", 7.0)),
@@ -177,7 +177,7 @@ class GoogleAIProvider(AIProvider):
                 complexity=complexity,
                 confidence=float(data.get("confidence", 0.7))
             )
-            
+
         except (json.JSONDecodeError, ValueError, KeyError):
             # If JSON parsing fails, create a basic response
             return ReviewResponse(
