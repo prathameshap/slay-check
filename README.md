@@ -114,6 +114,8 @@ critical_issues_limit: 3
 - **[Repo issues & technical debt](docs/REPO_ISSUES.md)** - Known issues and contribution ideas
 - **[Rust conversion analysis](docs/RUST_CONVERSION_ANALYSIS.md)** - Why the project stays in Python
 - **[Project & milestones](docs/project-and-milestones.md)** - How maintainers configure the GitHub Project and milestones
+- **[Milestone issues](docs/milestone-issues.md)** - Copy-paste issue text for V 0.0.1, V 0.0.2, V 0.1.0
+- **[Licensing](docs/licensing.md)** - Version-based open source and future-version terms
 
 **Open source & project health:** Security and best-practice scores are tracked by [OpenSSF Scorecard](https://scorecard.dev/viewer/?uri=github.com/prathameshap/slay-check). Results run on every push to `main` and weekly; the badge above links to the latest report.
 
@@ -161,13 +163,15 @@ This project tracks contributors with [All Contributors](https://allcontributors
 
 ## License
 
-**Slay Check** is offered under the same multi-license setup as [Zed](https://github.com/zed-industries/zed):
+**Slay Check** uses a conditional open source license:
 
-- **[GNU Affero General Public License v3](LICENSE-AGPL)** (AGPL-3.0)
-- **[Apache License 2.0](LICENSE-APACHE)** (Apache-2.0)
-- **[GNU General Public License v3](LICENSE-GPL)** (GPL-3.0)
+- **Versions 1.0.0 and earlier** (including all 0.x.x pre-releases) are offered under a multi-license setup. You may use, modify, and distribute those versions under **any one** of:
+  - **[GNU Affero General Public License v3](LICENSE-AGPL)** (AGPL-3.0)
+  - **[Apache License 2.0](LICENSE-APACHE)** (Apache-2.0)
+  - **[GNU General Public License v3](LICENSE-GPL)** (GPL-3.0)
+- **Versions after 1.0.0** may be released under different terms. The copyright holder reserves the right to publish future versions under a commercial or other license; use of those versions will be subject to the terms announced for each release.
 
-You may use, modify, and distribute this software under any one of these licenses. See each file for the full text.
+See the [LICENSE scope and full text](LICENSE-APACHE) in the repository.
 
 ## Security
 

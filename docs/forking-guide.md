@@ -382,4 +382,4 @@ Test your fork thoroughly before using in production workflows.
 - **Discussions**: Use GitHub Discussions for questions
 - **Documentation**: Check the main repository's documentation
 
-Happy forking! 🚀
+Happy forking!

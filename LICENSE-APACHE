@@ -1,5 +1,14 @@
 Copyright 2022 - 2025 Slay Check (https://github.com/prathameshap/slay-check)
 
+LICENSE SCOPE — This license applies to Slay Check version 1.0.0 and all
+versions released before 1.0.0 (including pre-release versions). You may use,
+modify, and distribute those versions under the terms below. The copyright
+holder reserves the right to release versions of Slay Check after 1.0.0
+under different terms, including commercial or proprietary licenses; use of
+those later versions is subject to the terms applicable to each such version.
+
+---
+
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
