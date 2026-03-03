@@ -98,11 +98,12 @@ critical_issues_limit: 3
 
 ## AI Providers
 
-| Provider | Models | Best For |
-|----------|--------|----------|
-| **OpenAI** | GPT-4o, GPT-4, GPT-3.5-turbo | General code review |
-| **Anthropic** | Claude-3-Sonnet, Claude-3-Opus | Security analysis |
-| **Google AI** | Gemini-Pro | Performance optimization |
+| Provider | Models / endpoints (examples) | Best For |
+|----------|-------------------------------|----------|
+| **OpenAI** | GPT-4 family (e.g. `gpt-4o`), or any compatible chat/completions model | General code review |
+| **Anthropic** | Claude 3 family (e.g. `claude-3-sonnet-20240229`) | Security and risk-focused analysis |
+| **Google AI** | Gemini family (e.g. `gemini-pro`) | Performance / efficiency analysis |
+| **Custom HTTP** | Any HTTP endpoint that accepts the Slay Check review JSON and returns the standard response schema | Enterprise / internal models and gateways |
 
 ## Documentation
 

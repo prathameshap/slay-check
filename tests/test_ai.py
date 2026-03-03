@@ -15,6 +15,7 @@ from slay_check.ai.base import (
     ReviewResponse,
     Severity,
 )
+from slay_check.ai.custom_http import CustomHTTPProvider
 from slay_check.ai.google import GoogleAIProvider
 from slay_check.ai.openai import OpenAIProvider
 
@@ -105,6 +106,17 @@ def test_google_provider():
     assert provider_empty.is_available() is False
 
 
+def test_custom_http_provider():
+    """Test Custom HTTP provider."""
+    provider = CustomHTTPProvider(endpoint="https://api.example.com/review", api_key="test-key")
+
+    assert provider.get_name() == "custom_http"
+    assert provider.is_available() is True
+
+    provider_empty = CustomHTTPProvider(endpoint="")
+    assert provider_empty.is_available() is False
+
+
 @patch("slay_check.ai.openai.AsyncOpenAI")
 def test_openai_review_code(mock_openai):
     """Test OpenAI code review."""
@@ -175,6 +187,31 @@ def test_google_review_code(mock_genai):
     request = ReviewRequest(
         code='print("hello")', language="python", file_path="test.py"
     )
+
+    response = provider.review_code(request)
+
+    assert response.analysis == "Test analysis"
+    assert response.score == 8.5
+    assert response.confidence == 0.8
+
+
+@patch("slay_check.ai.custom_http.httpx.post")
+def test_custom_http_review_code(mock_post):
+    """Test Custom HTTP code review."""
+    mock_response = Mock()
+    mock_response.json.return_value = {
+        "analysis": "Test analysis",
+        "score": 8.5,
+        "issues": [],
+        "suggestions": [],
+        "complexity": {},
+        "confidence": 0.8,
+    }
+    mock_response.raise_for_status.return_value = None
+    mock_post.return_value = mock_response
+
+    provider = CustomHTTPProvider(endpoint="https://api.example.com/review", api_key="test-key")
+    request = ReviewRequest(code='print("hello")', language="python", file_path="test.py")
 
     response = provider.review_code(request)
 

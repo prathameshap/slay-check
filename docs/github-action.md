@@ -52,16 +52,19 @@ Add these secrets to your repository:
 
 You can set these as repository variables:
 
-- `SLAY_CHECK_AI_PROVIDER`: AI provider to use (default: `openai`)
+- `SLAY_CHECK_AI_PROVIDER`: AI provider to use (default: `openai`)  
+  - Supported values: `openai`, `anthropic`, `google`, `http` (custom HTTP endpoint)
+- `SLAY_CHECK_AI_MODEL`: Model name/ID for the chosen provider (e.g. `gpt-4o`, `claude-3-sonnet-20240229`, `gemini-pro`)
+- `SLAY_CHECK_AI_BASE_URL`: Custom API base URL (used for OpenAI-/Anthropic-compatible or custom HTTP endpoints)
 - `SLAY_CHECK_VERBOSE`: Enable verbose logging (default: `false`)
 - `SLAY_CHECK_DRY_RUN`: Don't post comments, just show results (default: `false`)
 
 ### Configuration
 
-Create a `slay-check.yaml` file in your repository root to customize the review criteria:
+Create a `slay-check.yaml` file in your repository root to customize the review criteria and provider:
 
 ```yaml
-ai_provider: openai
+ai_provider: openai  # openai | anthropic | google | http
 review_criteria:
   analyze_problem: true
   algorithm_analysis: true
@@ -81,6 +84,57 @@ max_file_size: 10000
 max_files_per_pr: 50
 min_score_threshold: 6.0
 critical_issues_limit: 3
+```
+
+#### Custom HTTP provider
+
+To use a completely custom HTTP API for reviews, set:
+
+```yaml
+ai_provider: http
+ai_base_url: https://your-internal-endpoint.example.com/review
+ai_token: your-internal-api-token  # optional; sent as Authorization: Bearer <token>
+```
+
+Slay Check will POST JSON with this shape:
+
+```json
+{
+  "code": "<string>",
+  "language": "<string>",
+  "file_path": "<string>",
+  "context": "<string or null>",
+  "criteria": { "analyze_problem": true, "...": true },
+  "max_tokens": 4000,
+  "temperature": 0.3
+}
+```
+
+Your endpoint should return JSON in the standard review format:
+
+```json
+{
+  "analysis": "Detailed analysis of the code",
+  "score": 8.5,
+  "issues": [
+    {
+      "type": "performance",
+      "severity": "medium",
+      "line": 10,
+      "message": "Inefficient loop",
+      "suggestion": "Use a more efficient algorithm",
+      "confidence": 0.9
+    }
+  ],
+  "suggestions": ["Suggestion 1", "Suggestion 2"],
+  "complexity": {
+    "time_complexity": "O(n²)",
+    "space_complexity": "O(1)",
+    "cyclomatic_complexity": 5,
+    "maintainability": "good"
+  },
+  "confidence": 0.85
+}
 ```
 
 ## Features

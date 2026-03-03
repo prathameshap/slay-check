@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional
 
 from .ai.anthropic import AnthropicProvider
 from .ai.base import Issue, IssueType, ReviewRequest, ReviewResponse, Severity
+from .ai.custom_http import CustomHTTPProvider
 from .ai.google import GoogleAIProvider
 from .ai.openai import OpenAIProvider
 from .config import Config
@@ -83,6 +84,11 @@ class ReviewEngine:
         elif self.config.ai_provider == "google":
             return GoogleAIProvider(
                 api_key=self.config.ai_token, model=self.config.ai_model or "gemini-pro"
+            )
+        elif self.config.ai_provider in ("http", "custom_http"):
+            return CustomHTTPProvider(
+                endpoint=self.config.ai_base_url or "",
+                api_key=self.config.ai_token or None,
             )
         else:
             raise ValueError(f"Unsupported AI provider: {self.config.ai_provider}")

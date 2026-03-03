@@ -14,6 +14,7 @@ from .base import (
     ReviewResponse,
     Severity,
 )
+from .custom_http import CustomHTTPProvider
 from .google import GoogleAIProvider
 
 # Import specific providers
@@ -30,4 +31,5 @@ __all__ = [
     "OpenAIProvider",
     "AnthropicProvider",
     "GoogleAIProvider",
+    "CustomHTTPProvider",
 ]
