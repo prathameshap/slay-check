@@ -60,7 +60,7 @@ export SLAY_CHECK_AI_TOKEN="your-token"
 python -m slay_check.cli review --local
 ```
 
-## ⚙️ Configuration
+## Configuration
 
 Create `slay-check.yaml` in your repository:
 
@@ -144,7 +144,7 @@ python -m build
 
 ## Contributing
 
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines, including our **branching strategy** (same as [Zed](https://github.com/zed-industries/zed): single `main` branch, all changes via PRs). By participating, you agree to our [Code of Conduct](CODE_OF_CONDUCT.md).
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines, including our **branching strategy** (single `main` branch, all changes via PRs). By participating, you agree to our [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ### Quick Contribution Steps
 

@@ -1,6 +1,6 @@
 # AI Response Control Guide
 
-## 🎛️ Token Limits & AI Strictness Configuration
+## Token Limits & AI Strictness Configuration
 
 ### 1. **Token Limits** (`max_tokens`)
 

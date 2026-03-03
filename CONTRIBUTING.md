@@ -4,7 +4,7 @@ Thank you for your interest in contributing to Slay Check! This document provide
 
 ## Branching strategy
 
-We use the same branching model as [Zed](https://github.com/zed-industries/zed):
+We use the following branching model:
 
 - **Single long-lived branch:** `main` is the default and only permanent branch. All releases and production code live on `main`.
 - **All changes via pull requests:** No direct pushes to `main`. Create a branch from `main`, make your changes, then open a PR targeting `main`.
@@ -25,7 +25,7 @@ git fetch origin
 git rebase origin/main   # or: git merge origin/main
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -51,7 +51,7 @@ export SLAY_CHECK_GITHUB_TOKEN="your-test-token"
 pytest
 ```
 
-## 📋 Contributing Process
+## Contributing Process
 
 ### 1. Create an Issue
 
@@ -124,7 +124,7 @@ Create a pull request **targeting `main`** with:
 - Screenshots (if applicable)
 - Test results
 
-## 🎨 Code Style Guidelines
+## Code Style Guidelines
 
 ### Python Style
 
@@ -179,7 +179,7 @@ def process_file(filename: str) -> Result:
     # implementation
 ```
 
-## 🧪 Testing Guidelines
+## Testing Guidelines
 
 ### Unit Tests
 
@@ -231,7 +231,7 @@ def test_review_pull_request():
     pass
 ```
 
-## 📚 Documentation Guidelines
+## Documentation Guidelines
 
 ### README Updates
 
@@ -254,7 +254,7 @@ def test_review_pull_request():
 - Include default values
 - Include validation rules
 
-## 🏷️ Release Process
+## Release Process
 
 ### Versioning
 
@@ -272,7 +272,7 @@ We follow [Semantic Versioning](https://semver.org/):
 - [ ] Release notes prepared
 - [ ] GitHub release created
 
-## 🎯 Areas for Contribution
+## Areas for Contribution
 
 ### High Priority
 
@@ -297,12 +297,12 @@ We follow [Semantic Versioning](https://semver.org/):
 - **Notifications**: Slack/email notifications
 - **Custom Rules**: User-defined review rules
 
-## 🆘 Getting Help
+## Getting Help
 
 - **Issues**: [GitHub Issues](https://github.com/prathameshap/slay-check/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/prathameshap/slay-check/discussions)
 
-## 🏆 Recognition
+## Recognition
 
 Contributors will be recognized in:
 - README.md contributors section (via [All Contributors](https://allcontributors.org); see [README](README.md#contributors))
@@ -311,4 +311,4 @@ Contributors will be recognized in:
 
 To have the All Contributors table updated, invite [@all-contributors](https://github.com/all-contributors/all-contributors) in a comment, e.g. `@all-contributors please add @username for code`.
 
-Thank you for contributing to Slay Check! 🚀
+Thank you for contributing to Slay Check!
