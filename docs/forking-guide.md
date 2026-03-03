@@ -15,7 +15,7 @@ Forking Slay Check allows you to:
 
 ### 1. Fork the Repository
 
-1. Go to [Slay Check repository](https://github.com/slay-check/slay-check)
+1. Go to [Slay Check repository](https://github.com/prathameshap/slay-check)
 2. Click the "Fork" button
 3. Choose your GitHub account as the destination
 4. Wait for the fork to complete
@@ -27,13 +27,16 @@ git clone https://github.com/YOUR_USERNAME/slay-check.git
 cd slay-check
 ```
 
-### 3. Add Upstream Remote
+Ensure you're on `main` and add the upstream remote so you can sync with the canonical repo:
 
 ```bash
-git remote add upstream https://github.com/slay-check/slay-check.git
+git checkout main
+git remote add upstream https://github.com/prathameshap/slay-check.git
 ```
 
-### 4. Set Up Development Environment
+To update your fork with upstream changes: `git fetch upstream && git checkout main && git merge upstream/main` (or rebase), then push to your fork.
+
+### 3. Set Up Development Environment
 
 ```bash
 pip install -e .

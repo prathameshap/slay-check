@@ -21,7 +21,7 @@ jobs:
           
       - name: Install Slay Check
         run: |
-          pip install git+https://github.com/YOUR_USERNAME/slay-check.git
+          pip install git+https://github.com/prathameshap/slay-check.git
           
       - name: Run Security Review (Claude)
         env:
@@ -51,7 +51,7 @@ jobs:
           
       - name: Install Slay Check
         run: |
-          pip install git+https://github.com/YOUR_USERNAME/slay-check.git
+          pip install git+https://github.com/prathameshap/slay-check.git
           
       - name: Run Performance Review (GPT-4)
         env:
@@ -81,7 +81,7 @@ jobs:
           
       - name: Install Slay Check
         run: |
-          pip install git+https://github.com/YOUR_USERNAME/slay-check.git
+          pip install git+https://github.com/prathameshap/slay-check.git
           
       - name: Run General Review (Google AI)
         env:

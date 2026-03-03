@@ -1,6 +1,6 @@
 # Slay Check GitHub Action
 
-A GitHub Action for automated AI-powered code review using Slay Check.
+A GitHub Action for automated AI-powered code review using Slay Check. All review feedback is posted as a single comment on the PR.
 
 ## Usage
 
@@ -29,7 +29,7 @@ jobs:
           
       - name: Install Slay Check
         run: |
-          pip install git+https://github.com/YOUR_USERNAME/slay-check.git
+          pip install git+https://github.com/prathameshap/slay-check.git
           
       - name: Run Slay Check
         env:
@@ -85,6 +85,7 @@ critical_issues_limit: 3
 
 ## Features
 
+- **Single comment**: Full review (summary + per-file issues and suggestions) in one PR comment
 - **Automated Reviews**: Runs on every pull request
 - **Configurable Criteria**: Customize what gets reviewed
 - **Multiple AI Providers**: Support for OpenAI, Anthropic, and more

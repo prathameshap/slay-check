@@ -21,7 +21,7 @@ jobs:
           
       - name: Install Slay Check
         run: |
-          pip install git+https://github.com/YOUR_USERNAME/slay-check.git
+          pip install git+https://github.com/prathameshap/slay-check.git
           
       - name: Run Development Review
         env:
@@ -54,7 +54,7 @@ jobs:
           
       - name: Install Slay Check
         run: |
-          pip install git+https://github.com/YOUR_USERNAME/slay-check.git
+          pip install git+https://github.com/prathameshap/slay-check.git
           
       - name: Run Production Review
         env:

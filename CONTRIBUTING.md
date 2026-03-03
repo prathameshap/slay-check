@@ -2,6 +2,29 @@
 
 Thank you for your interest in contributing to Slay Check! This document provides guidelines for contributing to the project.
 
+## Branching strategy
+
+We use the same branching model as [Zed](https://github.com/zed-industries/zed):
+
+- **Single long-lived branch:** `main` is the default and only permanent branch. All releases and production code live on `main`.
+- **All changes via pull requests:** No direct pushes to `main`. Create a branch from `main`, make your changes, then open a PR targeting `main`.
+- **Branch naming:** Use short, descriptive branches such as `feature/short-description` or `fix/short-description`. Keep the change focused so the PR stays small.
+- **Stay up to date:** Before opening or updating a PR, rebase (or merge) your branch on the latest `main` so the PR is clean and easy to review.
+
+```bash
+# Start from an up-to-date main
+git fetch origin
+git checkout main
+git pull origin main
+
+# Create your branch
+git checkout -b feature/your-feature-name   # or fix/your-bug-fix
+
+# After making changes, keep in sync with main
+git fetch origin
+git rebase origin/main   # or: git merge origin/main
+```
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -40,7 +63,11 @@ Before starting work, create an issue to discuss:
 
 ### 2. Fork and Branch
 
+Create a branch from `main` (see [Branching strategy](#branching-strategy) above):
+
 ```bash
+git checkout main
+git pull origin main
 git checkout -b feature/your-feature-name
 # or
 git checkout -b fix/your-bug-fix
@@ -91,7 +118,7 @@ test: add unit tests for config validation
 git push origin feature/your-feature-name
 ```
 
-Create a pull request with:
+Create a pull request **targeting `main`** with:
 - Clear description of changes
 - Reference to related issues
 - Screenshots (if applicable)
@@ -278,8 +305,10 @@ We follow [Semantic Versioning](https://semver.org/):
 ## 🏆 Recognition
 
 Contributors will be recognized in:
-- README.md contributors section
+- README.md contributors section (via [All Contributors](https://allcontributors.org); see [README](README.md#contributors))
 - Release notes
 - GitHub contributors page
+
+To have the All Contributors table updated, invite [@all-contributors](https://github.com/all-contributors/all-contributors) in a comment, e.g. `@all-contributors please add @username for code`.
 
 Thank you for contributing to Slay Check! 🚀

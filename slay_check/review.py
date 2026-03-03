@@ -9,7 +9,7 @@ from pathlib import Path
 import re
 
 from .config import Config
-from .github_client import GitHubClient, PullRequestInfo, PullRequestFileInfo, ReviewComment
+from .github_client import GitHubClient, PullRequestInfo, PullRequestFileInfo
 from .ai.base import ReviewRequest, ReviewResponse, Issue, IssueType, Severity
 from .ai.openai import OpenAIProvider
 from .ai.anthropic import AnthropicProvider
@@ -296,48 +296,50 @@ class ReviewEngine:
         
         return summary
     
+    def _build_single_comment_body(self, result: ReviewResult) -> str:
+        """Build one comment body containing the full review (summary + all issues per file)."""
+        body = result.summary
+        
+        if result.files:
+            body += "\n---\n\n### Per-file details\n\n"
+            for file_review in result.files:
+                body += f"#### `{file_review.filename}` (score: {file_review.score:.1f}/10)\n\n"
+                if file_review.analysis:
+                    body += f"{file_review.analysis}\n\n"
+                if file_review.issues:
+                    body += "**Issues:**\n"
+                    for issue in file_review.issues:
+                        line_info = f" (line {issue.line})" if issue.line else ""
+                        body += f"- **[{issue.severity}]** {issue.type}{line_info}: {issue.message}\n"
+                        if issue.suggestion:
+                            body += f"  - Suggestion: {issue.suggestion}\n"
+                    body += "\n"
+                if file_review.suggestions:
+                    body += "**Suggestions:**\n"
+                    for s in file_review.suggestions:
+                        body += f"- {s}\n"
+                    body += "\n"
+        
+        return body
+    
     def post_review_comments(self, repo: str, pr_number: int, result: ReviewResult) -> None:
-        """Post review comments to GitHub."""
+        """Post review as a single comment (checkstyle-style: one comment with full feedback)."""
         if self.config.dry_run:
             print("Dry run mode - no comments posted")
             return
         
         try:
-            comments = []
+            body = self._build_single_comment_body(result)
             
-            for file_review in result.files:
-                for issue in file_review.issues:
-                    if issue.line:
-                        comment = ReviewComment(
-                            path=file_review.filename,
-                            line=issue.line,
-                            body=f"**{issue.severity.title()} {issue.type.title()} Issue**\n\n{issue.message}\n\n**Suggestion:** {issue.suggestion or 'No suggestion provided'}",
-                            severity=issue.severity,
-                            issue_type=issue.type
-                        )
-                        comments.append(comment)
-            
-            if comments:
-                print(f"Posting {len(comments)} review comments...")
-                self.github_client.post_review_comments(repo, pr_number, comments)
-                print("Review comments posted successfully")
-            else:
-                print("No line-specific issues found to comment on")
-            
-            # Post overall review summary
             if self.config.use_issue_comments:
-                print("Posting overall review summary as issue comment...")
-                self.github_client.create_issue_comment(
-                    repo, pr_number, result.summary
-                )
-                print("Overall review summary posted as issue comment successfully")
+                print("Posting full review as a single issue comment...")
+                self.github_client.create_issue_comment(repo, pr_number, body)
+                print("Review posted as single comment successfully")
             else:
-                print("Posting overall review summary as review...")
-                self.github_client.create_review(
-                    repo, pr_number, result.summary, "COMMENT"
-                )
-                print("Overall review summary posted as review successfully")
+                print("Posting full review as a single review comment...")
+                self.github_client.create_review(repo, pr_number, body, "COMMENT")
+                print("Review posted as single comment successfully")
             
         except Exception as e:
-            print(f"Error posting comments: {e}")
+            print(f"Error posting comment: {e}")
             raise

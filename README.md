@@ -1,21 +1,23 @@
 # Slay Check
 
-> AI-powered code review tool for GitHub Actions and local development
+> **Slay Check** — AI-powered code review for GitHub Actions and local development
 
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://python.org)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-AGPL%20v3%20%7C%20Apache%202.0%20%7C%20GPL%20v3-green.svg)](LICENSE-APACHE)
 [![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-ready-orange.svg)](.github/workflows)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/prathameshap/slay-check/badge)](https://scorecard.dev/viewer/?uri=github.com/prathameshap/slay-check)
 
-Slay Check provides intelligent code reviews using multiple AI providers (OpenAI, Anthropic, Google AI) with configurable analysis criteria including problem analysis, algorithm review, complexity assessment, and risk evaluation.
+**Slay Check** gives you a single, comprehensive AI review comment on every pull request. It supports multiple AI providers (OpenAI, Anthropic, Google AI) with configurable criteria: problem analysis, algorithm review, complexity, and risk evaluation.
 
 ## Features
 
-- ** Multi-AI Support**: OpenAI GPT-4, Anthropic Claude, Google Gemini
-- ** GitHub Actions Ready**: Automated PR reviews
-- ** CLI Interface**: Local development support
-- ** Configurable Analysis**: Customize review criteria
-- ** Comprehensive Scoring**: Detailed feedback with actionable suggestions
-- ** Security Focused**: Built-in security and risk assessment
+- **Multi-AI Support**: OpenAI GPT-4, Anthropic Claude, Google Gemini
+- **GitHub Actions Ready**: Automated PR reviews
+- **Single comment**: Full review (summary + per-file details) in one PR comment
+- **CLI Interface**: Local development support
+- **Configurable Analysis**: Customize review criteria
+- **Comprehensive Scoring**: Detailed feedback with actionable suggestions
+- **Security Focused**: Built-in security and risk assessment
 
 ##  Quick Start
 
@@ -109,6 +111,10 @@ critical_issues_limit: 3
 - **[Local Development](docs/local-development.md)** - CLI usage
 - **[Forking Guide](docs/forking-guide.md)** - Custom implementations
 - **[AI Response Control](docs/ai-response-control.md)** - Token limits & strictness
+- **[Repo issues & technical debt](docs/REPO_ISSUES.md)** - Known issues and contribution ideas
+- **[Rust conversion analysis](docs/RUST_CONVERSION_ANALYSIS.md)** - Why the project stays in Python
+
+**Open source & project health:** Security and best-practice scores are tracked by [OpenSSF Scorecard](https://scorecard.dev/viewer/?uri=github.com/prathameshap/slay-check). Results run on every push to `main` and weekly; the badge above links to the latest report.
 
 ## Development
 
@@ -135,7 +141,7 @@ python -m build
 
 ## Contributing
 
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines, including our **branching strategy** (same as [Zed](https://github.com/zed-industries/zed): single `main` branch, all changes via PRs). By participating, you agree to our [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ### Quick Contribution Steps
 
@@ -145,9 +151,26 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guid
 4. Add tests
 5. Submit a pull request
 
+### Contributors
+
+This project tracks contributors with [All Contributors](https://allcontributors.org). To add yourself after a merged PR, comment `@all-contributors please add @your-username for code/docs/tests` on the PR or an issue, or run `npx all-contributors add <username> <contribution-type>` locally (see [.all-contributorsrc](.all-contributorsrc)).
+
+<!-- ALL-CONTRIBUTORS-LIST:START -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+**Slay Check** is offered under the same multi-license setup as [Zed](https://github.com/zed-industries/zed):
+
+- **[GNU Affero General Public License v3](LICENSE-AGPL)** (AGPL-3.0)
+- **[Apache License 2.0](LICENSE-APACHE)** (Apache-2.0)
+- **[GNU General Public License v3](LICENSE-GPL)** (GPL-3.0)
+
+You may use, modify, and distribute this software under any one of these licenses. See each file for the full text.
+
+## Security
+
+Please report security issues as described in [SECURITY.md](SECURITY.md).
 
 ## Support
 
@@ -156,4 +179,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Built with a vibe for the developer community**
+**Slay Check** — built for the developer community

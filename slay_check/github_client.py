@@ -3,7 +3,7 @@ GitHub integration for Slay Check.
 """
 
 from typing import List, Optional, Dict, Any
-from github import Github, PullRequest
+from github import Github
 from pydantic import BaseModel
 
 
