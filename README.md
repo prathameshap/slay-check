@@ -3,7 +3,7 @@
 > **Slay Check** — AI-powered code review for GitHub Actions and local development
 
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://python.org)
-[![License](https://img.shields.io/badge/license-AGPL%20v3%20%7C%20Apache%202.0%20%7C%20GPL%20v3-green.svg)](LICENSE-APACHE)
+[![License](https://img.shields.io/badge/license-AGPL%20v3-green.svg)](LICENSE-AGPL)
 [![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-ready-orange.svg)](.github/workflows)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/prathameshap/slay-check/badge)](https://scorecard.dev/viewer/?uri=github.com/prathameshap/slay-check)
 
@@ -165,13 +165,10 @@ This project tracks contributors with [All Contributors](https://allcontributors
 
 **Slay Check** uses a conditional open source license:
 
-- **Versions 1.0.0 and earlier** (including all 0.x.x pre-releases) are offered under a multi-license setup. You may use, modify, and distribute those versions under **any one** of:
-  - **[GNU Affero General Public License v3](LICENSE-AGPL)** (AGPL-3.0)
-  - **[Apache License 2.0](LICENSE-APACHE)** (Apache-2.0)
-  - **[GNU General Public License v3](LICENSE-GPL)** (GPL-3.0)
+- **Versions 1.0.0 and earlier** (including all 0.x.x pre-releases) are offered under the **[GNU Affero General Public License v3](LICENSE-AGPL)** (AGPL-3.0). You may use, modify, and distribute those versions under the terms of the AGPL-3.0.
 - **Versions after 1.0.0** may be released under different terms. The copyright holder reserves the right to publish future versions under a commercial or other license; use of those versions will be subject to the terms announced for each release.
 
-See the [LICENSE scope and full text](LICENSE-APACHE) in the repository.
+See the [LICENSE scope and full text](LICENSE-AGPL) in the repository.
 
 ## Security
 
