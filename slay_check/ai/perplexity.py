@@ -102,3 +102,4 @@ class PerplexityProvider(OpenAIProvider):
                 complexity=Complexity(),
                 confidence=0.5,
             )
+

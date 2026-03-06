@@ -6,7 +6,7 @@ standard Slay Check review request and return a JSON response in the same
 shape as the built-in providers.
 """
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 import httpx
 
@@ -24,7 +24,12 @@ from .base import (
 class CustomHTTPProvider(AIProvider):
     """Generic HTTP-based provider for code review."""
 
-    def __init__(self, endpoint: str, api_key: Optional[str] = None, timeout: float = 30.0):
+    def __init__(
+        self,
+        endpoint: str,
+        api_key: Optional[str] = None,
+        timeout: float = 30.0,
+    ):
         self.endpoint = endpoint
         self.api_key = api_key
         self.timeout = timeout
@@ -49,7 +54,7 @@ class CustomHTTPProvider(AIProvider):
 
         headers: Dict[str, str] = {"Content-Type": "application/json"}
         if self.api_key:
-            # Conventional Authorization header; enterprises can ignore it or use a different scheme server-side.
+            # Authorization header; enterprises can use a different scheme server-side.
             headers["Authorization"] = f"Bearer {self.api_key}"
 
         payload: Dict[str, Any] = {
@@ -93,7 +98,7 @@ class CustomHTTPProvider(AIProvider):
         #   "complexity": {...},
         #   "confidence": float
         # }
-        issues: list[Issue] = []
+        issues: List[Issue] = []
         for issue_data in data.get("issues", []):
             issue = Issue(
                 type=IssueType(issue_data.get("type", "style")),
@@ -121,4 +126,3 @@ class CustomHTTPProvider(AIProvider):
             complexity=complexity,
             confidence=float(data.get("confidence", 0.7)),
         )
-
