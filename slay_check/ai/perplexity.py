@@ -22,7 +22,6 @@ from .base import (
 )
 from .openai import OpenAIProvider
 
-
 # Reuse OpenAI's prompt builder and response parser; only endpoint and default model differ.
 PERPLEXITY_BASE_URL = "https://api.perplexity.ai"
 DEFAULT_MODEL = "sonar-pro"
@@ -102,4 +101,3 @@ class PerplexityProvider(OpenAIProvider):
                 complexity=Complexity(),
                 confidence=0.5,
             )
-
