@@ -18,6 +18,7 @@ from slay_check.ai.base import (
 from slay_check.ai.custom_http import CustomHTTPProvider
 from slay_check.ai.google import GoogleAIProvider
 from slay_check.ai.openai import OpenAIProvider
+from slay_check.ai.perplexity import PerplexityProvider
 
 
 def test_review_request():
@@ -106,6 +107,18 @@ def test_google_provider():
     assert provider_empty.is_available() is False
 
 
+def test_perplexity_provider():
+    """Test Perplexity provider."""
+    provider = PerplexityProvider("test-key", "sonar-pro")
+
+    assert provider.get_name() == "perplexity"
+    assert provider.is_available() is True
+    assert provider.model == "sonar-pro"
+
+    provider_empty = PerplexityProvider("")
+    assert provider_empty.is_available() is False
+
+
 def test_custom_http_provider():
     """Test Custom HTTP provider."""
     provider = CustomHTTPProvider(endpoint="https://api.example.com/review", api_key="test-key")
@@ -184,6 +197,31 @@ def test_google_review_code(mock_genai):
     mock_model.generate_content_async = AsyncMock(return_value=mock_response)
 
     provider = GoogleAIProvider("test-key")
+    request = ReviewRequest(
+        code='print("hello")', language="python", file_path="test.py"
+    )
+
+    response = provider.review_code(request)
+
+    assert response.analysis == "Test analysis"
+    assert response.score == 8.5
+    assert response.confidence == 0.8
+
+
+@patch("slay_check.ai.openai.AsyncOpenAI")
+def test_perplexity_review_code(mock_openai):
+    """Test Perplexity code review."""
+    mock_client = Mock()
+    mock_openai.return_value = mock_client
+
+    mock_response = Mock()
+    mock_response.choices = [Mock()]
+    mock_response.choices[0].message.content = (
+        '{"analysis": "Test analysis", "score": 8.5, "issues": [], "suggestions": [], "complexity": {}, "confidence": 0.8}'
+    )
+    mock_client.chat.completions.create = AsyncMock(return_value=mock_response)
+
+    provider = PerplexityProvider("test-key")
     request = ReviewRequest(
         code='print("hello")', language="python", file_path="test.py"
     )

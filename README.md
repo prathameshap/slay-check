@@ -3,7 +3,7 @@
 > **Slay Check** — AI-powered code review for GitHub Actions and local development
 
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://python.org)
-[![License](https://img.shields.io/badge/license-AGPL%20v3-green.svg)](LICENSE-AGPL)
+[![License](https://img.shields.io/badge/license-AGPL%20v3%20%7C%20GPL%20v3-green.svg)](LICENSE-AGPL)
 [![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-ready-orange.svg)](.github/workflows)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/prathameshap/slay-check/badge)](https://scorecard.dev/viewer/?uri=github.com/prathameshap/slay-check)
 
@@ -103,6 +103,9 @@ critical_issues_limit: 3
 | **OpenAI** | GPT-4 family (e.g. `gpt-4o`), or any compatible chat/completions model | General code review |
 | **Anthropic** | Claude 3 family (e.g. `claude-3-sonnet-20240229`) | Security and risk-focused analysis |
 | **Google AI** | Gemini family (e.g. `gemini-pro`) | Performance / efficiency analysis |
+| **Perplexity** | `sonar`, `sonar-pro`, `sonar-deep-research`, `sonar-reasoning-pro` | Fast, grounded code review |
+| **Cursor** | Use **Custom HTTP** with your Cursor-backed or internal gateway URL (see [Custom HTTP](docs/github-action.md#custom-http-provider)) | Teams using Cursor or Cursor-compatible endpoints |
+| **Windsurf** | Use **Custom HTTP** with your Windsurf-backed or internal gateway URL | Teams using [Windsurf](https://docs.windsurf.com/) or compatible endpoints |
 | **Custom HTTP** | Any HTTP endpoint that accepts the Slay Check review JSON and returns the standard response schema | Enterprise / internal models and gateways |
 
 ## Documentation
@@ -164,12 +167,16 @@ This project tracks contributors with [All Contributors](https://allcontributors
 
 ## License
 
-**Slay Check** uses a conditional open source license:
+**Slay Check** uses a conditional dual license **only for version 1.0.0 and all earlier versions** (V1.0 and before). Later versions may be under different terms.
 
-- **Versions 1.0.0 and earlier** (including all 0.x.x pre-releases) are offered under the **[GNU Affero General Public License v3](LICENSE-AGPL)** (AGPL-3.0). You may use, modify, and distribute those versions under the terms of the AGPL-3.0.
-- **Versions after 1.0.0** may be released under different terms. The copyright holder reserves the right to publish future versions under a commercial or other license; use of those versions will be subject to the terms announced for each release.
+- **Enterprises** (companies, organizations, commercial use): **[GNU Affero General Public License v3](LICENSE-AGPL)** (AGPL-3.0).
+- **Individuals** (personal, non-commercial use): **[GNU General Public License v3](LICENSE-GPL)** (GPL-3.0).
 
-See the [LICENSE scope and full text](LICENSE-AGPL) in the repository.
+**Version condition:** These licenses apply **only** to Slay Check v1.0.0 and every version released before it. They do **not** apply to any version after 1.0.0.
+
+**Additional condition (all users):** You may not distribute this software, or any derivative work based on it, **for monetary gain**. Redistribution (including forks and modified versions) must be free of charge.
+
+**Versions after 1.0.0** may be released under different terms. See [Licensing](docs/licensing.md) and the LICENSE files for full scope and text.
 
 ## Security
 

@@ -8,14 +8,14 @@ below. Versions of Slay Check after 1.0.0 are not licensed under this file.
   • VERSION CONDITION: This license applies solely to version 1.0.0 and
     all earlier versions. It does not apply to any release numbered after 1.0.0.
 
-  • WHO: Enterprises (companies, organizations, and any commercial or
-    organizational use) must use Slay Check under this AGPL-3.0 license.
+  • WHO: Individuals (personal, non-commercial use) may use Slay Check under
+    this GPL-3.0 license.
 
   • ADDITIONAL CONDITION (all users): You may not distribute this software,
     or any derivative work based on it, for monetary gain. Redistribution
     (including forks and modified versions) must be free of charge. This
-    condition applies in addition to the terms of the GNU Affero General
-    Public License below.
+    condition applies in addition to the terms of the GNU General Public
+    License below.
 
 The copyright holder reserves the right to release versions of Slay Check
 after 1.0.0 under different terms; use of those later versions is subject
@@ -24,19 +24,19 @@ to the terms announced for each version.
 ---
 
 This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License as published by the Free
+the terms of the GNU General Public License as published by the Free
 Software Foundation, either version 3 of the License, or (at your option)
 any later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
 for more details.
 
-You should have received a copy of the GNU Affero General Public License
-along with this program. If not, see <https://www.gnu.org/licenses/agpl-3.0.html>.
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/gpl-3.0.html>.
 
 ---
 
-For the full GNU Affero General Public License v3 text, see:
-https://www.gnu.org/licenses/agpl-3.0.html
+For the full GNU General Public License v3 text, see:
+https://www.gnu.org/licenses/gpl-3.0.html

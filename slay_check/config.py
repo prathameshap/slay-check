@@ -145,7 +145,16 @@ class Config(BaseModel):
         if not self.github_token:
             raise ValueError("GitHub token is required")
 
-        if self.ai_provider not in ["openai", "anthropic", "google", "http", "custom_http"]:
+        if self.ai_provider not in [
+            "openai",
+            "anthropic",
+            "google",
+            "perplexity",
+            "cursor",
+            "windsurf",
+            "http",
+            "custom_http",
+        ]:
             raise ValueError(f"Unsupported AI provider: {self.ai_provider}")
 
         if self.temperature < 0.0 or self.temperature > 1.0:

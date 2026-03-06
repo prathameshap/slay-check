@@ -16,9 +16,8 @@ from .base import (
 )
 from .custom_http import CustomHTTPProvider
 from .google import GoogleAIProvider
-
-# Import specific providers
 from .openai import OpenAIProvider
+from .perplexity import PerplexityProvider
 
 __all__ = [
     "IssueType",
@@ -31,5 +30,6 @@ __all__ = [
     "OpenAIProvider",
     "AnthropicProvider",
     "GoogleAIProvider",
+    "PerplexityProvider",
     "CustomHTTPProvider",
 ]

@@ -13,6 +13,7 @@ from .ai.base import Issue, IssueType, ReviewRequest, ReviewResponse, Severity
 from .ai.custom_http import CustomHTTPProvider
 from .ai.google import GoogleAIProvider
 from .ai.openai import OpenAIProvider
+from .ai.perplexity import PerplexityProvider
 from .config import Config
 from .github_client import GitHubClient, PullRequestFileInfo, PullRequestInfo
 
@@ -85,7 +86,13 @@ class ReviewEngine:
             return GoogleAIProvider(
                 api_key=self.config.ai_token, model=self.config.ai_model or "gemini-pro"
             )
-        elif self.config.ai_provider in ("http", "custom_http"):
+        elif self.config.ai_provider == "perplexity":
+            return PerplexityProvider(
+                api_key=self.config.ai_token,
+                model=self.config.ai_model or "sonar-pro",
+                base_url=self.config.ai_base_url,
+            )
+        elif self.config.ai_provider in ("cursor", "windsurf", "http", "custom_http"):
             return CustomHTTPProvider(
                 endpoint=self.config.ai_base_url or "",
                 api_key=self.config.ai_token or None,
