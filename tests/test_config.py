@@ -118,9 +118,13 @@ def test_config_save_load():
         # Save configuration
         config.save(config_path)
 
-        # Load configuration without environment overrides interfering
+        # Load configuration without environment overrides interfering.
+        # Mock Path.home so it doesn't fail when env is cleared (Windows needs USERPROFILE).
         with mock.patch.dict(os.environ, {}, clear=True):
-            loaded_config = Config.load(config_path)
+            with mock.patch.object(
+                Path, "home", return_value=Path(config_path).resolve().parent
+            ):
+                loaded_config = Config.load(config_path)
 
         assert loaded_config.ai_provider == "anthropic"
         assert loaded_config.ai_token == "test-token"
