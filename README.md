@@ -5,7 +5,7 @@
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://python.org)
 [![License](https://img.shields.io/badge/license-AGPL%20v3%20%7C%20GPL%20v3-green.svg)](LICENSE-AGPL)
 [![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-ready-orange.svg)](.github/workflows)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/prathameshap/slay-check/badge)](https://scorecard.dev/viewer/?uri=github.com/prathameshap/slay-check)
+
 
 **Slay Check** gives you a single, comprehensive AI review comment on every pull request. It supports multiple AI providers (OpenAI, Anthropic, Google AI) with configurable criteria: problem analysis, algorithm review, complexity, and risk evaluation.
 
