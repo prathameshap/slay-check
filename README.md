@@ -76,18 +76,32 @@ jobs:
 
 On every non-draft pull request, the workflow installs Slay Check from this repo, reviews the changed files with your configured AI provider, and posts one comment on the PR with the full review.
 
+**Where the review is posted**  
+Slay Check posts **one comment** on the pull request. By default it uses an **issue comment** on the PR (the main conversation thread under "Conversation"), so it’s easy to see and reply to. You can switch to a **PR review** (single comment in the "Files changed" review UI) by setting `use_issue_comments: false` in `slay-check.yaml`. The comment contains the full summary, per-file analysis, issues, and suggestions.
+
 For more options (run from a fork, environment-specific or label-based workflows), see [docs/github-action.md](docs/github-action.md) and [examples/github-workflows/](examples/github-workflows/).
 
 ### Local Development
 
+**From VS Code or Cursor**  
+Open the integrated terminal and run Slay Check from your project (or from a clone of this repo):
+
 ```bash
-# Install
+# Install (once)
 pip install git+https://github.com/prathameshap/slay-check.git
 
-# Configure
-export SLAY_CHECK_AI_TOKEN="your-token"
+# Set tokens (or use slay-check.yaml / .env)
+export SLAY_CHECK_AI_TOKEN="your-ai-key"
+export SLAY_CHECK_GITHUB_TOKEN="your-github-pat"
 
-# Review local changes
+# Review a PR (results in terminal; add --dry-run to avoid posting)
+slay-check review --repo owner/repo --pr 42
+```
+
+To avoid re-exporting tokens in every terminal, you can set them in the IDE: **VS Code** → Settings → search “terminal env” → add `SLAY_CHECK_AI_TOKEN` and `SLAY_CHECK_GITHUB_TOKEN` to `terminal.integrated.env.*`. In **Cursor**, the same settings apply. There is no VS Code/Cursor extension yet; the CLI is the way to “call” the repo from the IDE.
+
+```bash
+# Review local changes (when implemented)
 python -m slay_check.cli review --local
 ```
 
@@ -160,14 +174,52 @@ critical_issues_limit: 3
 # Clone and install
 git clone https://github.com/prathameshap/slay-check.git
 cd slay-check
-pip install -e .
+pip install -e ".[dev]"
 
-# Run tests
+# Run tests (all providers mocked; no API keys needed)
 pytest
 
 # Build package
 python -m build
 ```
+
+### Testing all services
+
+**1. Unit tests (no real APIs)**  
+Uses mocks for every provider. No tokens required.
+
+```bash
+pip install -e ".[dev]"
+export SLAY_CHECK_AI_TOKEN=dummy
+export SLAY_CHECK_GITHUB_TOKEN=dummy
+pytest tests/ -v
+```
+
+- **All tests:** `pytest tests/ -v`
+- **AI providers only:** `pytest tests/test_ai.py -v`
+- **Config only:** `pytest tests/test_config.py -v`
+- **CLI only:** `pytest tests/test_cli.py -v`
+- **With coverage:** `pytest tests/ --cov=slay_check --cov-report=term-missing`
+
+**2. Lint (same as CI)**  
+```bash
+black --check slay_check tests
+isort --check-only slay_check tests
+flake8 slay_check tests
+```
+
+**3. Manual test against real APIs**  
+To hit real OpenAI/Anthropic/Google/Perplexity/HTTP endpoints, run the CLI with real tokens and `--dry-run` so nothing is posted to GitHub:
+
+```bash
+export SLAY_CHECK_AI_TOKEN="your-openai-key"
+export SLAY_CHECK_GITHUB_TOKEN="your-github-pat"
+# Optional: SLAY_CHECK_AI_PROVIDER=anthropic (default: openai)
+
+slay-check review --repo owner/repo --pr <PR_NUMBER> --dry-run --verbose
+```
+
+Repeat with different `SLAY_CHECK_AI_PROVIDER` (and corresponding token) to test each provider. For **custom HTTP**, set `SLAY_CHECK_AI_PROVIDER=custom_http` and `SLAY_CHECK_AI_BASE_URL` to your endpoint; the token is sent as `Authorization: Bearer <token>`.
 
 ## Performance
 

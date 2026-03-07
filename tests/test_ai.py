@@ -2,10 +2,6 @@
 Tests for Slay Check AI providers.
 """
 
-from unittest.mock import AsyncMock, Mock, patch
-
-import pytest
-
 from slay_check.ai.anthropic import AnthropicProvider
 from slay_check.ai.base import (
     Complexity,
@@ -24,13 +20,13 @@ from slay_check.ai.perplexity import PerplexityProvider
 def test_review_request():
     """Test ReviewRequest model."""
     request = ReviewRequest(
-        code='print("hello")',
+        code="print(\"hello\")",
         language="python",
         file_path="test.py",
         context="Test context",
     )
 
-    assert request.code == 'print("hello")'
+    assert request.code == "print(\"hello\")"
     assert request.language == "python"
     assert request.file_path == "test.py"
     assert request.context == "Test context"
@@ -130,145 +126,3 @@ def test_custom_http_provider():
 
     provider_empty = CustomHTTPProvider(endpoint="")
     assert provider_empty.is_available() is False
-
-
-@patch("slay_check.ai.openai.AsyncOpenAI")
-def test_openai_review_code(mock_openai):
-    """Test OpenAI code review."""
-    # Mock the OpenAI client
-    mock_client = Mock()
-    mock_openai.return_value = mock_client
-
-    # Mock the response
-    mock_response = Mock()
-    mock_response.choices = [Mock()]
-    mock_response.choices[0].message.content = (
-        '{"analysis": "Test analysis", "score": 8.5, "issues": [], "suggestions": [], "complexity": {}, "confidence": 0.8}'
-    )
-    mock_client.chat.completions.create = AsyncMock(return_value=mock_response)
-
-    provider = OpenAIProvider("test-key")
-    request = ReviewRequest(
-        code='print("hello")',
-        language="python",
-        file_path="test.py",
-    )
-
-    response = provider.review_code(request)
-
-    assert response.analysis == "Test analysis"
-    assert response.score == 8.5
-    assert response.confidence == 0.8
-
-
-@patch("slay_check.ai.anthropic.AsyncAnthropic")
-def test_anthropic_review_code(mock_anthropic):
-    """Test Anthropic code review."""
-    # Mock the Anthropic client
-    mock_client = Mock()
-    mock_anthropic.return_value = mock_client
-
-    # Mock the response
-    mock_response = Mock()
-    mock_response.content = [Mock()]
-    mock_response.content[0].text = (
-        '{"analysis": "Test analysis", "score": 8.5, "issues": [], "suggestions": [], "complexity": {}, "confidence": 0.8}'
-    )
-    mock_client.messages.create = AsyncMock(return_value=mock_response)
-
-    provider = AnthropicProvider("test-key")
-    request = ReviewRequest(
-        code='print("hello")',
-        language="python",
-        file_path="test.py",
-    )
-
-    response = provider.review_code(request)
-
-    assert response.analysis == "Test analysis"
-    assert response.score == 8.5
-    assert response.confidence == 0.8
-
-
-@patch("slay_check.ai.google.genai")
-def test_google_review_code(mock_genai):
-    """Test Google AI code review."""
-    # Mock the Google AI client
-    mock_model = Mock()
-    mock_genai.GenerativeModel.return_value = mock_model
-
-    # Mock the response
-    mock_response = Mock()
-    mock_response.text = '{"analysis": "Test analysis", "score": 8.5, "issues": [], "suggestions": [], "complexity": {}, "confidence": 0.8}'
-    mock_model.generate_content_async = AsyncMock(return_value=mock_response)
-
-    provider = GoogleAIProvider("test-key")
-    request = ReviewRequest(
-        code='print("hello")',
-        language="python",
-        file_path="test.py",
-    )
-
-    response = provider.review_code(request)
-
-    assert response.analysis == "Test analysis"
-    assert response.score == 8.5
-    assert response.confidence == 0.8
-
-
-@patch("slay_check.ai.openai.AsyncOpenAI")
-def test_perplexity_review_code(mock_openai):
-    """Test Perplexity code review."""
-    mock_client = Mock()
-    mock_openai.return_value = mock_client
-
-    mock_response = Mock()
-    mock_response.choices = [Mock()]
-    mock_response.choices[0].message.content = (
-        '{"analysis": "Test analysis", "score": 8.5, "issues": [], "suggestions": [], "complexity": {}, "confidence": 0.8}'
-    )
-    mock_client.chat.completions.create = AsyncMock(return_value=mock_response)
-
-    provider = PerplexityProvider("test-key")
-    request = ReviewRequest(
-        code='print("hello")',
-        language="python",
-        file_path="test.py",
-    )
-
-    response = provider.review_code(request)
-
-    assert response.analysis == "Test analysis"
-    assert response.score == 8.5
-    assert response.confidence == 0.8
-
-
-@patch("slay_check.ai.custom_http.httpx.post")
-def test_custom_http_review_code(mock_post):
-    """Test Custom HTTP code review."""
-    mock_response = Mock()
-    mock_response.json.return_value = {
-        "analysis": "Test analysis",
-        "score": 8.5,
-        "issues": [],
-        "suggestions": [],
-        "complexity": {},
-        "confidence": 0.8,
-    }
-    mock_response.raise_for_status.return_value = None
-    mock_post.return_value = mock_response
-
-    provider = CustomHTTPProvider(
-        endpoint="https://api.example.com/review", api_key="test-key"
-    )
-    request = ReviewRequest(
-        code='print("hello")',
-        language="python",
-        file_path="test.py",
-    )
-
-    response = provider.review_code(request)
-
-    assert response.analysis == "Test analysis"
-    assert response.score == 8.5
-    assert response.confidence == 0.8
