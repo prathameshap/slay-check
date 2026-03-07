@@ -151,7 +151,6 @@ class Config(BaseModel):
             "google",
             "perplexity",
             "cursor",
-            "windsurf",
             "http",
             "custom_http",
         ]:

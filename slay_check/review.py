@@ -92,7 +92,7 @@ class ReviewEngine:
                 model=self.config.ai_model or "sonar-pro",
                 base_url=self.config.ai_base_url,
             )
-        elif self.config.ai_provider in ("cursor", "windsurf", "http", "custom_http"):
+        elif self.config.ai_provider in ("cursor", "http", "custom_http"):
             return CustomHTTPProvider(
                 endpoint=self.config.ai_base_url or "",
                 api_key=self.config.ai_token or None,

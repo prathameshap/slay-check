@@ -7,7 +7,7 @@
 [![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-ready-orange.svg)](.github/workflows)
 
 
-**Slay Check** gives you a single, comprehensive AI review comment on every pull request. It supports multiple AI providers (OpenAI, Anthropic, Google AI, Perplexity, WindSurf, and Cursor) with configurable criteria: problem analysis, algorithm review, complexity, and risk evaluation.
+**Slay Check** gives you a single, comprehensive AI review comment on every pull request. It supports multiple AI providers (OpenAI, Anthropic, Google AI, Perplexity, and Cursor) with configurable criteria: problem analysis, algorithm review, complexity, and risk evaluation.
 
 ## Features
 
@@ -68,7 +68,7 @@ jobs:
    - **`GITHUB_TOKEN`** — Provided automatically; no need to create it.
 
 3. **Optional:** Set repository **variables** (Settings → Variables) or add a `slay-check.yaml` in the repo root:
-   - `SLAY_CHECK_AI_PROVIDER`: `openai` | `anthropic` | `google` | `perplexity` | `cursor` | `windsurf` | `http` | `custom_http`
+   - `SLAY_CHECK_AI_PROVIDER`: `openai` | `anthropic` | `google` | `perplexity` | `cursor` | `http` | `custom_http`
    - `SLAY_CHECK_AI_MODEL`: e.g. `gpt-4o`, `claude-3-sonnet-20240229`, `gemini-pro`, `sonar-pro`
    - `SLAY_CHECK_AI_BASE_URL`: for custom/OpenAI-compatible endpoints
    - `SLAY_CHECK_VERBOSE`: `true` | `false`
@@ -150,7 +150,6 @@ critical_issues_limit: 3
 | **Google AI** | Gemini family (e.g. `gemini-pro`) | Performance / efficiency analysis |
 | **Perplexity** | `sonar`, `sonar-pro`, `sonar-deep-research`, `sonar-reasoning-pro` | Fast, grounded code review |
 | **Cursor** | Use **Custom HTTP** with your Cursor-backed or internal gateway URL (see [Custom HTTP](docs/github-action.md#custom-http-provider)) | Teams using Cursor or Cursor-compatible endpoints |
-| **Windsurf** | Use **Custom HTTP** with your Windsurf-backed or internal gateway URL | Teams using [Windsurf](https://docs.windsurf.com/) or compatible endpoints |
 | **Custom HTTP** | Any HTTP endpoint that accepts the Slay Check review JSON and returns the standard response schema | Enterprise / internal models and gateways |
 
 ## Documentation

@@ -53,7 +53,7 @@ Add these secrets to your repository:
 You can set these as repository variables:
 
 - `SLAY_CHECK_AI_PROVIDER`: AI provider to use (default: `openai`)  
-  - Supported values: `openai`, `anthropic`, `google`, `perplexity`, `cursor`, `windsurf`, `http` (custom HTTP endpoint)
+  - Supported values: `openai`, `anthropic`, `google`, `perplexity`, `cursor`, `http` (custom HTTP endpoint)
 - `SLAY_CHECK_AI_MODEL`: Model name/ID for the chosen provider (e.g. `gpt-4o`, `claude-3-sonnet-20240229`, `gemini-pro`, `sonar-pro` for Perplexity)
 - `SLAY_CHECK_AI_BASE_URL`: Custom API base URL (used for OpenAI-/Anthropic-compatible or custom HTTP endpoints)
 - `SLAY_CHECK_VERBOSE`: Enable verbose logging (default: `false`)
@@ -64,7 +64,7 @@ You can set these as repository variables:
 Create a `slay-check.yaml` file in your repository root to customize the review criteria and provider:
 
 ```yaml
-ai_provider: openai  # openai | anthropic | google | perplexity | cursor | windsurf | http
+ai_provider: openai  # openai | anthropic | google | perplexity | cursor | http
 review_criteria:
   analyze_problem: true
   algorithm_analysis: true
@@ -110,17 +110,10 @@ ai_token: <your-token>
 
 Slay Check will `POST` the same JSON as for [Custom HTTP](#custom-http-provider) and expect the same response shape.
 
-#### Windsurf
-
-[Windsurf](https://docs.windsurf.com/) (by Codeium) offers an IDE and PR reviews; its [API](https://docs.windsurf.com/windsurf/accounts/api-reference/api-introduction) is aimed at analytics and team config rather than a direct “send code, get review” endpoint. To use a Windsurf-backed or internal gateway that speaks the Slay Check JSON contract, use the **Custom HTTP** provider:
+TO_REMOVE “send code, get review” endpoint. To use a Windsurf-backed or internal gateway that speaks the Slay Check JSON contract, use the **Custom HTTP** provider:
 
 ```yaml
-ai_provider: windsurf
-ai_base_url: https://your-windsurf-gateway.example.com/review
-ai_token: <your-token>
 ```
-
-Slay Check will `POST` the same JSON as for [Custom HTTP](#custom-http-provider) and expect the same response shape.
 
 #### Custom HTTP provider
 
@@ -178,7 +171,7 @@ Your endpoint should return JSON in the standard review format:
 - **Single comment**: Full review (summary + per-file issues and suggestions) in one PR comment
 - **Automated Reviews**: Runs on every pull request
 - **Configurable Criteria**: Customize what gets reviewed
-- **Multiple AI Providers**: OpenAI, Anthropic, Google AI, Perplexity, Cursor, Windsurf (custom HTTP), and any custom HTTP endpoint
+- **Multiple AI Providers**: OpenAI, Anthropic, Google AI, Perplexity, Cursor (custom HTTP), and any custom HTTP endpoint
 - **Smart Filtering**: Exclude files and patterns you don't want reviewed
 - **Performance Limits**: Control file size and count limits
 - **Score Thresholds**: Set minimum scores and issue limits
