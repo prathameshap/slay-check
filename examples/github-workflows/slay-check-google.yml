@@ -1,0 +1,57 @@
+# Slay Check - Google AI (Gemini) provider
+# Copy to your repo: .github/workflows/slay-check-google.yml
+# Required secret: GOOGLE_AI_API_KEY
+# Optional vars: SLAY_CHECK_AI_MODEL (default: gemini-pro)
+
+name: Slay Check - Google AI Review
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  slay-check-google:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Slay Check
+        run: |
+          pip install git+https://github.com/prathameshap/slay-check.git
+
+      - name: Run Slay Check (Google AI)
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          SLAY_CHECK_AI_PROVIDER: google
+          SLAY_CHECK_AI_MODEL: ${{ vars.SLAY_CHECK_AI_MODEL || 'gemini-pro' }}
+          SLAY_CHECK_AI_TOKEN: ${{ secrets.GOOGLE_AI_API_KEY }}
+          SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLAY_CHECK_VERBOSE: ${{ vars.SLAY_CHECK_VERBOSE || 'false' }}
+          SLAY_CHECK_DRY_RUN: ${{ vars.SLAY_CHECK_DRY_RUN || 'false' }}
+        run: |
+          python -m slay_check.github_action
+
+      - name: Comment on PR (on failure)
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '**Slay Check (Google AI) Review Failed**\n\nPlease check the [workflow logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.'
+            })
