@@ -20,13 +20,13 @@ from slay_check.ai.perplexity import PerplexityProvider
 def test_review_request():
     """Test ReviewRequest model."""
     request = ReviewRequest(
-        code="print(\"hello\")",
+        code='print("hello")',
         language="python",
         file_path="test.py",
         context="Test context",
     )
 
-    assert request.code == "print(\"hello\")"
+    assert request.code == 'print("hello")'
     assert request.language == "python"
     assert request.file_path == "test.py"
     assert request.context == "Test context"
