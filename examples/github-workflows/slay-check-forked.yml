@@ -1,3 +1,7 @@
+# Example: Run Slay Check from your own fork (e.g. to test changes before release).
+# Copy to your repo: .github/workflows/slay-check.yml (or merge with existing).
+# Set secrets: SLAY_CHECK_TOKEN (PAT with repo access), SLAY_CHECK_AI_TOKEN, and replace YOUR_USERNAME below.
+
 name: Slay Check - AI Code Review (Forked)
 on:
   pull_request:
@@ -9,30 +13,30 @@ jobs:
   slay-check:
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false
-    
+
     steps:
       - name: Checkout your repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       - name: Checkout Slay Check (forked)
         uses: actions/checkout@v4
         with:
           repository: YOUR_USERNAME/slay-check
           path: slay-check
           token: ${{ secrets.SLAY_CHECK_TOKEN }}
-          
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
-          
+          python-version: "3.11"
+
       - name: Install Slay Check from fork
         run: |
           cd slay-check
           pip install -e .
-          
+
       - name: Run Slay Check
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -45,7 +49,7 @@ jobs:
           SLAY_CHECK_DRY_RUN: ${{ vars.SLAY_CHECK_DRY_RUN || 'false' }}
         run: |
           python -m slay_check.github_action
-          
+
       - name: Comment on PR
         if: failure()
         uses: actions/github-script@v7

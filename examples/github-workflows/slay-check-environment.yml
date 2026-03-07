@@ -1,29 +1,32 @@
+# Example: Different AI provider and thresholds for "development" vs "production" reviews.
+# Copy to your repo: .github/workflows/slay-check-environment.yml
+# Requires secrets: OPENAI_API_KEY, ANTHROPIC_API_KEY, GITHUB_TOKEN (or SLAY_CHECK_GITHUB_TOKEN).
+
 name: Slay Check - Environment-Specific Review
 on:
   pull_request:
     types: [opened, synchronize, reopened]
 
 jobs:
-  # Runs when the PR is from a feature branch (e.g. feature/xyz -> main). No separate dev branch required.
   development-review:
     runs-on: ubuntu-latest
     if: github.event.pull_request.head.ref != 'main'
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
-          
+          python-version: "3.11"
+
       - name: Install Slay Check
         run: |
           pip install git+https://github.com/prathameshap/slay-check.git
-          
+
       - name: Run Development Review
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -41,22 +44,22 @@ jobs:
   production-review:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
-          
+          python-version: "3.11"
+
       - name: Install Slay Check
         run: |
           pip install git+https://github.com/prathameshap/slay-check.git
-          
+
       - name: Run Production Review
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}

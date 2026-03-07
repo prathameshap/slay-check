@@ -1,3 +1,6 @@
+# Example: Run Slay Check in debug mode (verbose + dry run, no comments posted).
+# Copy to your repo: .github/workflows/slay-check-debug.yml when debugging token/setup issues.
+
 name: Slay Check - Debug Mode
 on:
   pull_request:
@@ -7,18 +10,18 @@ jobs:
   slay-check-debug:
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
-          
+          python-version: "3.11"
+
       - name: Debug Environment
         run: |
           echo "Repository: ${{ github.repository }}"
@@ -26,15 +29,15 @@ jobs:
           echo "Event Name: ${{ github.event_name }}"
           echo "AI Token Set: ${{ secrets.SLAY_CHECK_AI_TOKEN != '' }}"
           echo "GitHub Token Set: ${{ secrets.GITHUB_TOKEN != '' }}"
-          
+
       - name: Install Slay Check
         run: |
           pip install git+https://github.com/prathameshap/slay-check.git
-          
+
       - name: Test Slay Check Import
         run: |
           python -c "import slay_check; print('Slay Check imported successfully')"
-          
+
       - name: Run Slay Check (Debug)
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}

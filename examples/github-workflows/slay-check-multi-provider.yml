@@ -1,3 +1,7 @@
+# Example: Choose AI provider by PR label (security -> Anthropic, performance -> OpenAI, else Google).
+# Copy to your repo: .github/workflows/slay-check-multi-provider.yml
+# Requires secrets: ANTHROPIC_API_KEY, OPENAI_API_KEY, GOOGLE_AI_API_KEY, GITHUB_TOKEN.
+
 name: Slay Check - Multi-Provider Review
 on:
   pull_request:
@@ -7,22 +11,22 @@ jobs:
   security-review:
     runs-on: ubuntu-latest
     if: contains(github.event.pull_request.labels.*.name, 'security')
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
-          
+          python-version: "3.11"
+
       - name: Install Slay Check
         run: |
           pip install git+https://github.com/prathameshap/slay-check.git
-          
+
       - name: Run Security Review (Claude)
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -37,22 +41,22 @@ jobs:
   performance-review:
     runs-on: ubuntu-latest
     if: contains(github.event.pull_request.labels.*.name, 'performance')
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
-          
+          python-version: "3.11"
+
       - name: Install Slay Check
         run: |
           pip install git+https://github.com/prathameshap/slay-check.git
-          
+
       - name: Run Performance Review (GPT-4)
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -67,22 +71,22 @@ jobs:
   general-review:
     runs-on: ubuntu-latest
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'security') && !contains(github.event.pull_request.labels.*.name, 'performance') }}
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
-          
+          python-version: "3.11"
+
       - name: Install Slay Check
         run: |
           pip install git+https://github.com/prathameshap/slay-check.git
-          
+
       - name: Run General Review (Google AI)
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
