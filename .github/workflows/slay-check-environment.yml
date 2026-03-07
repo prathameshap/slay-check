@@ -4,9 +4,10 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
+  # Runs when the PR is from a feature branch (e.g. feature/xyz -> main). No separate dev branch required.
   development-review:
     runs-on: ubuntu-latest
-    if: github.ref != 'refs/heads/main'
+    if: github.event.pull_request.head.ref != 'main'
     
     steps:
       - name: Checkout repository
