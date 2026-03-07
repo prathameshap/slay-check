@@ -110,11 +110,6 @@ ai_token: <your-token>
 
 Slay Check will `POST` the same JSON as for [Custom HTTP](#custom-http-provider) and expect the same response shape.
 
-TO_REMOVE “send code, get review” endpoint. To use a Windsurf-backed or internal gateway that speaks the Slay Check JSON contract, use the **Custom HTTP** provider:
-
-```yaml
-```
-
 #### Custom HTTP provider
 
 To use a completely custom HTTP API for reviews, set:
