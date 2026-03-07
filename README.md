@@ -23,29 +23,60 @@
 
 ### GitHub Actions
 
-1. **Add workflow** (`.github/workflows/slay-check.yml`):
+1. **Add a workflow** in your repo: create `.github/workflows/slay-check.yml` with:
 
 ```yaml
-name: Slay Check
-on: [pull_request]
+name: Slay Check - AI Code Review
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  pull_request_target:
+    types: [opened, synchronize, reopened]
 
 jobs:
-  review:
+  slay-check:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
-          python-version: '3.11'
-      - run: pip install git+https://github.com/prathameshap/slay-check.git
-      - run: python -m slay_check.github_action
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Install Slay Check
+        run: pip install git+https://github.com/prathameshap/slay-check.git
+      - name: Run Slay Check
         env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          SLAY_CHECK_AI_PROVIDER: ${{ vars.SLAY_CHECK_AI_PROVIDER || 'openai' }}
+          SLAY_CHECK_AI_MODEL: ${{ vars.SLAY_CHECK_AI_MODEL || 'gpt-4o' }}
+          SLAY_CHECK_AI_BASE_URL: ${{ vars.SLAY_CHECK_AI_BASE_URL || 'https://api.openai.com/v1/' }}
           SLAY_CHECK_AI_TOKEN: ${{ secrets.SLAY_CHECK_AI_TOKEN }}
           SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLAY_CHECK_VERBOSE: ${{ vars.SLAY_CHECK_VERBOSE || 'false' }}
+          SLAY_CHECK_DRY_RUN: ${{ vars.SLAY_CHECK_DRY_RUN || 'false' }}
+        run: python -m slay_check.github_action
 ```
 
-2. **Add secrets**:
-   - `SLAY_CHECK_AI_TOKEN`: Your AI provider API key
+2. **Add repository secrets** (Settings → Secrets and variables → Actions):
+   - **`SLAY_CHECK_AI_TOKEN`** — Your AI provider API key (OpenAI, Anthropic, Google, Perplexity, etc.).
+   - **`GITHUB_TOKEN`** — Provided automatically; no need to create it.
+
+3. **Optional:** Set repository **variables** (Settings → Variables) or add a `slay-check.yaml` in the repo root:
+   - `SLAY_CHECK_AI_PROVIDER`: `openai` | `anthropic` | `google` | `perplexity` | `cursor` | `windsurf` | `http` | `custom_http`
+   - `SLAY_CHECK_AI_MODEL`: e.g. `gpt-4o`, `claude-3-sonnet-20240229`, `gemini-pro`, `sonar-pro`
+   - `SLAY_CHECK_AI_BASE_URL`: for custom/OpenAI-compatible endpoints
+   - `SLAY_CHECK_VERBOSE`: `true` | `false`
+   - `SLAY_CHECK_DRY_RUN`: `true` to run without posting comments
+
+On every non-draft pull request, the workflow installs Slay Check from this repo, reviews the changed files with your configured AI provider, and posts one comment on the PR with the full review.
+
+For more options (run from a fork, environment-specific or label-based workflows), see [docs/github-action.md](docs/github-action.md) and [examples/github-workflows/](examples/github-workflows/).
 
 ### Local Development
 
