@@ -7,7 +7,7 @@
 [![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-ready-orange.svg)](.github/workflows)
 
 
-**Slay Check** gives you a single, comprehensive AI review comment on every pull request. It supports multiple AI providers (OpenAI, Anthropic, Google AI) with configurable criteria: problem analysis, algorithm review, complexity, and risk evaluation.
+**Slay Check** gives you a single, comprehensive AI review comment on every pull request. It supports multiple AI providers (OpenAI, Anthropic, Google AI, Perplexity, WindSurf, and Cursor) with configurable criteria: problem analysis, algorithm review, complexity, and risk evaluation.
 
 ## Features
 
