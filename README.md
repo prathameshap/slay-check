@@ -47,7 +47,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install Slay Check
-        run: pip install git+https://github.com/prathameshap/slay-check.git
+        run: pip install git+https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/prathameshap/slay-check.git
       - name: Run Slay Check
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -88,7 +88,7 @@ Open the integrated terminal and run Slay Check from your project (or from a clo
 
 ```bash
 # Install (once)
-pip install git+https://github.com/prathameshap/slay-check.git
+pip install git+https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/prathameshap/slay-check.git
 
 # Set tokens (or use slay-check.yaml / .env)
 export SLAY_CHECK_AI_TOKEN="your-ai-key"

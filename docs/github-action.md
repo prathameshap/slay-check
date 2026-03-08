@@ -29,7 +29,7 @@ jobs:
           
       - name: Install Slay Check
         run: |
-          pip install git+https://github.com/prathameshap/slay-check.git
+          pip install git+https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/prathameshap/slay-check.git
           
       - name: Run Slay Check
         env:

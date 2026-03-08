@@ -262,10 +262,10 @@ Install Slay Check locally for testing:
 
 ```bash
 # Install from GitHub
-pip install git+https://github.com/prathameshap/slay-check.git
+pip install git+https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/prathameshap/slay-check.git
 
 # Or install from your fork
-pip install git+https://github.com/prathameshap/slay-check.git
+pip install git+https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/prathameshap/slay-check.git
 
 # Initialize configuration
 slay-check config init
