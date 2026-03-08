@@ -8,6 +8,7 @@ on:
 jobs:
   slay-check:
     runs-on: ubuntu-latest
+    environment: production
     if: github.event.pull_request.draft == false
     
     steps:
