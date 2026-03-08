@@ -7,11 +7,11 @@
 [![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-ready-orange.svg)](.github/workflows)
 
 
-**Slay Check** gives you a single, comprehensive AI review comment on every pull request. It supports multiple AI providers (OpenAI, Anthropic, Google AI, Perplexity, and Cursor) with configurable criteria: problem analysis, algorithm review, complexity, and risk evaluation.
+**Slay Check** gives you a single, comprehensive AI review comment on every pull request. It supports multiple AI providers (OpenAI, Anthropic, Google Gemini, Perplexity, and Custom HTTP) with configurable criteria: problem analysis, algorithm review, complexity, and risk evaluation.
 
 ## Features
 
-- **Multi-AI Support**: OpenAI GPT-4, Anthropic Claude, Google Gemini
+- **Multi-AI Support**: OpenAI GPT-4, Anthropic Claude, Google Gemini, Perplexity AI
 - **GitHub Actions Ready**: Automated PR reviews
 - **Single comment**: Full review (summary + per-file details) in one PR comment
 - **CLI Interface**: Local development support
@@ -69,7 +69,7 @@ jobs:
 
 3. **Optional:** Set repository **variables** (Settings → Variables) or add a `slay-check.yaml` in the repo root:
    - `SLAY_CHECK_AI_PROVIDER`: `openai` | `anthropic` | `google` | `perplexity` | `cursor` | `http` | `custom_http`
-   - `SLAY_CHECK_AI_MODEL`: e.g. `gpt-4o`, `claude-3-sonnet-20240229`, `gemini-pro`, `sonar-pro`
+   - `SLAY_CHECK_AI_MODEL`: e.g. `gpt-4o`, `claude-3-sonnet-20240229`, `gemini-2.0-flash`, `sonar-pro`
    - `SLAY_CHECK_AI_BASE_URL`: for custom/OpenAI-compatible endpoints
    - `SLAY_CHECK_VERBOSE`: `true` | `false`
    - `SLAY_CHECK_DRY_RUN`: `true` to run without posting comments
@@ -78,6 +78,16 @@ On every non-draft pull request, the workflow installs Slay Check from this repo
 
 **Where the review is posted**  
 Slay Check posts **one comment** on the pull request. By default it uses an **issue comment** on the PR (the main conversation thread under "Conversation"), so it’s easy to see and reply to. You can switch to a **PR review** (single comment in the "Files changed" review UI) by setting `use_issue_comments: false` in `slay-check.yaml`. The comment contains the full summary, per-file analysis, issues, and suggestions.
+
+**Provider-specific workflows:** If you want a dedicated workflow per AI provider, ready-to-use files are available in [examples/github-workflows/](examples/github-workflows/). Copy the one for your provider into `.github/workflows/` and add the corresponding secret:
+
+| Workflow file | Provider | Secret required |
+|---------------|----------|-----------------|
+| `slay-check-anthropic.yml` | Anthropic (Claude) | `ANTHROPIC_API_KEY` |
+| `slay-check-openai.yml` | OpenAI (GPT) | `OPENAI_API_KEY` |
+| `slay-check-google.yml` | Google AI (Gemini) | `GOOGLE_AI_API_KEY` |
+| `slay-check-perplexity.yml` | Perplexity AI | `PERPLEXITY_API_KEY` |
+| `slay-check-custom-http.yml` | Custom HTTP endpoint | `SLAY_CHECK_AI_TOKEN` (optional) |
 
 For more options (run from a fork, environment-specific or label-based workflows), see [docs/github-action.md](docs/github-action.md) and [examples/github-workflows/](examples/github-workflows/).
 
@@ -88,7 +98,7 @@ Open the integrated terminal and run Slay Check from your project (or from a clo
 
 ```bash
 # Install (once)
-pip install git+https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/prathameshap/slay-check.git
+pip install git+https://github.com/prathameshap/slay-check.git
 
 # Set tokens (or use slay-check.yaml / .env)
 export SLAY_CHECK_AI_TOKEN="your-ai-key"
@@ -111,8 +121,8 @@ Create `slay-check.yaml` in your repository:
 
 ```yaml
 # AI Provider
-ai_provider: openai  # openai, anthropic, google
-ai_model: gpt-4o     # Model to use
+ai_provider: openai  # openai, anthropic, google, perplexity, custom_http
+ai_model: gpt-4o     # Model to use (e.g. gpt-4o, claude-3-sonnet-20240229, gemini-2.0-flash, sonar-pro)
 
 # Analysis Criteria
 review_criteria:
@@ -147,7 +157,7 @@ critical_issues_limit: 3
 |----------|-------------------------------|----------|
 | **OpenAI** | GPT-4 family (e.g. `gpt-4o`), or any compatible chat/completions model | General code review |
 | **Anthropic** | Claude 3 family (e.g. `claude-3-sonnet-20240229`) | Security and risk-focused analysis |
-| **Google AI** | Gemini family (e.g. `gemini-pro`) | Performance / efficiency analysis |
+| **Google AI** | Gemini family (e.g. `gemini-2.0-flash`) | Performance / efficiency analysis |
 | **Perplexity** | `sonar`, `sonar-pro`, `sonar-deep-research`, `sonar-reasoning-pro` | Fast, grounded code review |
 | **Cursor** | Use **Custom HTTP** with your Cursor-backed or internal gateway URL (see [Custom HTTP](docs/github-action.md#custom-http-provider)) | Teams using Cursor or Cursor-compatible endpoints |
 | **Custom HTTP** | Any HTTP endpoint that accepts the Slay Check review JSON and returns the standard response schema | Enterprise / internal models and gateways |
