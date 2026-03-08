@@ -14,6 +14,7 @@ on:
 jobs:
   slay-check-perplexity:
     runs-on: ubuntu-latest
+    environment: production
     if: github.event.pull_request.draft == false
 
     steps:
