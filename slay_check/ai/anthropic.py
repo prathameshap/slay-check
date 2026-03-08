@@ -62,6 +62,7 @@ class AnthropicProvider(AIProvider):
             return self._parse_response(content)
 
         except Exception as e:
+            print(f"Anthropic API error: {str(e)}")
             return ReviewResponse(
                 analysis=f"Error during review: {str(e)}",
                 score=5.0,

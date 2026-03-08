@@ -6,7 +6,7 @@ import asyncio
 import json
 from typing import Any, Dict, Optional
 
-import google.generativeai as genai
+from google import genai
 
 from .base import (
     AIProvider,
@@ -22,9 +22,8 @@ from .base import (
 class GoogleAIProvider(AIProvider):
     """Google AI provider for code review."""
 
-    def __init__(self, api_key: str, model: str = "gemini-pro"):
-        genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel(model)
+    def __init__(self, api_key: str, model: str = "gemini-2.0-flash"):
+        self.client = genai.Client(api_key=api_key)
         self.api_key = api_key
         self.model_name = model
 
@@ -43,11 +42,15 @@ class GoogleAIProvider(AIProvider):
         prompt = self._build_prompt(request)
 
         try:
-            response = await self.model.generate_content_async(prompt)
+            response = await self.client.aio.models.generate_content(
+                model=self.model_name,
+                contents=prompt,
+            )
             content = response.text
             return self._parse_response(content)
 
         except Exception as e:
+            print(f"Google AI error: {str(e)}")
             return ReviewResponse(
                 analysis=f"Error during review: {str(e)}",
                 score=5.0,

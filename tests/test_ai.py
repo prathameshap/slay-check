@@ -93,7 +93,7 @@ def test_anthropic_provider():
 
 def test_google_provider():
     """Test Google AI provider."""
-    provider = GoogleAIProvider("test-key", "gemini-pro")
+    provider = GoogleAIProvider("test-key", "gemini-2.0-flash")
 
     assert provider.get_name() == "google"
     assert provider.is_available() is True

@@ -37,7 +37,7 @@ jobs:
           GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           SLAY_CHECK_AI_PROVIDER: google
-          SLAY_CHECK_AI_MODEL: ${{ vars.GEMINI || 'gemini-pro' }}
+          SLAY_CHECK_AI_MODEL: ${{ vars.GEMINI || 'gemini-2.0-flash' }}
           SLAY_CHECK_AI_TOKEN: ${{ secrets.GOOGLE_AI_API_KEY }}
           SLAY_CHECK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLAY_CHECK_VERBOSE: ${{ vars.SLAY_CHECK_VERBOSE || 'false' }}
