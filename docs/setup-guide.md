@@ -130,14 +130,36 @@ jobs:
 
 ## Step 4: Configure Slay Check (Optional)
 
-Create `slay-check.yaml` in your repository root to customize behavior:
+Create `slay-check.yaml` in your repository root to customize behavior.
+
+### Choose what gets reviewed
+
+**Preset** (one word):
+
+```yaml
+# One of: full (default), standard, minimal, security, performance
+review_preset: security
+```
+
+**Or focus** (only these criteria):
+
+```yaml
+review_focus:
+  - security
+  - performance
+  - complexity
+```
+
+**Environment variables:** `SLAY_CHECK_REVIEW_PRESET=security` or `SLAY_CHECK_REVIEW_FOCUS=security,performance`
+
+### Full configuration (optional)
 
 ```yaml
 # AI Provider Configuration
-ai_provider: openai  # Options: openai, anthropic, google
-ai_model: gpt-4      # Override default model
+ai_provider: openai  # Options: openai, anthropic, google, perplexity, cursor, http, custom_http
+ai_model: gpt-4o     # Default: gpt-4o
 
-# Review Criteria
+# Review: use preset/focus above, or set each criterion explicitly
 review_criteria:
   analyze_problem: true
   algorithm_analysis: true
@@ -156,18 +178,20 @@ exclude_patterns:
   - "__pycache__/*"
   - "*.pyc"
 
-# Performance Limits
+# Performance Limits (defaults: 10000, 50)
 max_file_size: 10000
 max_files_per_pr: 50
 
-# Behavior
+# Behavior (defaults: false, false)
 verbose: false
 dry_run: false
 
-# Review Thresholds
+# Review Thresholds (defaults: 6.0, 3)
 min_score_threshold: 6.0
 critical_issues_limit: 3
 ```
+
+**Defaults:** If you omit `review_preset` and `review_focus`, all criteria are enabled (full review). See [README Configuration](https://github.com/prathameshap/slay-check#configuration) for the full default values table.
 
 ## Step 5: Test Your Setup
 

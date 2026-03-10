@@ -1,5 +1,21 @@
 # AI Response Control Guide
 
+## Choosing What Gets Reviewed
+
+Use **presets** or **focus** to control which aspects of the code are reviewed (see [README Configuration](https://github.com/prathameshap/slay-check#configuration)):
+
+```yaml
+# One word: full (default), standard, minimal, security, performance
+review_preset: security
+# Or only these: review_focus: [security, performance, complexity]
+```
+
+**Environment variables:** `SLAY_CHECK_REVIEW_PRESET=security`, `SLAY_CHECK_REVIEW_FOCUS=security,performance` (comma-separated).
+
+**Defaults:** If you omit both, all criteria are enabled (full review).
+
+---
+
 ## Token Limits & AI Strictness Configuration
 
 ### 1. **Token Limits** (`max_tokens`)
@@ -90,6 +106,10 @@ critical_issues_limit: 1
 Override settings via environment:
 
 ```bash
+# What to review (preset or focus)
+export SLAY_CHECK_REVIEW_PRESET="security"
+export SLAY_CHECK_REVIEW_FOCUS="security,performance"   # comma-separated
+
 # Token limits
 export SLAY_CHECK_MAX_TOKENS="2000"
 

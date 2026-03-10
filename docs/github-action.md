@@ -58,10 +58,30 @@ You can set these as repository variables:
 - `SLAY_CHECK_AI_BASE_URL`: Custom API base URL (used for OpenAI-/Anthropic-compatible or custom HTTP endpoints)
 - `SLAY_CHECK_VERBOSE`: Enable verbose logging (default: `false`)
 - `SLAY_CHECK_DRY_RUN`: Don't post comments, just show results (default: `false`)
+- `SLAY_CHECK_REVIEW_PRESET`: Preset for what to review: `full`, `standard`, `minimal`, `security`, `performance` (default: full)
+- `SLAY_CHECK_REVIEW_FOCUS`: Comma-separated criteria to enable, e.g. `security,performance` (overrides preset if both set)
 
 ### Configuration
 
-Create a `slay-check.yaml` file in your repository root to customize the review criteria and provider:
+Create a `slay-check.yaml` file in your repository root to customize the review criteria and provider.
+
+**Easy: preset or focus**
+
+```yaml
+# One-word preset: full | standard | minimal | security | performance
+review_preset: security
+```
+
+Or choose only the areas you want:
+
+```yaml
+review_focus:
+  - security
+  - performance
+  - complexity
+```
+
+**Full control:** set each criterion explicitly:
 
 ```yaml
 ai_provider: openai  # openai | anthropic | google | perplexity | cursor | http
@@ -85,6 +105,8 @@ max_files_per_pr: 50
 min_score_threshold: 6.0
 critical_issues_limit: 3
 ```
+
+**Defaults:** If you omit `review_preset` and `review_focus`, all review criteria are enabled (full review). Defaults include `ai_provider: openai`, `ai_model: gpt-4o`, `max_tokens: 4000`, `temperature: 0.3`, `min_score_threshold: 6.0`, `critical_issues_limit: 3`, `max_file_size: 10000`, `max_files_per_pr: 50`. See [README Configuration](https://github.com/prathameshap/slay-check#configuration) for the full default values table.
 
 #### Perplexity
 

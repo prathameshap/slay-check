@@ -10,6 +10,99 @@ import yaml
 from pydantic import BaseModel, Field
 
 
+# Presets: choose what to review with one word.
+REVIEW_PRESETS: Dict[str, Dict[str, bool]] = {
+    "full": {
+        "analyze_problem": True,
+        "algorithm_analysis": True,
+        "best_approaches": True,
+        "complexity_analysis": True,
+        "risk_assessment": True,
+        "security_review": True,
+        "performance_review": True,
+    },
+    "standard": {
+        "analyze_problem": False,
+        "algorithm_analysis": True,
+        "best_approaches": True,
+        "complexity_analysis": True,
+        "risk_assessment": True,
+        "security_review": True,
+        "performance_review": True,
+    },
+    "minimal": {
+        "analyze_problem": False,
+        "algorithm_analysis": False,
+        "best_approaches": False,
+        "complexity_analysis": False,
+        "risk_assessment": False,
+        "security_review": True,
+        "performance_review": True,
+    },
+    "security": {
+        "analyze_problem": False,
+        "algorithm_analysis": False,
+        "best_approaches": False,
+        "complexity_analysis": False,
+        "risk_assessment": True,
+        "security_review": True,
+        "performance_review": False,
+    },
+    "performance": {
+        "analyze_problem": False,
+        "algorithm_analysis": True,
+        "best_approaches": True,
+        "complexity_analysis": True,
+        "risk_assessment": False,
+        "security_review": False,
+        "performance_review": True,
+    },
+}
+
+# Short names for review_focus (e.g. focus: [security, performance]).
+FOCUS_ALIASES: Dict[str, str] = {
+    "problem": "analyze_problem",
+    "analyze_problem": "analyze_problem",
+    "algorithm": "algorithm_analysis",
+    "algorithm_analysis": "algorithm_analysis",
+    "best_approaches": "best_approaches",
+    "best_practices": "best_approaches",
+    "complexity": "complexity_analysis",
+    "complexity_analysis": "complexity_analysis",
+    "risk": "risk_assessment",
+    "risk_assessment": "risk_assessment",
+    "security": "security_review",
+    "security_review": "security_review",
+    "performance": "performance_review",
+    "performance_review": "performance_review",
+}
+
+
+def _preset_to_criteria(preset_name: str) -> Dict[str, bool]:
+    """Return review_criteria dict for a preset. Default to full if unknown."""
+    preset = preset_name.strip().lower()
+    return REVIEW_PRESETS.get(preset, REVIEW_PRESETS["full"]).copy()
+
+
+def _focus_to_criteria(focus_list: List[str]) -> Dict[str, bool]:
+    """Build review_criteria from a list of focus names; only those are True."""
+    all_keys = [
+        "analyze_problem",
+        "algorithm_analysis",
+        "best_approaches",
+        "complexity_analysis",
+        "risk_assessment",
+        "security_review",
+        "performance_review",
+    ]
+    criteria = {k: False for k in all_keys}
+    for name in focus_list:
+        key = FOCUS_ALIASES.get(name.strip().lower(), name.strip().lower())
+        if key in criteria:
+            criteria[key] = True
+    return criteria
+
+
 class ReviewCriteria(BaseModel):
     """Review criteria configuration."""
 
@@ -102,6 +195,8 @@ class Config(BaseModel):
         _verbose_env = os.getenv("SLAY_CHECK_VERBOSE")
         _dry_run_env = os.getenv("SLAY_CHECK_DRY_RUN")
         _use_issue_comments_env = os.getenv("SLAY_CHECK_USE_ISSUE_COMMENTS")
+        _review_preset = os.getenv("SLAY_CHECK_REVIEW_PRESET")
+        _review_focus = os.getenv("SLAY_CHECK_REVIEW_FOCUS")
         env_overrides = {
             "ai_provider": os.getenv("SLAY_CHECK_AI_PROVIDER"),
             "ai_token": os.getenv("SLAY_CHECK_AI_TOKEN"),
@@ -119,11 +214,26 @@ class Config(BaseModel):
                 if _use_issue_comments_env is not None
                 else None
             ),
+            "review_preset": _review_preset,
+            "review_focus": _review_focus.split(",") if _review_focus else None,
         }
 
         # Remove None values
         env_overrides = {k: v for k, v in env_overrides.items() if v is not None}
         config_data.update(env_overrides)
+
+        # Resolve review_criteria from preset or focus (easy config for users)
+        if "review_focus" in config_data:
+            focus = config_data.pop("review_focus")
+            if isinstance(focus, str):
+                focus = [s.strip() for s in focus.split(",")]
+            config_data["review_criteria"] = ReviewCriteria(**_focus_to_criteria(focus))
+        elif "review_preset" in config_data:
+            preset = config_data.pop("review_preset")
+            preset_str = preset if isinstance(preset, str) else str(preset)
+            config_data["review_criteria"] = ReviewCriteria(
+                **_preset_to_criteria(preset_str)
+            )
 
         return cls(**config_data)
 

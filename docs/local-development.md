@@ -51,7 +51,18 @@ SLAY_CHECK_GITHUB_TOKEN=your-github-token
 
 ### 3. Customize Configuration
 
-Edit `slay-check.yaml` to match your preferences:
+Edit `slay-check.yaml` to match your preferences.
+
+**Easy: preset or focus**
+
+```yaml
+ai_provider: openai
+# One-word preset: full | standard | minimal | security | performance
+review_preset: security
+# Or pick only these: review_focus: [security, performance, complexity]
+```
+
+**Full control:** set each criterion explicitly:
 
 ```yaml
 ai_provider: openai
@@ -77,6 +88,8 @@ max_files_per_pr: 20
 verbose: true
 dry_run: true  # Don't post comments during development
 ```
+
+**Defaults:** If you don't set `review_preset` or `review_focus`, the default is full (all criteria on). Other defaults: `max_file_size: 10000`, `max_files_per_pr: 50`, `min_score_threshold: 6.0`, `critical_issues_limit: 3`, `max_tokens: 4000`, `temperature: 0.3`. See [README Configuration](https://github.com/prathameshap/slay-check#configuration).
 
 ## Usage
 
@@ -150,14 +163,7 @@ slay-check review --pr 123 --repo owner/repo
 
 ```yaml
 ai_provider: openai
-review_criteria:
-  analyze_problem: true
-  algorithm_analysis: true
-  best_approaches: true
-  complexity_analysis: true
-  risk_assessment: true
-  security_review: false      # Skip security review in dev
-  performance_review: true
+review_preset: minimal   # or review_focus: [security, performance]
 exclude_patterns:
   - "*.md"
   - "*.txt"
@@ -177,14 +183,7 @@ critical_issues_limit: 10
 
 ```yaml
 ai_provider: openai
-review_criteria:
-  analyze_problem: true
-  algorithm_analysis: true
-  best_approaches: true
-  complexity_analysis: true
-  risk_assessment: true
-  security_review: true       # Enable security review
-  performance_review: true
+review_preset: standard   # or omit for full
 exclude_patterns:
   - "*.md"
   - "*.txt"
@@ -205,15 +204,8 @@ critical_issues_limit: 3
 ### Security-Focused Configuration
 
 ```yaml
-ai_provider: anthropic       # Use Claude for security
-review_criteria:
-  analyze_problem: true
-  algorithm_analysis: false
-  best_approaches: true
-  complexity_analysis: false
-  risk_assessment: true
-  security_review: true       # Focus on security
-  performance_review: false
+ai_provider: anthropic
+review_preset: security   # security + risk only
 exclude_patterns:
   - "*.md"
   - "*.txt"
@@ -255,6 +247,8 @@ Check your `ai_provider` setting in `slay-check.yaml`. Supported providers:
 - `openai`
 - `anthropic`
 - `google`
+- `perplexity`
+- `cursor`, `http`, `custom_http` (custom endpoints)
 
 #### 4. "No files to review"
 

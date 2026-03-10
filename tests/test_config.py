@@ -135,3 +135,47 @@ def test_config_save_load():
     finally:
         # Clean up
         os.unlink(config_path)
+
+
+def test_review_preset():
+    """Test review_preset loads correct criteria."""
+    with tempfile.NamedTemporaryFile(
+        mode="w", suffix=".yaml", delete=False
+    ) as f:
+        f.write("ai_provider: openai\nai_token: x\ngithub_token: y\n")
+        f.write('review_preset: "security"\n')
+        config_path = f.name
+    try:
+        with mock.patch.dict(os.environ, {}, clear=True):
+            with mock.patch.object(
+                Path, "home", return_value=Path(config_path).resolve().parent
+            ):
+                config = Config.load(config_path)
+        assert config.review_criteria.security_review is True
+        assert config.review_criteria.risk_assessment is True
+        assert config.review_criteria.performance_review is False
+        assert config.review_criteria.analyze_problem is False
+    finally:
+        os.unlink(config_path)
+
+
+def test_review_focus():
+    """Test review_focus list loads correct criteria."""
+    with tempfile.NamedTemporaryFile(
+        mode="w", suffix=".yaml", delete=False
+    ) as f:
+        f.write("ai_provider: openai\nai_token: x\ngithub_token: y\n")
+        f.write("review_focus:\n  - security\n  - performance\n")
+        config_path = f.name
+    try:
+        with mock.patch.dict(os.environ, {}, clear=True):
+            with mock.patch.object(
+                Path, "home", return_value=Path(config_path).resolve().parent
+            ):
+                config = Config.load(config_path)
+        assert config.review_criteria.security_review is True
+        assert config.review_criteria.performance_review is True
+        assert config.review_criteria.analyze_problem is False
+        assert config.review_criteria.algorithm_analysis is False
+    finally:
+        os.unlink(config_path)

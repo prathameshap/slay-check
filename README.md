@@ -73,6 +73,8 @@ jobs:
    - `SLAY_CHECK_AI_BASE_URL`: for custom/OpenAI-compatible endpoints
    - `SLAY_CHECK_VERBOSE`: `true` | `false`
    - `SLAY_CHECK_DRY_RUN`: `true` to run without posting comments
+   - `SLAY_CHECK_REVIEW_PRESET`: `full` | `standard` | `minimal` | `security` | `performance` — what to review (see [Configuration](#configuration))
+   - `SLAY_CHECK_REVIEW_FOCUS`: comma-separated list, e.g. `security,performance` — only these criteria
 
 On every non-draft pull request, the workflow installs Slay Check from this repo, reviews the changed files with your configured AI provider, and posts one comment on the PR with the full review.
 
@@ -117,22 +119,54 @@ python -m slay_check.cli review --local
 
 ## Configuration
 
-Create `slay-check.yaml` in your repository:
+Create `slay-check.yaml` in your repository (or use environment variables).
+
+### Choose what gets reviewed
+
+**Easiest: use a preset** — one word to focus the review:
+
+```yaml
+# One of: full (default), standard, minimal, security, performance
+review_preset: security
+```
+
+| Preset | What's reviewed |
+|--------|------------------|
+| `full` | Everything (problem, algorithm, best approaches, complexity, risk, security, performance) |
+| `standard` | Same as full but skip problem analysis |
+| `minimal` | Security + performance only |
+| `security` | Security + risk only |
+| `performance` | Algorithm, best approaches, complexity, performance |
+
+**Or pick specific areas** with a list (only these are enabled):
+
+```yaml
+review_focus:
+  - security
+  - performance
+  - complexity
+```
+
+Allowed focus names: `problem`, `algorithm`, `best_approaches`, `complexity`, `risk`, `security`, `performance`.
+
+**Environment variables:** `SLAY_CHECK_REVIEW_PRESET=security` or `SLAY_CHECK_REVIEW_FOCUS=security,performance` (comma-separated).
+
+**Advanced:** set each criterion explicitly with `review_criteria`:
 
 ```yaml
 # AI Provider
 ai_provider: openai  # openai, anthropic, google, perplexity, custom_http
 ai_model: gpt-4o     # Model to use (e.g. gpt-4o, claude-3-sonnet-20240229, gemini-2.0-flash, sonar-pro)
 
-# Analysis Criteria
+# Analysis Criteria (optional; use preset or focus above for simplicity)
 review_criteria:
-  analyze_problem: true      # Problem analysis
-  algorithm_analysis: true   # Algorithm review
-  best_approaches: true      # Alternative approaches
-  complexity_analysis: true # Time/space complexity
-  risk_assessment: true     # Risk evaluation
-  security_review: true     # Security analysis
-  performance_review: true  # Performance analysis
+  analyze_problem: true
+  algorithm_analysis: true
+  best_approaches: true
+  complexity_analysis: true
+  risk_assessment: true
+  security_review: true
+  performance_review: true
 
 # File Filtering
 exclude_patterns:
@@ -150,6 +184,26 @@ max_files_per_pr: 50
 min_score_threshold: 6.0
 critical_issues_limit: 3
 ```
+
+### Default values
+
+If you don't set `review_preset` or `review_focus`, the default is **full** (all review criteria enabled). Other defaults:
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `ai_provider` | `openai` | AI provider |
+| `ai_model` | `gpt-4o` | Model name |
+| `review_preset` | *(none → full)* | Preset when not set |
+| `review_criteria` | all `true` | When no preset/focus |
+| `max_file_size` | `10000` | Max lines per file |
+| `max_files_per_pr` | `50` | Max files reviewed per PR |
+| `max_tokens` | `4000` | Max tokens per AI response |
+| `temperature` | `0.3` | Model temperature |
+| `min_score_threshold` | `6.0` | Min score to pass (0–10) |
+| `critical_issues_limit` | `3` | Max critical issues allowed |
+| `verbose` | `false` | Verbose logging |
+| `dry_run` | `false` | Don't post comments |
+| `use_issue_comments` | `true` | Post as PR issue comment |
 
 ## AI Providers
 

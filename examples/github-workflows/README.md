@@ -26,3 +26,5 @@ Override the model via the `SLAY_CHECK_AI_MODEL` repository variable without edi
 | **slay-check-multi-provider.yml** | Choose provider by PR label: `security` → Anthropic, `performance` → OpenAI, otherwise Google. Needs `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GOOGLE_AI_API_KEY`, `GITHUB_TOKEN`. |
 
 The main repo uses the standard workflow in [.github/workflows/slay-check.yml](../../.github/workflows/slay-check.yml); these examples are optional variants.
+
+To choose what gets reviewed (security only, performance, etc.), set repository variables or add `slay-check.yaml`: use `review_preset: security` or `review_focus: [security, performance]`. See [Configuration](https://github.com/prathameshap/slay-check#configuration) and [GitHub Action docs](../../docs/github-action.md) for defaults and all options.

@@ -43,7 +43,7 @@ cd slay-check
 # Install in development mode
 pip install -e .
 
-# Set up environment
+# Set up environment (see README for full config: preset, focus, defaults)
 export SLAY_CHECK_AI_TOKEN="your-test-token"
 export SLAY_CHECK_GITHUB_TOKEN="your-test-token"
 
