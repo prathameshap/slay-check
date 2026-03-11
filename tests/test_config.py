@@ -139,9 +139,7 @@ def test_config_save_load():
 
 def test_review_preset():
     """Test review_preset loads correct criteria."""
-    with tempfile.NamedTemporaryFile(
-        mode="w", suffix=".yaml", delete=False
-    ) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
         f.write("ai_provider: openai\nai_token: x\ngithub_token: y\n")
         f.write('review_preset: "security"\n')
         config_path = f.name
@@ -161,9 +159,7 @@ def test_review_preset():
 
 def test_review_focus():
     """Test review_focus list loads correct criteria."""
-    with tempfile.NamedTemporaryFile(
-        mode="w", suffix=".yaml", delete=False
-    ) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
         f.write("ai_provider: openai\nai_token: x\ngithub_token: y\n")
         f.write("review_focus:\n  - security\n  - performance\n")
         config_path = f.name

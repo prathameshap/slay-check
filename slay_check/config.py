@@ -9,7 +9,6 @@ from typing import Any, Dict, List, Optional
 import yaml
 from pydantic import BaseModel, Field
 
-
 # Presets: choose what to review with one word.
 REVIEW_PRESETS: Dict[str, Dict[str, bool]] = {
     "full": {
