@@ -2,10 +2,11 @@
 
 > **Slay Check** — AI-powered code review for GitHub Actions and local development
 
+**TL;DR** — Copy the workflow below into `.github/workflows/slay-check.yml`, add the `SLAY_CHECK_AI_TOKEN` secret (your AI provider key), and open a PR. You’ll get one AI review comment per PR. Optional: set provider/model via variables or a `slay-check.yaml` file.
+
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://python.org)
 [![License](https://img.shields.io/badge/license-AGPL%20v3%20%7C%20GPL%20v3-green.svg)](LICENSE-AGPL)
 [![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-ready-orange.svg)](.github/workflows)
-
 
 **Slay Check** gives you a single, comprehensive AI review comment on every pull request. It supports multiple AI providers (OpenAI, Anthropic, Google Gemini, Perplexity, and Custom HTTP) with configurable criteria: problem analysis, algorithm review, complexity, and risk evaluation.
 
@@ -19,11 +20,11 @@
 - **Comprehensive Scoring**: Detailed feedback with actionable suggestions
 - **Security Focused**: Built-in security and risk assessment
 
-##  Quick Start
+## Quick Start
 
-### GitHub Actions
+### GitHub Actions (3 steps)
 
-1. **Add a workflow** in your repo: create `.github/workflows/slay-check.yml` with:
+1. **Add a workflow** — Create `.github/workflows/slay-check.yml` and paste the workflow below. The install step uses `GITHUB_TOKEN` so the job can clone this repo; you only add your AI key in step 2.
 
 ```yaml
 name: Slay Check - AI Code Review
@@ -67,7 +68,9 @@ jobs:
    - **`SLAY_CHECK_AI_TOKEN`** — Your AI provider API key (OpenAI, Anthropic, Google, Perplexity, etc.).
    - **`GITHUB_TOKEN`** — Provided automatically; no need to create it.
 
-3. **Optional:** Set repository **variables** (Settings → Variables) or add a `slay-check.yaml` in the repo root:
+3. **Open a PR** — On every non-draft pull request, the workflow runs, reviews changed files with your AI provider, and posts **one comment** with the full review.
+
+**Optional:** Set repository **variables** (Settings → Variables) or add a `slay-check.yaml` in the repo root:
    - `SLAY_CHECK_AI_PROVIDER`: `openai` | `anthropic` | `google` | `perplexity` | `cursor` | `http` | `custom_http`
    - `SLAY_CHECK_AI_MODEL`: e.g. `gpt-4o`, `claude-3-sonnet-20240229`, `gemini-2.0-flash`, `sonar-pro`
    - `SLAY_CHECK_AI_BASE_URL`: for custom/OpenAI-compatible endpoints
@@ -76,12 +79,10 @@ jobs:
    - `SLAY_CHECK_REVIEW_PRESET`: `full` | `standard` | `minimal` | `security` | `performance` — what to review (see [Configuration](#configuration))
    - `SLAY_CHECK_REVIEW_FOCUS`: comma-separated list, e.g. `security,performance` — only these criteria
 
-On every non-draft pull request, the workflow installs Slay Check from this repo, reviews the changed files with your configured AI provider, and posts one comment on the PR with the full review.
+**Where the review appears**  
+Slay Check posts **one comment** per PR. By default it’s an **issue comment** (main conversation under "Conversation"). To use a **PR review** comment instead, set `use_issue_comments: false` in `slay-check.yaml`. The comment includes the summary, per-file analysis, issues, and suggestions.
 
-**Where the review is posted**  
-Slay Check posts **one comment** on the pull request. By default it uses an **issue comment** on the PR (the main conversation thread under "Conversation"), so it’s easy to see and reply to. You can switch to a **PR review** (single comment in the "Files changed" review UI) by setting `use_issue_comments: false` in `slay-check.yaml`. The comment contains the full summary, per-file analysis, issues, and suggestions.
-
-**Provider-specific workflows:** If you want a dedicated workflow per AI provider, ready-to-use files are available in [examples/github-workflows/](examples/github-workflows/). Copy the one for your provider into `.github/workflows/` and add the corresponding secret:
+**Provider-specific workflows:** Ready-made workflows per provider live in [examples/github-workflows/](examples/github-workflows/). Copy the one you need into `.github/workflows/` and set the matching secret.
 
 | Workflow file | Provider | Secret required |
 |---------------|----------|-----------------|
@@ -218,16 +219,17 @@ If you don't set `review_preset` or `review_focus`, the default is **full** (all
 
 ## Documentation
 
-- **[Setup Guide](docs/setup-guide.md)** - Complete installation instructions
-- **[GitHub Actions](docs/github-action.md)** - Workflow configuration
-- **[Local Development](docs/local-development.md)** - CLI usage
-- **[Forking Guide](docs/forking-guide.md)** - Custom implementations
-- **[AI Response Control](docs/ai-response-control.md)** - Token limits & strictness
-- **[Repo issues & technical debt](docs/REPO_ISSUES.md)** - Known issues and contribution ideas
-- **[Rust conversion analysis](docs/RUST_CONVERSION_ANALYSIS.md)** - Why the project stays in Python
-- **[Project & milestones](docs/project-and-milestones.md)** - How maintainers configure the GitHub Project and milestones
-- **[Milestone issues](docs/milestone-issues.md)** - Copy-paste issue text for V 0.0.1, V 0.0.2, V 0.1.0
-- **[Licensing](docs/licensing.md)** - Version-based open source and future-version terms
+**Where to go next:**
+
+| Goal | Doc |
+|------|-----|
+| Run in GitHub Actions | [GitHub Actions](docs/github-action.md) |
+| Run locally (CLI) | [Local Development](docs/local-development.md) |
+| Full setup (secrets, keys, troubleshooting) | [Setup Guide](docs/setup-guide.md) |
+| Customize review (presets, providers) | [Configuration](#configuration) below |
+| Fork or contribute | [CONTRIBUTING.md](CONTRIBUTING.md) |
+
+**More:** [AI Response Control](docs/ai-response-control.md) · [Forking Guide](docs/forking-guide.md) · [Repo issues & tech debt](docs/REPO_ISSUES.md) · [Licensing](docs/licensing.md)
 
 **Open source & project health:** Security and best-practice scores are tracked by [OpenSSF Scorecard](https://scorecard.dev/viewer/?uri=github.com/prathameshap/slay-check). Results run on every push to `main` and weekly; the badge above links to the latest report.
 
@@ -313,16 +315,7 @@ This project tracks contributors with [All Contributors](https://allcontributors
 
 ## License
 
-**Slay Check** uses a conditional dual license **only for version 1.0.0 and all earlier versions** (V1.0 and before). Later versions may be under different terms.
-
-- **Enterprises** (companies, organizations, commercial use): **[GNU Affero General Public License v3](LICENSE-AGPL)** (AGPL-3.0).
-- **Individuals** (personal, non-commercial use): **[GNU General Public License v3](LICENSE-GPL)** (GPL-3.0).
-
-**Version condition:** These licenses apply **only** to Slay Check v1.0.0 and every version released before it. They do **not** apply to any version after 1.0.0.
-
-**Additional condition (all users):** You may not distribute this software, or any derivative work based on it, **for monetary gain**. Redistribution (including forks and modified versions) must be free of charge.
-
-**Versions after 1.0.0** may be released under different terms. See [Licensing](docs/licensing.md) and the LICENSE files for full scope and text.
+**Slay Check** is dual-licensed for **v1.0.0 and earlier**: [AGPL-3.0](LICENSE-AGPL) for enterprises, [GPL-3.0](LICENSE-GPL) for individuals. Redistribution must be free of charge. Versions after 1.0.0 may use different terms. Full details: [Licensing](docs/licensing.md) and the LICENSE files.
 
 ## Security
 
@@ -330,6 +323,7 @@ Please report security issues as described in [SECURITY.md](SECURITY.md).
 
 ## Support
 
+- **Something wrong?** See [Troubleshooting](docs/setup-guide.md#troubleshooting) in the setup guide.
 - **Issues**: [GitHub Issues](https://github.com/prathameshap/slay-check/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/prathameshap/slay-check/discussions)
 
