@@ -23,9 +23,21 @@ class GoogleAIProvider(AIProvider):
     """Google AI provider for code review."""
 
     def __init__(self, api_key: str, model: str = "gemini-2.0-flash"):
-        self.client = genai.Client(api_key=api_key)
         self.api_key = api_key
         self.model_name = model
+        # Only create the client when we have a key; genai.Client("") raises ValueError.
+        self._client = genai.Client(api_key=api_key) if api_key else None
+
+    @property
+    def client(self):
+        """Lazy client to avoid validating empty key in genai.Client."""
+        if self._client is not None:
+            return self._client
+        raise ValueError(
+            "No API key was provided. Please pass a valid API key. "
+            "Learn how to create an API key at "
+            "https://ai.google.dev/gemini-api/docs/api-key."
+        )
 
     def get_name(self) -> str:
         return "google"
