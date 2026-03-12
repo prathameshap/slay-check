@@ -2,6 +2,8 @@
 
 Copy any of these workflow files into your repository's `.github/workflows/` to customize how Slay Check runs on pull requests.
 
+**Pip cache:** Each workflow enables `cache: 'pip'` so dependencies are reused between runs. This reduces runner time and does **not** increase GitHub Actions cost (billing is by runner minutes; caching typically lowers them).
+
 ## Provider-specific workflows
 
 Each file is a ready-to-use workflow for a single AI provider. Pick the one that matches the API key you have.

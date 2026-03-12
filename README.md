@@ -42,6 +42,9 @@
 
 For more options (run from a fork, environment-specific or label-based workflows), see [docs/github-action.md](docs/github-action.md) and [examples/github-workflows/](examples/github-workflows/).
 
+**Pip cache**  
+Workflows use `cache: 'pip'` so dependencies are reused between runs. This shortens job time and does **not** increase GitHub Actions cost (you pay by runner minutes; caching typically reduces them).
+
 **Where the review appears**  
 Slay Check posts **one comment** per PR. By default it’s an **issue comment** (main conversation under "Conversation"). To use a **PR review** comment instead, set `use_issue_comments: false` in `slay-check.yaml`.
 
