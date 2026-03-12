@@ -2,6 +2,8 @@
 Tests for Slay Check AI providers.
 """
 
+import pytest
+
 from slay_check.ai.anthropic import AnthropicProvider
 from slay_check.ai.base import (
     Complexity,
@@ -12,9 +14,13 @@ from slay_check.ai.base import (
     Severity,
 )
 from slay_check.ai.custom_http import CustomHTTPProvider
-from slay_check.ai.google import GoogleAIProvider
 from slay_check.ai.openai import OpenAIProvider
 from slay_check.ai.perplexity import PerplexityProvider
+
+try:
+    from slay_check.ai.google import GoogleAIProvider
+except Exception:
+    GoogleAIProvider = None  # type: ignore[assignment]
 
 
 def test_review_request():
@@ -93,6 +99,9 @@ def test_anthropic_provider():
 
 def test_google_provider():
     """Test Google AI provider."""
+    if GoogleAIProvider is None:
+        pytest.skip("google-genai dependency not installed")
+
     provider = GoogleAIProvider("test-key", "gemini-2.0-flash")
 
     assert provider.get_name() == "google"

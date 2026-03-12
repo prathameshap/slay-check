@@ -305,10 +305,8 @@ We follow [Semantic Versioning](https://semver.org/):
 ## Recognition
 
 Contributors will be recognized in:
-- README.md contributors section (via [All Contributors](https://allcontributors.org); see [README](README.md#contributors))
+- README.md contributors section
 - Release notes
 - GitHub contributors page
-
-To have the All Contributors table updated, invite [@all-contributors](https://github.com/all-contributors/all-contributors) in a comment, e.g. `@all-contributors please add @username for code`.
 
 Thank you for contributing to Slay Check!

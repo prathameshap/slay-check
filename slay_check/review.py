@@ -11,7 +11,6 @@ from typing import Any, Dict, List, Optional
 from .ai.anthropic import AnthropicProvider
 from .ai.base import Issue, IssueType, ReviewRequest, ReviewResponse, Severity
 from .ai.custom_http import CustomHTTPProvider
-from .ai.google import GoogleAIProvider
 from .ai.openai import OpenAIProvider
 from .ai.perplexity import PerplexityProvider
 from .config import Config
@@ -83,8 +82,17 @@ class ReviewEngine:
                 base_url=self.config.ai_base_url,
             )
         elif self.config.ai_provider == "google":
+            try:
+                from .ai.google import GoogleAIProvider
+            except Exception as e:
+                raise ValueError(
+                    "Google provider is not available. Install 'google-genai' "
+                    "or choose a different provider."
+                ) from e
+
             return GoogleAIProvider(
-                api_key=self.config.ai_token, model=self.config.ai_model or "gemini-pro"
+                api_key=self.config.ai_token,
+                model=self.config.ai_model or "gemini-2.0-flash",
             )
         elif self.config.ai_provider == "perplexity":
             return PerplexityProvider(

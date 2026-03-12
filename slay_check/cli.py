@@ -35,18 +35,104 @@ def config():
 @config.command("init")
 @click.option("--path", default="slay-check.yaml", help="Configuration file path")
 def init_config(path: str):
-    """Initialize configuration file"""
+    """Initialize configuration file (interactive wizard)."""
     if os.path.exists(path):
         console.print(f"[yellow]Configuration file {path} already exists[/yellow]")
         return
 
-    config = Config()
-    config.save(path)
+    # If running in a non-interactive context (e.g. CI), write a sensible default
+    # config without prompting. This keeps `slay-check config init` script-friendly.
+    if not sys.stdin.isatty():
+        provider = "openai"
+        ai_model = "gpt-4o"
+        review_preset = "standard"
+        use_issue_comments = True
+        dry_run = False
+        config_data = {
+            "ai_provider": provider,
+            "ai_model": ai_model,
+            "review_preset": review_preset,
+            "use_issue_comments": use_issue_comments,
+            "dry_run": dry_run,
+        }
+    else:
+        console.print(Panel.fit("Slay Check config wizard", style="cyan"))
+
+        provider = click.prompt(
+            "AI provider",
+            type=click.Choice(
+                ["openai", "anthropic", "google", "perplexity", "custom_http"],
+                case_sensitive=False,
+            ),
+            default="openai",
+            show_default=True,
+        ).lower()
+
+        model_default = {
+            "openai": "gpt-4o",
+            "anthropic": "claude-3-sonnet-20240229",
+            "google": "gemini-2.0-flash",
+            "perplexity": "sonar-pro",
+            "custom_http": "",
+        }.get(provider, "")
+
+        ai_model = click.prompt(
+            "Model (leave empty to use default)",
+            default=model_default,
+            show_default=True if model_default else False,
+        ).strip()
+
+        review_preset = click.prompt(
+            "Review preset",
+            type=click.Choice(
+                ["full", "standard", "minimal", "security", "performance"],
+                case_sensitive=False,
+            ),
+            default="standard",
+            show_default=True,
+        ).lower()
+
+        post_as = click.prompt(
+            "Post review as",
+            type=click.Choice(["issue_comment", "pr_review"], case_sensitive=False),
+            default="issue_comment",
+            show_default=True,
+        ).lower()
+        use_issue_comments = post_as == "issue_comment"
+
+        dry_run = click.confirm("Dry run (do not post comment)?", default=False)
+
+        config_data = {
+            "ai_provider": provider,
+            "review_preset": review_preset,
+            "use_issue_comments": use_issue_comments,
+            "dry_run": dry_run,
+        }
+
+        if ai_model:
+            config_data["ai_model"] = ai_model
+
+        if provider == "custom_http":
+            endpoint = click.prompt("Custom HTTP endpoint URL", type=str).strip()
+            config_data["ai_base_url"] = endpoint
+
+    # Write YAML without embedding secrets. Tokens should be set via env/secrets.
+    with open(path, "w", encoding="utf-8") as f:
+        import yaml
+
+        yaml.dump(config_data, f, default_flow_style=False, indent=2, sort_keys=False)
 
     console.print(f"[green]Configuration file created: {path}[/green]")
-    console.print("\n[yellow]Please edit the file and add your API tokens:[/yellow]")
-    console.print("- ai_token: Your AI provider API token")
-    console.print("- github_token: Your GitHub personal access token")
+    console.print("\n[yellow]Next steps:[/yellow]")
+    console.print(
+        "- Add your AI token as an environment variable or GitHub secret: SLAY_CHECK_AI_TOKEN"
+    )
+    console.print(
+        "- For PR reviews/comments, set SLAY_CHECK_GITHUB_TOKEN (in Actions, use GITHUB_TOKEN)"
+    )
+    console.print(
+        "- Optional: override provider/model via environment variables at runtime"
+    )
 
 
 @config.command("show")

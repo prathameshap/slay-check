@@ -15,9 +15,13 @@ from .base import (
     Severity,
 )
 from .custom_http import CustomHTTPProvider
-from .google import GoogleAIProvider
 from .openai import OpenAIProvider
 from .perplexity import PerplexityProvider
+
+try:
+    from .google import GoogleAIProvider
+except Exception:  # Optional dependency may be missing in some environments
+    GoogleAIProvider = None  # type: ignore[assignment]
 
 __all__ = [
     "IssueType",
