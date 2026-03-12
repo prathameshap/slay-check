@@ -3,8 +3,8 @@ CLI interface for Slay Check.
 """
 
 import os
-import sys
 import subprocess
+import sys
 from typing import Optional
 
 import click
@@ -14,8 +14,7 @@ from rich.table import Table
 from rich.text import Text
 
 from .config import Config
-from .github_client import GitHubClient
-from .github_client import PullRequestFileInfo, PullRequestInfo
+from .github_client import GitHubClient, PullRequestFileInfo, PullRequestInfo
 from .review import ReviewEngine
 
 console = Console()
