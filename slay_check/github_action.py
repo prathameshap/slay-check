@@ -5,7 +5,6 @@ GitHub Action entry point for Slay Check.
 
 import os
 import sys
-from typing import Optional
 
 from slay_check.config import Config
 from slay_check.review import ReviewEngine
@@ -65,7 +64,8 @@ def main():
         # Check if review passed thresholds
         if result.score < config.min_score_threshold:
             print(
-                f"Review failed: Score {result.score:.1f} below threshold {config.min_score_threshold}"
+                f"Review failed: Score {result.score:.1f} below threshold "
+                f"{config.min_score_threshold}"
             )
             sys.exit(1)
 
@@ -76,7 +76,8 @@ def main():
 
         if critical_issues > config.critical_issues_limit:
             print(
-                f"Review failed: {critical_issues} critical issues exceed limit {config.critical_issues_limit}"
+                f"Review failed: {critical_issues} critical issues exceed limit "
+                f"{config.critical_issues_limit}"
             )
             sys.exit(1)
 

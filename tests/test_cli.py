@@ -4,7 +4,6 @@ Tests for Slay Check CLI.
 
 from unittest.mock import Mock, patch
 
-import pytest
 from click.testing import CliRunner
 
 from slay_check.cli import cli, config, review

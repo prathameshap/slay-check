@@ -11,10 +11,9 @@ import click
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
-from rich.text import Text
 
 from .config import Config
-from .github_client import GitHubClient, PullRequestFileInfo, PullRequestInfo
+from .github_client import PullRequestFileInfo, PullRequestInfo
 from .review import ReviewEngine
 
 console = Console()
@@ -126,10 +125,12 @@ def init_config(path: str):
     console.print(f"[green]Configuration file created: {path}[/green]")
     console.print("\n[yellow]Next steps:[/yellow]")
     console.print(
-        "- Add your AI token as an environment variable or GitHub secret: SLAY_CHECK_AI_TOKEN"
+        "- Add your AI token as an environment variable or GitHub secret: "
+        "SLAY_CHECK_AI_TOKEN"
     )
     console.print(
-        "- For PR reviews/comments, set SLAY_CHECK_GITHUB_TOKEN (in Actions, use GITHUB_TOKEN)"
+        "- For PR reviews/comments, set SLAY_CHECK_GITHUB_TOKEN "
+        "(in Actions, use GITHUB_TOKEN)"
     )
     console.print(
         "- Optional: override provider/model via environment variables at runtime"
@@ -204,7 +205,8 @@ def review(
 
         if not local and not (pr and repo):
             console.print(
-                "[red]Please specify either --pr and --repo for pull request review or --local for local changes[/red]"
+                "[red]Please specify either --pr and --repo for pull request "
+                "review or --local for local changes[/red]"
             )
             sys.exit(1)
 

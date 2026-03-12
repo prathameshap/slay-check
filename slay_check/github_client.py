@@ -2,7 +2,7 @@
 GitHub integration for Slay Check.
 """
 
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
 from github import Github
 from pydantic import BaseModel
@@ -133,11 +133,13 @@ class GitHubClient:
                         line=comment.line,
                     )
                     print(
-                        f"Posted comment {i}/{len(comments)} on {comment.path}:{comment.line}"
+                        f"Posted comment {i}/{len(comments)} on "
+                        f"{comment.path}:{comment.line}"
                     )
                 except Exception as e:
                     print(
-                        f"Failed to post comment {i} on {comment.path}:{comment.line}: {e}"
+                        f"Failed to post comment {i} on {comment.path}:"
+                        f"{comment.line}: {e}"
                     )
                     continue
 

@@ -5,30 +5,26 @@ Uses the Perplexity API (OpenAI-compatible) at https://api.perplexity.ai.
 Models: sonar, sonar-pro, sonar-deep-research, sonar-reasoning-pro
 """
 
-import asyncio
 import json
 from typing import Optional
 
-from openai import AsyncOpenAI
-
 from .base import (
-    AIProvider,
     Complexity,
     Issue,
     IssueType,
-    ReviewRequest,
     ReviewResponse,
     Severity,
 )
 from .openai import OpenAIProvider
 
-# Reuse OpenAI's prompt builder and response parser; only endpoint and default model differ.
+# Reuse OpenAI's prompt builder and response parser; only endpoint and
+# default model differ.
 PERPLEXITY_BASE_URL = "https://api.perplexity.ai"
 DEFAULT_MODEL = "sonar-pro"
 
 
 class PerplexityProvider(OpenAIProvider):
-    """Perplexity AI provider for code review (OpenAI-compatible API)."""
+    """Perplexity AI provider (OpenAI-compatible API)."""
 
     def __init__(
         self,

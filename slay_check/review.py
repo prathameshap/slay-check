@@ -2,15 +2,13 @@
 Review engine for Slay Check.
 """
 
-import asyncio
 import logging
-import re
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, List, Optional
 
 from .ai.anthropic import AnthropicProvider
-from .ai.base import Issue, IssueType, ReviewRequest, ReviewResponse, Severity
+from .ai.base import Issue, ReviewRequest
 from .ai.custom_http import CustomHTTPProvider
 from .ai.openai import OpenAIProvider
 from .ai.perplexity import PerplexityProvider
@@ -321,7 +319,7 @@ class ReviewEngine:
         self, file_reviews: List[FileReview], issues: List[Issue], score: float
     ) -> str:
         """Generate a summary of the review."""
-        summary = f"## Code Review Summary\n\n"
+        summary = "## Code Review Summary\n\n"
         summary += f"**Overall Score:** {score:.1f}/10\n\n"
         summary += f"**Files Reviewed:** {len(file_reviews)}\n"
         summary += f"**Issues Found:** {len(issues)}\n\n"
@@ -353,20 +351,26 @@ class ReviewEngine:
         return summary
 
     def _build_single_comment_body(self, result: ReviewResult) -> str:
-        """Build one comment body containing the full review (summary + all issues per file)."""
+        """Build one comment with full review (summary + per-file issues)."""
         body = result.summary
 
         if result.files:
             body += "\n---\n\n### Per-file details\n\n"
             for file_review in result.files:
-                body += f"#### `{file_review.filename}` (score: {file_review.score:.1f}/10)\n\n"
+                body += (
+                    f"#### `{file_review.filename}` "
+                    f"(score: {file_review.score:.1f}/10)\n\n"
+                )
                 if file_review.analysis:
                     body += f"{file_review.analysis}\n\n"
                 if file_review.issues:
                     body += "**Issues:**\n"
                     for issue in file_review.issues:
                         line_info = f" (line {issue.line})" if issue.line else ""
-                        body += f"- **[{issue.severity}]** {issue.type}{line_info}: {issue.message}\n"
+                        body += (
+                            f"- **[{issue.severity}]** {issue.type}{line_info}: "
+                            f"{issue.message}\n"
+                        )
                         if issue.suggestion:
                             body += f"  - Suggestion: {issue.suggestion}\n"
                     body += "\n"
@@ -381,7 +385,7 @@ class ReviewEngine:
     def post_review_comments(
         self, repo: str, pr_number: int, result: ReviewResult
     ) -> None:
-        """Post review as a single comment (checkstyle-style: one comment with full feedback)."""
+        """Post review as a single comment (one comment with full feedback)."""
         if self.config.dry_run:
             logger.info("Dry run mode - no comments posted")
             return

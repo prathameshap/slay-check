@@ -1,7 +1,8 @@
 """
 Slay Check - AI Code Review Tool
 
-A high-performance, modular AI code review tool designed for GitHub Actions and local development.
+A high-performance, modular AI code review tool for GitHub Actions
+and local development.
 """
 
 __version__ = "1.0.0"

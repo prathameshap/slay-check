@@ -4,7 +4,7 @@ OpenAI provider implementation for Slay Check.
 
 import asyncio
 import json
-from typing import Any, Dict, Optional
+from typing import Optional
 
 from openai import AsyncOpenAI
 
@@ -54,7 +54,10 @@ class OpenAIProvider(AIProvider):
                 messages=[
                     {
                         "role": "system",
-                        "content": "You are an expert code reviewer. Analyze the provided code and give comprehensive feedback.",
+                        "content": (
+                            "You are an expert code reviewer. Analyze the provided "
+                            "code and give comprehensive feedback."
+                        ),
                     },
                     {"role": "user", "content": prompt},
                 ],
@@ -129,14 +132,15 @@ class OpenAIProvider(AIProvider):
         prompt += "3. MEDIUM: Code style, best practices\n"
         prompt += "4. LOW: Minor improvements, documentation\n"
 
-        prompt += "\nIMPORTANT: You MUST find specific issues in the code. Even if the code is good, look for:\n"
+        prompt += "\nIMPORTANT: You MUST find specific issues in the code. "
+        prompt += "Even if the code is good, look for:\n"
         prompt += "- Code style improvements\n"
         prompt += "- Performance optimizations\n"
         prompt += "- Best practice violations\n"
         prompt += "- Potential bugs or edge cases\n"
         prompt += "- Security considerations\n"
         prompt += "- Maintainability improvements\n"
-        prompt += "\nPlease provide your analysis in JSON format with the following structure:\n"
+        prompt += "\nPlease provide your analysis in JSON format with this structure:\n"
         prompt += """{
   "analysis": "Detailed analysis of the code",
   "score": 8.5,

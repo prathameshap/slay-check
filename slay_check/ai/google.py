@@ -4,7 +4,6 @@ Google AI provider implementation for Slay Check.
 
 import asyncio
 import json
-from typing import Any, Dict, Optional
 
 from google import genai
 
@@ -126,7 +125,7 @@ class GoogleAIProvider(AIProvider):
         prompt += "3. MEDIUM: Code style, best practices\n"
         prompt += "4. LOW: Minor improvements, documentation\n"
 
-        prompt += "\nPlease provide your analysis in JSON format with the following structure:\n"
+        prompt += "\nPlease provide your analysis in JSON format with this structure:\n"
         prompt += """{
   "analysis": "Detailed analysis of the code",
   "score": 8.5,

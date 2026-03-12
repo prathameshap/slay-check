@@ -119,7 +119,7 @@ def test_config_save_load():
         config.save(config_path)
 
         # Load configuration without environment overrides interfering.
-        # Mock Path.home so it doesn't fail when env is cleared (Windows needs USERPROFILE).
+        # Mock Path.home so it doesn't fail when env is cleared (Windows).
         with mock.patch.dict(os.environ, {}, clear=True):
             with mock.patch.object(
                 Path, "home", return_value=Path(config_path).resolve().parent

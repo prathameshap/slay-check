@@ -44,7 +44,9 @@ class CustomHTTPProvider(AIProvider):
         """Review code by calling a custom HTTP endpoint."""
         if not self.endpoint:
             return ReviewResponse(
-                analysis="Custom HTTP endpoint is not configured (ai_base_url is empty).",
+                analysis=(
+                    "Custom HTTP endpoint is not configured (ai_base_url is empty)."
+                ),
                 score=5.0,
                 issues=[],
                 suggestions=[],
