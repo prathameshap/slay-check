@@ -6,6 +6,7 @@
 
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://python.org)
 [![License](https://img.shields.io/badge/license-AGPL%20v3-green.svg)](LICENSE-AGPL)
+[![CI](https://github.com/prathameshap/slay-check/actions/workflows/ci.yml/badge.svg)](https://github.com/prathameshap/slay-check/actions/workflows/ci.yml)
 [![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-ready-orange.svg)](.github/workflows)
 
 **Slay Check** gives you a single, comprehensive AI review comment on every pull request. It supports multiple AI providers (OpenAI, Anthropic, Google Gemini, Perplexity, and Custom HTTP) with configurable criteria: problem analysis, algorithm review, complexity, and risk evaluation.
@@ -46,12 +47,20 @@ Slay Check posts **one comment** per PR. By default it’s an **issue comment** 
 
 ### Local Development
 
+**PyPI status**  
+Slay Check is **not published to PyPI** yet. Install it from GitHub (or install editable for development) using the commands below.
+
 **From VS Code or Cursor**  
 Open the integrated terminal and run Slay Check from your project (or from a clone of this repo):
 
 ```bash
 # Install (once)
 pip install git+https://github.com/prathameshap/slay-check.git
+
+# Or: editable install for contributing
+# git clone https://github.com/prathameshap/slay-check.git
+# cd slay-check
+# pip install -e ".[dev]"
 
 # Set tokens (or use slay-check.yaml / .env)
 export SLAY_CHECK_AI_TOKEN="your-ai-key"
@@ -64,8 +73,8 @@ slay-check review --repo owner/repo --pr 42
 To avoid re-exporting tokens in every terminal, you can set them in the IDE: **VS Code** → Settings → search “terminal env” → add `SLAY_CHECK_AI_TOKEN` and `SLAY_CHECK_GITHUB_TOKEN` to `terminal.integrated.env.*`. In **Cursor**, the same settings apply. There is no VS Code/Cursor extension yet; the CLI is the way to “call” the repo from the IDE.
 
 ```bash
-# Review local changes (when implemented)
-python -m slay_check.cli review --local
+# Review local changes (no GitHub token required)
+slay-check review --local --dry-run
 ```
 
 ## Configuration

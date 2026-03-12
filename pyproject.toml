@@ -65,6 +65,9 @@ slay-check = "slay_check.cli:main"
 where = ["."]
 include = ["slay_check*"]
 
+[tool.setuptools]
+license-files = ["LICENSE-AGPL"]
+
 [tool.black]
 line-length = 88
 target-version = ['py38']

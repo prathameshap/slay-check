@@ -4,6 +4,7 @@ CLI interface for Slay Check.
 
 import os
 import sys
+import subprocess
 from typing import Optional
 
 import click
@@ -14,6 +15,7 @@ from rich.text import Text
 
 from .config import Config
 from .github_client import GitHubClient
+from .github_client import PullRequestFileInfo, PullRequestInfo
 from .review import ReviewEngine
 
 console = Console()
@@ -199,6 +201,8 @@ def review(
         if dry_run:
             config.dry_run = True
 
+        _configure_logging(config.verbose)
+
         if not local and not (pr and repo):
             console.print(
                 "[red]Please specify either --pr and --repo for pull request review or --local for local changes[/red]"
@@ -206,7 +210,7 @@ def review(
             sys.exit(1)
 
         # Validate configuration
-        config.validate()
+        config.validate(require_github_token=not local)
 
         if local:
             review_local_changes(config)
@@ -221,15 +225,128 @@ def review(
 def review_local_changes(config: Config):
     """Review local git changes"""
     console.print("[yellow]Reviewing local changes...[/yellow]")
+    diff = _get_local_git_diff()
+    if not diff.strip():
+        console.print("[green]No local changes detected (git diff is empty).[/green]")
+        return
 
-    # TODO: Implement local git diff analysis
-    # This would involve:
-    # 1. Running git diff to get changes
-    # 2. Parsing the diff
-    # 3. Running AI review
-    # 4. Displaying results
+    pr_info = PullRequestInfo(
+        number=0,
+        title="Local changes",
+        body=None,
+        state="local",
+        base_ref="",
+        head_ref="",
+        files=[],
+        owner="",
+        repo="",
+        author="",
+        created_at="",
+        updated_at="",
+    )
 
-    console.print("[red]Local review not yet implemented[/red]")
+    files = _split_unified_diff_by_file(diff)
+    if not files:
+        console.print("[yellow]No file patches found in git diff output.[/yellow]")
+        return
+
+    file_infos = []
+    for filename, patch in files.items():
+        additions = sum(
+            1
+            for line in patch.splitlines()
+            if line.startswith("+") and not line.startswith("+++")
+        )
+        deletions = sum(
+            1
+            for line in patch.splitlines()
+            if line.startswith("-") and not line.startswith("---")
+        )
+        changes = additions + deletions
+        file_infos.append(
+            PullRequestFileInfo(
+                filename=filename,
+                status="modified",
+                additions=additions,
+                deletions=deletions,
+                changes=changes,
+                patch=patch,
+            )
+        )
+
+    review_engine = ReviewEngine(config)
+    filtered = review_engine._filter_files(file_infos)  # reuse same filter logic
+    if not filtered:
+        console.print("[yellow]No files to review after filtering.[/yellow]")
+        return
+
+    file_reviews = []
+    all_issues = []
+    for file_info in filtered:
+        file_review = review_engine._review_file(file_info, pr_info)
+        file_reviews.append(file_review)
+        all_issues.extend(file_review.issues)
+
+    overall_score = (
+        sum(fr.score for fr in file_reviews) / len(file_reviews)
+        if file_reviews
+        else 0.0
+    )
+    summary = review_engine._generate_summary(file_reviews, all_issues, overall_score)
+
+    console.print("\n[bold green]=== Local Review Results ===[/bold green]")
+    console.print(f"Files reviewed: {len(file_reviews)}")
+    console.print(f"Issues found: {len(all_issues)}")
+    console.print(f"Overall score: {overall_score:.1f}/10\n")
+    console.print(summary)
+
+
+def _get_local_git_diff() -> str:
+    """Get the local git diff as a unified diff string."""
+    try:
+        result = subprocess.run(
+            ["git", "diff", "--no-color"],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        return result.stdout or ""
+    except Exception as e:
+        raise RuntimeError(f"Failed to run git diff: {e}") from e
+
+
+def _split_unified_diff_by_file(diff_text: str) -> dict[str, str]:
+    """Split `git diff` output into per-file patches keyed by file path."""
+    files: dict[str, list[str]] = {}
+    current_file: Optional[str] = None
+
+    for line in diff_text.splitlines():
+        if line.startswith("diff --git "):
+            # Example: diff --git a/path b/path
+            parts = line.split()
+            if len(parts) >= 4:
+                b_path = parts[3]
+                if b_path.startswith("b/"):
+                    current_file = b_path[2:]
+                else:
+                    current_file = b_path
+                files.setdefault(current_file, []).append(line)
+            else:
+                current_file = None
+            continue
+
+        if current_file is None:
+            continue
+        files[current_file].append(line)
+
+    return {k: "\n".join(v) for k, v in files.items()}
+
+
+def _configure_logging(verbose: bool) -> None:
+    import logging
+
+    level = logging.INFO if verbose else logging.WARNING
+    logging.basicConfig(level=level, format="%(levelname)s: %(message)s")
 
 
 def review_pull_request(config: Config, repo: str, pr_number: int):

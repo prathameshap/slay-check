@@ -246,12 +246,17 @@ class Config(BaseModel):
         with open(config_path, "w") as f:
             yaml.dump(config_dict, f, default_flow_style=False, indent=2)
 
-    def validate(self) -> None:
-        """Validate configuration."""
+    def validate(self, *, require_github_token: bool = True) -> None:
+        """Validate configuration.
+
+        Args:
+            require_github_token: When False, skip GitHub token requirement (useful for
+                local-only flows that do not call the GitHub API).
+        """
         if not self.ai_token:
             raise ValueError("AI token is required")
 
-        if not self.github_token:
+        if require_github_token and not self.github_token:
             raise ValueError("GitHub token is required")
 
         if self.ai_provider not in [

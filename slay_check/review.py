@@ -3,6 +3,7 @@ Review engine for Slay Check.
 """
 
 import asyncio
+import logging
 import re
 import time
 from pathlib import Path
@@ -15,6 +16,8 @@ from .ai.openai import OpenAIProvider
 from .ai.perplexity import PerplexityProvider
 from .config import Config
 from .github_client import GitHubClient, PullRequestFileInfo, PullRequestInfo
+
+logger = logging.getLogger(__name__)
 
 
 class FileReview:
@@ -138,7 +141,9 @@ class ReviewEngine:
                 file_reviews.append(file_review)
                 all_issues.extend(file_review.issues)
             except Exception as e:
-                print(f"Warning: Failed to review file {file_info.filename}: {e}")
+                logger.warning(
+                    "Failed to review file %s: %s", file_info.filename, e, exc_info=True
+                )
                 continue
 
         # Calculate overall score
@@ -231,21 +236,27 @@ class ReviewEngine:
 
         # Get AI review
         if self.config.verbose:
-            print(f"Requesting AI review for {file_info.filename}...")
+            logger.info("Requesting AI review for %s...", file_info.filename)
 
         response = self.ai_provider.review_code(request)
 
         if self.config.verbose:
-            print(
-                f"AI Response - Score: {response.score:.1f}, Issues: {len(response.issues)}"
+            logger.info(
+                "AI Response - Score: %.1f, Issues: %d",
+                response.score,
+                len(response.issues),
             )
             if response.issues:
                 for i, issue in enumerate(response.issues, 1):
-                    print(
-                        f"  Issue {i}: {issue.severity} {issue.type} - {issue.message}"
+                    logger.info(
+                        "Issue %d: %s %s - %s",
+                        i,
+                        issue.severity,
+                        issue.type,
+                        issue.message,
                     )
             else:
-                print("  No specific issues found by AI")
+                logger.info("No specific issues found by AI")
 
         return FileReview(
             filename=file_info.filename,
@@ -372,7 +383,7 @@ class ReviewEngine:
     ) -> None:
         """Post review as a single comment (checkstyle-style: one comment with full feedback)."""
         if self.config.dry_run:
-            print("Dry run mode - no comments posted")
+            logger.info("Dry run mode - no comments posted")
             return
 
         try:
