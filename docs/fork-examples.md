@@ -19,19 +19,19 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           
       - name: Checkout Slay Check fork
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: YOUR_USERNAME/slay-check
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -67,19 +67,19 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           
       - name: Checkout Slay Check fork
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: YOUR_USERNAME/slay-check
           path: slay-check
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -113,12 +113,12 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           
       - name: Checkout Slay Check fork (specific branch)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: YOUR_USERNAME/slay-check
           ref: feature/custom-review-logic
@@ -126,7 +126,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -160,12 +160,12 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           
       - name: Checkout Slay Check fork (specific tag)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: YOUR_USERNAME/slay-check
           ref: v1.2.0-custom
@@ -173,7 +173,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -209,19 +209,19 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           
       - name: Checkout Slay Check fork (environment-based)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: ${{ github.ref == 'refs/heads/main' && 'prod-team/slay-check' || 'dev-team/slay-check' }}
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -255,19 +255,19 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           
       - name: Checkout Slay Check fork (label-based)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: ${{ contains(github.event.pull_request.labels.*.name, 'security') && 'security-team/slay-check' || 'YOUR_USERNAME/slay-check' }}
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -301,19 +301,19 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           
       - name: Checkout Slay Check fork (path-based)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: ${{ contains(github.event.pull_request.head.ref, 'frontend') && 'frontend-team/slay-check' || 'backend-team/slay-check' }}
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -350,19 +350,19 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           
       - name: Checkout Security Slay Check fork
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: security-team/slay-check
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -388,19 +388,19 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           
       - name: Checkout Performance Slay Check fork
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: performance-team/slay-check
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -426,19 +426,19 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           
       - name: Checkout General Slay Check fork
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: YOUR_USERNAME/slay-check
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -474,13 +474,13 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           
       - name: Checkout Slay Check fork (with fallback)
         id: checkout-fork
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: YOUR_USERNAME/slay-check
           path: slay-check
@@ -489,14 +489,14 @@ jobs:
         
       - name: Checkout main Slay Check (fallback)
         if: steps.checkout-fork.outcome == 'failure'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: slay-check/slay-check
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -532,19 +532,19 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           
       - name: Checkout Slay Check fork
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: YOUR_USERNAME/slay-check
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -582,19 +582,19 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           
       - name: Checkout Slay Check fork
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: YOUR_USERNAME/slay-check
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'

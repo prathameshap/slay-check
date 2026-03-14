@@ -61,19 +61,19 @@ jobs:
     
     steps:
       - name: Checkout your repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           
       - name: Checkout Slay Check (your fork)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: YOUR_USERNAME/slay-check
           path: slay-check
           token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -109,19 +109,19 @@ jobs:
     
     steps:
       - name: Checkout your repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           
       - name: Checkout Slay Check (your fork)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: YOUR_USERNAME/slay-check
           path: slay-check
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -149,7 +149,7 @@ Use a specific branch or tag from your fork:
 
 ```yaml
 - name: Checkout Slay Check (specific version)
-  uses: actions/checkout@v4
+  uses: actions/checkout@v5
   with:
     repository: YOUR_USERNAME/slay-check
     ref: v1.2.0  # or branch name like 'custom-features'
@@ -257,14 +257,14 @@ Create separate forks for different teams:
 ```yaml
 # Team A workflow
 - name: Checkout Slay Check (Team A fork)
-  uses: actions/checkout@v4
+  uses: actions/checkout@v5
   with:
     repository: team-a/slay-check
     path: slay-check
 
 # Team B workflow  
 - name: Checkout Slay Check (Team B fork)
-  uses: actions/checkout@v4
+  uses: actions/checkout@v5
   with:
     repository: team-b/slay-check
     path: slay-check
@@ -276,7 +276,7 @@ Use different forks for different environments:
 
 ```yaml
 - name: Checkout Slay Check (environment-specific)
-  uses: actions/checkout@v4
+  uses: actions/checkout@v5
   with:
     repository: ${{ github.ref == 'refs/heads/main' && 'prod-team/slay-check' || 'dev-team/slay-check' }}
     path: slay-check
@@ -288,7 +288,7 @@ Use different forks based on conditions:
 
 ```yaml
 - name: Checkout Slay Check (conditional)
-  uses: actions/checkout@v4
+  uses: actions/checkout@v5
   with:
     repository: ${{ contains(github.event.pull_request.labels.*.name, 'security') && 'security-team/slay-check' || 'YOUR_USERNAME/slay-check' }}
     path: slay-check
@@ -323,7 +323,7 @@ repository: YOUR_USERNAME/slay-check  # Make sure this is correct
 **Solution:** Check Python version compatibility and dependencies:
 ```yaml
 - name: Set up Python
-  uses: actions/setup-python@v4
+  uses: actions/setup-python@v5
   with:
     python-version: '3.11'  # Match your fork's Python version
     cache: 'pip'
