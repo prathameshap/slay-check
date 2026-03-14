@@ -10,12 +10,12 @@
 [![AI Code Review](https://img.shields.io/badge/AI%20Code%20Review-Slay%20Check-purple.svg)](https://github.com/prathameshap/slay-check)
 [![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-ready-orange.svg)](.github/workflows)
 
-[![OpenAI](https://img.shields.io/github/actions/workflow/status/prathameshap/slay-check/slay-check-all-models.yml?label=OpenAI&logo=openai)](https://github.com/prathameshap/slay-check/actions/workflows/slay-check-all-models.yml)
-[![Anthropic](https://img.shields.io/github/actions/workflow/status/prathameshap/slay-check/slay-check-all-models.yml?label=Anthropic&logo=anthropic)](https://github.com/prathameshap/slay-check/actions/workflows/slay-check-all-models.yml)
-[![Google Gemini](https://img.shields.io/github/actions/workflow/status/prathameshap/slay-check/slay-check-all-models.yml?label=Google%20Gemini&logo=googlegemini)](https://github.com/prathameshap/slay-check/actions/workflows/slay-check-all-models.yml)
-[![Perplexity](https://img.shields.io/github/actions/workflow/status/prathameshap/slay-check/slay-check-all-models.yml?label=Perplexity)](https://github.com/prathameshap/slay-check/actions/workflows/slay-check-all-models.yml)
-[![GitHub Models](https://img.shields.io/github/actions/workflow/status/prathameshap/slay-check/slay-check-all-models.yml?label=GitHub%20Models&logo=github)](https://github.com/prathameshap/slay-check/actions/workflows/slay-check-all-models.yml)
-[![Ollama](https://img.shields.io/badge/Ollama-local%2Ffree-blue?logo=ollama)](https://ollama.com)
+[![OpenAI](https://img.shields.io/badge/OpenAI-supported-412991?logo=openai&logoColor=white)](https://platform.openai.com)
+[![Anthropic](https://img.shields.io/badge/Anthropic-supported-D97757?logo=anthropic&logoColor=white)](https://www.anthropic.com)
+[![Google Gemini](https://img.shields.io/badge/Gemini-supported-4285F4?logo=googlegemini&logoColor=white)](https://ai.google.dev)
+[![Perplexity](https://img.shields.io/badge/Perplexity-supported-1FB8CD)](https://docs.perplexity.ai)
+[![GitHub Models](https://img.shields.io/badge/GitHub%20Models-free-181717?logo=github&logoColor=white)](https://github.com/marketplace/models)
+[![Ollama](https://img.shields.io/badge/Ollama-local%2Ffree-black?logo=ollama&logoColor=white)](https://ollama.com)
 
 **Slay Check** gives you a single, comprehensive AI review comment on every pull request. It supports multiple AI providers (OpenAI, Anthropic, Google Gemini, Perplexity, Ollama, GitHub Models, and Custom HTTP) with configurable criteria: problem analysis, algorithm review, complexity, and risk evaluation.
 
