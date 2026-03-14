@@ -62,15 +62,7 @@ class AnthropicProvider(AIProvider):
             return self._parse_response(content)
 
         except Exception as e:
-            print(f"Anthropic API error: {str(e)}")
-            return ReviewResponse(
-                analysis=f"Error during review: {str(e)}",
-                score=5.0,
-                issues=[],
-                suggestions=[],
-                complexity=Complexity(),
-                confidence=0.0,
-            )
+            raise RuntimeError(f"Anthropic API error: {e}") from e
 
     def _build_prompt(self, request: ReviewRequest) -> str:
         """Build the prompt for code review."""
@@ -205,13 +197,7 @@ class AnthropicProvider(AIProvider):
                 confidence=float(data.get("confidence", 0.7)),
             )
 
-        except (json.JSONDecodeError, ValueError, KeyError):
-            # If JSON parsing fails, create a basic response
-            return ReviewResponse(
-                analysis=content,
-                score=7.0,
-                issues=[],
-                suggestions=[],
-                complexity=Complexity(),
-                confidence=0.7,
-            )
+        except (json.JSONDecodeError, ValueError, KeyError) as e:
+            raise RuntimeError(
+                f"Failed to parse Anthropic response as JSON: {e}"
+            ) from e

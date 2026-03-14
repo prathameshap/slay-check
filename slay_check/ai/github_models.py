@@ -82,14 +82,7 @@ class GitHubModelsProvider(AIProvider):
             return self._parse_response(content)
 
         except Exception as e:
-            return ReviewResponse(
-                analysis=f"Error during review: {e}",
-                score=5.0,
-                issues=[],
-                suggestions=[],
-                complexity=Complexity(),
-                confidence=0.0,
-            )
+            raise RuntimeError(f"GitHub Models API error: {e}") from e
 
     # ------------------------------------------------------------------
     # Prompt & parsing — same structure as OpenAIProvider.
@@ -198,12 +191,7 @@ class GitHubModelsProvider(AIProvider):
                 confidence=float(data.get("confidence", 0.7)),
             )
 
-        except (json.JSONDecodeError, ValueError, KeyError):
-            return ReviewResponse(
-                analysis=content,
-                score=7.0,
-                issues=[],
-                suggestions=[],
-                complexity=Complexity(),
-                confidence=0.5,
-            )
+        except (json.JSONDecodeError, ValueError, KeyError) as e:
+            raise RuntimeError(
+                f"Failed to parse GitHub Models response as JSON: {e}"
+            ) from e

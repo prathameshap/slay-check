@@ -43,15 +43,8 @@ class CustomHTTPProvider(AIProvider):
     def review_code(self, request: ReviewRequest) -> ReviewResponse:
         """Review code by calling a custom HTTP endpoint."""
         if not self.endpoint:
-            return ReviewResponse(
-                analysis=(
-                    "Custom HTTP endpoint is not configured (ai_base_url is empty)."
-                ),
-                score=5.0,
-                issues=[],
-                suggestions=[],
-                complexity=Complexity(),
-                confidence=0.0,
+            raise ValueError(
+                "Custom HTTP endpoint is not configured (ai_base_url is empty)."
             )
 
         headers: Dict[str, str] = {"Content-Type": "application/json"}
@@ -80,14 +73,7 @@ class CustomHTTPProvider(AIProvider):
             data = response.json()
             return self._parse_response(data)
         except Exception as e:
-            return ReviewResponse(
-                analysis=f"Error during custom HTTP review: {str(e)}",
-                score=5.0,
-                issues=[],
-                suggestions=[],
-                complexity=Complexity(),
-                confidence=0.0,
-            )
+            raise RuntimeError(f"Custom HTTP review error: {e}") from e
 
     def _parse_response(self, data: Dict[str, Any]) -> ReviewResponse:
         """Parse custom HTTP JSON response into ReviewResponse."""

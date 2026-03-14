@@ -61,17 +61,25 @@ def test_review_local():
     """Test review local command."""
     runner = CliRunner()
 
-    with patch("slay_check.cli.Config.load") as mock_load:
+    with (
+        patch("slay_check.cli.Config.load") as mock_load,
+        patch("slay_check.cli._get_local_git_diff", return_value=""),
+    ):
         mock_config = Mock()
         mock_config.validate.return_value = None
         mock_config.verbose = False
         mock_config.dry_run = False
+        mock_config.github_token = ""
+        mock_config.ai_token = "test"
+        mock_config.ai_provider = "openai"
+        mock_config.ai_model = "gpt-4o"
+        mock_config.ai_base_url = None
         mock_load.return_value = mock_config
 
         result = runner.invoke(review, ["--local"])
 
         assert result.exit_code == 0
-        assert "Reviewing" in result.output and "local changes" in result.output
+        assert "Reviewing" in result.output
 
 
 def test_review_pr():

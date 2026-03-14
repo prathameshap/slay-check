@@ -88,12 +88,7 @@ class PerplexityProvider(OpenAIProvider):
                 confidence=float(data.get("confidence", 0.7)),
             )
 
-        except (json.JSONDecodeError, ValueError, KeyError):
-            return ReviewResponse(
-                analysis=content,
-                score=7.0,
-                issues=[],
-                suggestions=[],
-                complexity=Complexity(),
-                confidence=0.5,
-            )
+        except (json.JSONDecodeError, ValueError, KeyError) as e:
+            raise RuntimeError(
+                f"Failed to parse Perplexity response as JSON: {e}"
+            ) from e

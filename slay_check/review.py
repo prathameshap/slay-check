@@ -67,8 +67,19 @@ class ReviewEngine:
 
     def __init__(self, config: Config):
         self.config = config
-        self.github_client = GitHubClient(config.github_token)
+        self._github_client: Optional[GitHubClient] = None
+        if config.github_token:
+            self._github_client = GitHubClient(config.github_token)
         self.ai_provider = self._create_ai_provider()
+
+    @property
+    def github_client(self) -> GitHubClient:
+        if self._github_client is None:
+            raise ValueError(
+                "GitHub client is not available. Set "
+                "SLAY_CHECK_GITHUB_TOKEN to use PR features."
+            )
+        return self._github_client
 
     def _create_ai_provider(self):
         """Create AI provider based on configuration."""
@@ -339,7 +350,13 @@ class ReviewEngine:
         self, file_reviews: List[FileReview], issues: List[Issue], score: float
     ) -> str:
         """Generate a summary of the review."""
-        summary = "## Code Review Summary\n\n"
+        provider_name = self.ai_provider.get_name()
+        model_name = getattr(self.ai_provider, "model", "")
+        provider_label = provider_name
+        if model_name:
+            provider_label = f"{provider_name} / {model_name}"
+
+        summary = f"## Code Review Summary ({provider_label})\n\n"
         summary += f"**Overall Score:** {score:.1f}/10\n\n"
         summary += f"**Files Reviewed:** {len(file_reviews)}\n"
         summary += f"**Issues Found:** {len(issues)}\n\n"

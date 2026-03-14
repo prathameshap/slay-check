@@ -69,14 +69,7 @@ class OpenAIProvider(AIProvider):
             return self._parse_response(content)
 
         except Exception as e:
-            return ReviewResponse(
-                analysis=f"Error during review: {str(e)}",
-                score=5.0,
-                issues=[],
-                suggestions=[],
-                complexity=Complexity(),
-                confidence=0.0,
-            )
+            raise RuntimeError(f"OpenAI API error: {e}") from e
 
     def _build_prompt(self, request: ReviewRequest) -> str:
         """Build the prompt for code review."""
@@ -220,25 +213,4 @@ class OpenAIProvider(AIProvider):
             )
 
         except (json.JSONDecodeError, ValueError, KeyError) as e:
-            # If JSON parsing fails, try to extract information from text
-            print(f"JSON parsing failed: {e}")
-            print(f"AI Response: {content[:500]}...")
-
-            # Try to extract score from text
-            score = 7.0
-            if "score" in content.lower():
-                import re
-
-                score_match = re.search(r"score[:\s]*(\d+\.?\d*)", content.lower())
-                if score_match:
-                    score = float(score_match.group(1))
-
-            # Create a basic response with the raw analysis
-            return ReviewResponse(
-                analysis=content,
-                score=score,
-                issues=[],  # No specific issues extracted
-                suggestions=[],  # No specific suggestions extracted
-                complexity=Complexity(),
-                confidence=0.5,  # Lower confidence due to parsing failure
-            )
+            raise RuntimeError(f"Failed to parse OpenAI response as JSON: {e}") from e
