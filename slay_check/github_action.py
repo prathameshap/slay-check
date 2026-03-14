@@ -53,7 +53,13 @@ def main():
         logger.info("Overall score: %.1f/10", result.score)
         logger.info("Duration: %.2fs", result.duration)
 
-        if not config.dry_run:
+        output_file = os.getenv("SLAY_CHECK_OUTPUT_FILE")
+        if output_file:
+            body = review_engine._build_single_comment_body(result)
+            with open(output_file, "w", encoding="utf-8") as f:
+                f.write(body)
+            logger.info("Review written to %s", output_file)
+        elif not config.dry_run:
             review_engine.post_review_comments(repo, pr_number, result)
             logger.info("Review comments posted to pull request")
         else:
