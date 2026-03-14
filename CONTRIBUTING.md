@@ -40,8 +40,8 @@ git rebase origin/main   # or: git merge origin/main
 git clone https://github.com/your-username/slay-check.git
 cd slay-check
 
-# Install in development mode
-pip install -e .
+# Install in development mode (includes dev tools: pytest, black, flake8, etc.)
+pip install -e ".[dev]"
 
 # Set up environment (see README for full config: preset, focus, defaults)
 export SLAY_CHECK_AI_TOKEN="your-test-token"
@@ -87,10 +87,7 @@ pytest
 pytest --cov=slay_check
 
 # Test CLI
-python -m slay_check.cli --help
-
-# Test GitHub Action
-python -m slay_check.github_action --help
+slay-check --help
 ```
 
 ### 5. Update Documentation
@@ -305,7 +302,6 @@ We follow [Semantic Versioning](https://semver.org/):
 ## Recognition
 
 Contributors will be recognized in:
-- README.md contributors section
 - Release notes
 - GitHub contributors page
 

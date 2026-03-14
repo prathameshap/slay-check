@@ -5,24 +5,22 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "slay-check"
 version = "1.0.0"
-description = "AI-powered code review tool for GitHub Actions"
+description = "AI-powered code review for GitHub Actions and local development"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.11"
 license = {text = "AGPL-3.0"}
 authors = [
     {name = "Slay Check Team", email = "team@slay-check.dev"},
 ]
-keywords = ["ai", "code-review", "github-actions", "openai", "anthropic"]
+keywords = ["ai", "code-review", "github-actions", "openai", "anthropic", "ollama", "github-models"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: GNU Affero General Public License v3",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Quality Assurance",
     "Topic :: Software Development :: Testing",
 ]
@@ -70,7 +68,7 @@ license-files = ["LICENSE-AGPL"]
 
 [tool.black]
 line-length = 88
-target-version = ['py38']
+target-version = ['py311']
 include = '\.pyi?$'
 extend-exclude = '''
 /(
@@ -93,7 +91,7 @@ line_length = 88
 known_first_party = ["slay_check"]
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.11"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true

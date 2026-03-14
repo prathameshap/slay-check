@@ -14,6 +14,8 @@ from slay_check.ai.base import (
     Severity,
 )
 from slay_check.ai.custom_http import CustomHTTPProvider
+from slay_check.ai.github_models import GitHubModelsProvider
+from slay_check.ai.ollama import OllamaProvider
 from slay_check.ai.openai import OpenAIProvider
 from slay_check.ai.perplexity import PerplexityProvider
 
@@ -134,4 +136,29 @@ def test_custom_http_provider():
     assert provider.is_available() is True
 
     provider_empty = CustomHTTPProvider(endpoint="")
+    assert provider_empty.is_available() is False
+
+
+def test_ollama_provider():
+    """Test Ollama provider instantiation and metadata."""
+    provider = OllamaProvider(model="llama3")
+
+    assert provider.get_name() == "ollama"
+    assert provider.model == "llama3"
+    assert provider.base_url == "http://localhost:11434/v1"
+
+    # is_available makes a real HTTP call; without a running Ollama
+    # instance it should return False (not raise).
+    assert provider.is_available() is False
+
+
+def test_github_models_provider():
+    """Test GitHub Models provider."""
+    provider = GitHubModelsProvider("ghp_test-token", "gpt-4o")
+
+    assert provider.get_name() == "github"
+    assert provider.is_available() is True
+    assert provider.model == "gpt-4o"
+
+    provider_empty = GitHubModelsProvider("")
     assert provider_empty.is_available() is False

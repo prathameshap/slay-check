@@ -1,335 +1,146 @@
 # Local Development Guide
 
-This guide covers how to use Slay Check for local development and testing.
+How to use Slay Check on your machine (no GitHub Actions required).
 
 ## Prerequisites
 
-- Python 3.11 or later
+- Python 3.11+
 - Git
-- AI provider API token (OpenAI, Anthropic, Google AI)
-- GitHub personal access token (for PR reviews)
+- **One of:**
+  - **Ollama** (free, local) — [install Ollama](https://ollama.com), then `ollama pull llama3`. No API key needed.
+  - **GitHub Models** (free) — uses your existing GitHub PAT.
+  - AI provider API key (OpenAI, Anthropic, Google AI, Perplexity)
+- GitHub personal access token (only needed for `--pr` reviews, **not** for `--local`)
 
 ## Installation
 
-### Option 1: Install from GitHub
-
 ```bash
-pip install git+https://github.com/YOUR_USERNAME/slay-check.git
-```
+# Option 1 — install from GitHub (recommended)
+pip install git+https://github.com/prathameshap/slay-check.git
 
-### Option 2: Build from Source
-
-```bash
-git clone https://github.com/YOUR_USERNAME/slay-check.git
+# Option 2 — editable install for contributing
+git clone https://github.com/prathameshap/slay-check.git
 cd slay-check
-pip install -e .
+pip install -e ".[dev]"
 ```
 
-## Configuration
+## Set tokens
 
-### 1. Initialize Configuration
+**macOS / Linux:**
+
+```bash
+export SLAY_CHECK_AI_TOKEN="your-ai-key"
+export SLAY_CHECK_GITHUB_TOKEN="your-github-pat"   # only for --pr reviews
+```
+
+**Windows (PowerShell):**
+
+```powershell
+$env:SLAY_CHECK_AI_TOKEN = "your-ai-key"
+$env:SLAY_CHECK_GITHUB_TOKEN = "your-github-pat"
+```
+
+Or create a `.env` file in your project root (auto-loaded by Slay Check):
+
+```
+SLAY_CHECK_AI_TOKEN=your-ai-key
+SLAY_CHECK_GITHUB_TOKEN=your-github-pat
+```
+
+To avoid re-exporting in every terminal, set them in your IDE:
+**VS Code / Cursor** → Settings → search "terminal env" → add tokens to `terminal.integrated.env.*`.
+
+## Usage
+
+### Free local reviews (no API key)
+
+**Ollama (completely free, offline):**
+
+```bash
+ollama pull llama3                     # download model once
+export SLAY_CHECK_AI_PROVIDER=ollama   # or set in slay-check.yaml
+slay-check review --local
+```
+
+**GitHub Models (free with GitHub account):**
+
+```bash
+export SLAY_CHECK_AI_PROVIDER=github
+export SLAY_CHECK_AI_TOKEN="ghp_your-github-pat"
+slay-check review --local
+```
+
+### Review local changes (no GitHub token needed)
+
+```bash
+# Unstaged changes (git diff)
+slay-check review --local
+
+# Staged changes (git diff --cached)
+slay-check review --local --staged
+
+# Both default to --dry-run (no posting)
+```
+
+### Review a pull request
+
+```bash
+slay-check review --repo owner/repo --pr 42
+slay-check review --repo owner/repo --pr 42 --dry-run --verbose
+```
+
+### Initialize config (interactive wizard)
 
 ```bash
 slay-check config init
 ```
 
-This creates a `slay-check.yaml` file in your current directory.
+## Configuration
 
-### 2. Set Environment Variables
+See [README — Configuration](https://github.com/prathameshap/slay-check#configuration) for presets, focus lists, and full YAML reference.
 
-```bash
-export SLAY_CHECK_AI_TOKEN="your-ai-token"
-export SLAY_CHECK_GITHUB_TOKEN="your-github-token"
-```
-
-Or create a `.env` file:
-
-```bash
-SLAY_CHECK_AI_TOKEN=your-ai-token
-SLAY_CHECK_GITHUB_TOKEN=your-github-token
-```
-
-### 3. Customize Configuration
-
-Edit `slay-check.yaml` to match your preferences.
-
-**Easy: preset or focus**
+Quick example:
 
 ```yaml
-ai_provider: openai
-# One-word preset: full | standard | minimal | security | performance
-review_preset: security
-# Or pick only these: review_focus: [security, performance, complexity]
-```
-
-**Full control:** set each criterion explicitly:
-
-```yaml
-ai_provider: openai
-review_criteria:
-  analyze_problem: true
-  algorithm_analysis: true
-  best_approaches: true
-  complexity_analysis: true
-  risk_assessment: true
-  security_review: true
-  performance_review: true
-
-exclude_patterns:
-  - "*.md"
-  - "*.txt"
-  - "vendor/*"
-  - "testdata/*"
-  - "__pycache__/*"
-  - "*.pyc"
-
-max_file_size: 5000
-max_files_per_pr: 20
+review_preset: security      # or: full, standard, minimal, performance
+dry_run: true                 # safe for local dev
 verbose: true
-dry_run: true  # Don't post comments during development
-```
-
-**Defaults:** If you don't set `review_preset` or `review_focus`, the default is full (all criteria on). Other defaults: `max_file_size: 10000`, `max_files_per_pr: 50`, `min_score_threshold: 6.0`, `critical_issues_limit: 3`, `max_tokens: 4000`, `temperature: 0.3`. See [README Configuration](https://github.com/prathameshap/slay-check#configuration).
-
-## Usage
-
-### Review Local Changes
-
-Review your current git changes:
-
-```bash
-slay-check review --local
-```
-
-This will:
-1. Get the current git diff
-2. Analyze changed files
-3. Display review results
-4. Not post any comments (dry run mode)
-
-### Review Specific Pull Request
-
-```bash
-slay-check review --pr 123 --repo owner/repo
-```
-
-### Review with Custom Branches
-
-```bash
-slay-check review --base main --head feature-branch
-```
-
-### Verbose Output
-
-Get detailed information about the review process:
-
-```bash
-slay-check review --pr 123 --verbose
-```
-
-## Development Workflow
-
-### 1. Make Changes
-
-```bash
-git checkout -b feature/new-feature
-# Make your changes
-git add .
-git commit -m "Add new feature"
-```
-
-### 2. Review Before Push
-
-```bash
-slay-check review --local
-```
-
-### 3. Push and Create PR
-
-```bash
-git push origin feature/new-feature
-# Create PR on GitHub
-```
-
-### 4. Review PR
-
-```bash
-slay-check review --pr 123 --repo owner/repo
-```
-
-## Configuration Examples
-
-### Development Configuration
-
-```yaml
-ai_provider: openai
-review_preset: minimal   # or review_focus: [security, performance]
-exclude_patterns:
-  - "*.md"
-  - "*.txt"
-  - "vendor/*"
-  - "testdata/*"
-  - "__pycache__/*"
-  - "*.pyc"
-max_file_size: 5000
-max_files_per_pr: 20
-verbose: true
-dry_run: true
-min_score_threshold: 5.0
-critical_issues_limit: 10
-```
-
-### Production Configuration
-
-```yaml
-ai_provider: openai
-review_preset: standard   # or omit for full
-exclude_patterns:
-  - "*.md"
-  - "*.txt"
-  - "vendor/*"
-  - "node_modules/*"
-  - "*.min.js"
-  - "*.min.css"
-  - "__pycache__/*"
-  - "*.pyc"
-max_file_size: 10000
-max_files_per_pr: 50
-verbose: false
-dry_run: false
-min_score_threshold: 7.0
-critical_issues_limit: 3
-```
-
-### Security-Focused Configuration
-
-```yaml
-ai_provider: anthropic
-review_preset: security   # security + risk only
-exclude_patterns:
-  - "*.md"
-  - "*.txt"
-  - "vendor/*"
-  - "testdata/*"
-  - "__pycache__/*"
-  - "*.pyc"
-max_file_size: 15000
-max_files_per_pr: 30
-verbose: true
-dry_run: false
-min_score_threshold: 8.0
-critical_issues_limit: 1
 ```
 
 ## Troubleshooting
 
-### Common Issues
+| Error | Fix |
+|-------|-----|
+| `AI token is required` | Set `SLAY_CHECK_AI_TOKEN` (env var or `.env`). |
+| `GitHub token is required` | Set `SLAY_CHECK_GITHUB_TOKEN`, or use `--local` which doesn't need it. |
+| `No files to review` | Check `exclude_patterns` in config; try `--verbose`. |
+| `Provider not found` | Verify `ai_provider` in `slay-check.yaml`. Supported: `openai`, `anthropic`, `google`, `perplexity`, `ollama`, `github`, `custom_http`. |
+| API rate limits | Reduce `max_files_per_pr` or switch provider. |
 
-#### 1. "AI token is required"
-
-Make sure you've set the `SLAY_CHECK_AI_TOKEN` environment variable:
-
-```bash
-export SLAY_CHECK_AI_TOKEN="your-token"
-```
-
-#### 2. "GitHub token is required"
-
-Set the `SLAY_CHECK_GITHUB_TOKEN` environment variable:
+### Debug mode
 
 ```bash
-export SLAY_CHECK_GITHUB_TOKEN="your-token"
+slay-check review --pr 42 --repo owner/repo --verbose --dry-run
 ```
 
-#### 3. "Provider not found"
+## IDE integration
 
-Check your `ai_provider` setting in `slay-check.yaml`. Supported providers:
-- `openai`
-- `anthropic`
-- `google`
-- `perplexity`
-- `cursor`, `http`, `custom_http` (custom endpoints)
-
-#### 4. "No files to review"
-
-This can happen if:
-- All files are excluded by patterns
-- Files are too large (exceed `max_file_size`)
-- No changes detected
-
-Check your configuration and try with `--verbose` flag.
-
-#### 5. API Rate Limits
-
-If you hit rate limits:
-- Reduce `max_files_per_pr`
-- Increase delays between requests
-- Use a different AI provider
-
-### Debug Mode
-
-Enable debug logging:
-
-```bash
-export SLAY_CHECK_VERBOSE=true
-slay-check review --pr 123 --verbose
-```
-
-### Dry Run Mode
-
-Test without posting comments:
-
-```bash
-export SLAY_CHECK_DRY_RUN=true
-slay-check review --pr 123
-```
-
-## Best Practices
-
-### 1. Use Dry Run for Development
-
-Always use `dry_run: true` when developing locally to avoid posting comments.
-
-### 2. Set Appropriate Limits
-
-Adjust `max_file_size` and `max_files_per_pr` based on your project size.
-
-### 3. Exclude Unnecessary Files
-
-Add patterns to `exclude_patterns` to skip files that don't need review.
-
-### 4. Use Different Configurations
-
-Create different configurations for different environments (dev, staging, prod).
-
-### 5. Monitor Performance
-
-Use `--verbose` flag to monitor review performance and identify bottlenecks.
-
-## Integration with IDEs
-
-### VS Code
-
-Add to your VS Code settings:
+### VS Code / Cursor
 
 ```json
 {
   "terminal.integrated.env.osx": {
     "SLAY_CHECK_AI_TOKEN": "your-token",
     "SLAY_CHECK_GITHUB_TOKEN": "your-token"
+  },
+  "terminal.integrated.env.windows": {
+    "SLAY_CHECK_AI_TOKEN": "your-token",
+    "SLAY_CHECK_GITHUB_TOKEN": "your-token"
   }
 }
 ```
 
-### JetBrains IDEs
-
-Add environment variables in Run/Debug configurations.
-
-## Scripts and Automation
-
-### Pre-commit Hook
-
-Create `.git/hooks/pre-commit`:
+### Pre-commit hook
 
 ```bash
 #!/bin/bash
@@ -338,14 +149,4 @@ if [ $? -ne 0 ]; then
   echo "Review failed. Please fix issues before committing."
   exit 1
 fi
-```
-
-### CI/CD Integration
-
-Use in your CI pipeline:
-
-```yaml
-- name: Run Slay Check
-  run: |
-    slay-check review --pr ${{ github.event.pull_request.number }} --repo ${{ github.repository }}
 ```

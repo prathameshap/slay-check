@@ -7,7 +7,10 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 import yaml
+from dotenv import load_dotenv
 from pydantic import BaseModel, Field
+
+load_dotenv()
 
 # Presets: choose what to review with one word.
 REVIEW_PRESETS: Dict[str, Dict[str, bool]] = {
@@ -253,22 +256,46 @@ class Config(BaseModel):
             require_github_token: When False, skip GitHub token requirement (useful for
                 local-only flows that do not call the GitHub API).
         """
-        if not self.ai_token:
-            raise ValueError("AI token is required")
+        # Ollama runs locally and needs no API key.
+        # GitHub Models can fall back to the GitHub token.
+        if self.ai_provider == "ollama":
+            pass  # no token needed
+        elif self.ai_provider in ("github", "github_models"):
+            if not self.ai_token and not self.github_token:
+                raise ValueError(
+                    "GitHub Models requires a GitHub PAT. Set "
+                    "SLAY_CHECK_AI_TOKEN or SLAY_CHECK_GITHUB_TOKEN."
+                )
+        elif not self.ai_token:
+            raise ValueError(
+                "AI token is required. Set SLAY_CHECK_AI_TOKEN as an "
+                "environment variable, in .env, or in slay-check.yaml."
+            )
 
         if require_github_token and not self.github_token:
-            raise ValueError("GitHub token is required")
+            raise ValueError(
+                "GitHub token is required for PR reviews. Set "
+                "SLAY_CHECK_GITHUB_TOKEN, or use --local to review "
+                "without it."
+            )
 
-        if self.ai_provider not in [
+        supported = [
             "openai",
             "anthropic",
             "google",
             "perplexity",
+            "ollama",
+            "github",
+            "github_models",
             "cursor",
             "http",
             "custom_http",
-        ]:
-            raise ValueError(f"Unsupported AI provider: {self.ai_provider}")
+        ]
+        if self.ai_provider not in supported:
+            raise ValueError(
+                f"Unsupported AI provider: '{self.ai_provider}'. "
+                f"Supported: {', '.join(supported)}"
+            )
 
         if self.temperature < 0.0 or self.temperature > 1.0:
             raise ValueError("Temperature must be between 0.0 and 1.0")

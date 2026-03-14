@@ -6,6 +6,7 @@ from unittest.mock import Mock, patch
 
 from click.testing import CliRunner
 
+from slay_check import __version__
 from slay_check.cli import cli, config, review
 
 
@@ -15,7 +16,7 @@ def test_cli_version():
     result = runner.invoke(cli, ["version"])
 
     assert result.exit_code == 0
-    assert "Slay Check v1.0.0" in result.output
+    assert f"Slay Check v{__version__}" in result.output
 
 
 def test_config_init():
@@ -70,16 +71,17 @@ def test_review_local():
         result = runner.invoke(review, ["--local"])
 
         assert result.exit_code == 0
-        assert "Reviewing local changes" in result.output
+        assert "Reviewing" in result.output and "local changes" in result.output
 
 
 def test_review_pr():
     """Test review PR command."""
     runner = CliRunner()
 
-    with patch("slay_check.cli.Config.load") as mock_load, patch(
-        "slay_check.cli.ReviewEngine"
-    ) as mock_engine:
+    with (
+        patch("slay_check.cli.Config.load") as mock_load,
+        patch("slay_check.cli.ReviewEngine") as mock_engine,
+    ):
 
         mock_config = Mock()
         mock_config.validate.return_value = None

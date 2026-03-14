@@ -7,13 +7,15 @@
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://python.org)
 [![License](https://img.shields.io/badge/license-AGPL%20v3-green.svg)](LICENSE-AGPL)
 [![CI](https://github.com/prathameshap/slay-check/actions/workflows/ci.yml/badge.svg)](https://github.com/prathameshap/slay-check/actions/workflows/ci.yml)
+[![AI Code Review](https://img.shields.io/badge/AI%20Code%20Review-Slay%20Check-purple.svg)](https://github.com/prathameshap/slay-check)
 [![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-ready-orange.svg)](.github/workflows)
 
-**Slay Check** gives you a single, comprehensive AI review comment on every pull request. It supports multiple AI providers (OpenAI, Anthropic, Google Gemini, Perplexity, and Custom HTTP) with configurable criteria: problem analysis, algorithm review, complexity, and risk evaluation.
+**Slay Check** gives you a single, comprehensive AI review comment on every pull request. It supports multiple AI providers (OpenAI, Anthropic, Google Gemini, Perplexity, Ollama, GitHub Models, and Custom HTTP) with configurable criteria: problem analysis, algorithm review, complexity, and risk evaluation.
 
 ## Features
 
-- **Multi-AI Support**: OpenAI GPT-4, Anthropic Claude, Google Gemini, Perplexity AI
+- **Multi-AI Support**: OpenAI, Anthropic, Google Gemini, Perplexity, Ollama (local/free), GitHub Models (free), Custom HTTP
+- **Free local reviews**: Use Ollama (no API key, runs on your machine) or GitHub Models (free with your GitHub account)
 - **GitHub Actions Ready**: Automated PR reviews
 - **Single comment**: Full review (summary + per-file details) in one PR comment
 - **CLI Interface**: Local development support
@@ -48,10 +50,67 @@ Workflows use `cache: 'pip'` so dependencies are reused between runs. This short
 **Where the review appears**  
 Slay Check posts **one comment** per PR. By default it’s an **issue comment** (main conversation under "Conversation"). To use a **PR review** comment instead, set `use_issue_comments: false` in `slay-check.yaml`.
 
+<details>
+<summary><strong>Example review comment (click to expand)</strong></summary>
+
+```
+## Code Review Summary
+
+**Overall Score:** 7.5/10
+
+**Files Reviewed:** 3
+**Issues Found:** 2
+
+### Issues by Severity
+- **Medium:** 1
+- **Low:** 1
+
+### Top Suggestions
+- Consider using a constant for the retry limit
+- Add input validation for the timeout parameter
+
+---
+
+### Per-file details
+
+#### src/client.py (score: 7.0/10)
+
+The HTTP client handles retries but does not validate timeout values.
+
+**Issues:**
+- **[medium]** performance (line 42): Unbounded retry loop may cause hangs
+  - Suggestion: Add a max-retry constant and backoff strategy
+
+**Suggestions:**
+- Extract magic numbers into named constants
+```
+
+</details>
+
 ### Local Development
 
 **PyPI status**  
 Slay Check is **not published to PyPI** yet. Install it from GitHub (or install editable for development) using the commands below.
+
+**Free options (no API key needed):**
+
+| Method | Setup | Command |
+|--------|-------|---------|
+| **Ollama** (completely free, offline) | [Install Ollama](https://ollama.com), then `ollama pull llama3` | `slay-check review --local` with `ai_provider: ollama` |
+| **GitHub Models** (free with GitHub account) | Use your existing GitHub PAT | `slay-check review --local` with `ai_provider: github` |
+
+```bash
+# Ollama — zero cost, runs on your machine
+pip install git+https://github.com/prathameshap/slay-check.git
+ollama pull llama3            # download a model (once)
+export SLAY_CHECK_AI_PROVIDER=ollama
+slay-check review --local     # no API key required
+
+# GitHub Models — free, uses your GitHub PAT
+export SLAY_CHECK_AI_PROVIDER=github
+export SLAY_CHECK_AI_TOKEN="ghp_your-github-pat"
+slay-check review --local
+```
 
 **From VS Code or Cursor**  
 Open the integrated terminal and run Slay Check from your project (or from a clone of this repo):
@@ -76,8 +135,25 @@ slay-check review --repo owner/repo --pr 42
 To avoid re-exporting tokens in every terminal, you can set them in the IDE: **VS Code** → Settings → search “terminal env” → add `SLAY_CHECK_AI_TOKEN` and `SLAY_CHECK_GITHUB_TOKEN` to `terminal.integrated.env.*`. In **Cursor**, the same settings apply. There is no VS Code/Cursor extension yet; the CLI is the way to “call” the repo from the IDE.
 
 ```bash
-# Review local changes (no GitHub token required)
-slay-check review --local --dry-run
+# Review local unstaged changes (no GitHub token required)
+slay-check review --local
+
+# Review staged changes only
+slay-check review --local --staged
+```
+
+You can also create a `.env` file in your project root instead of exporting:
+
+```
+SLAY_CHECK_AI_TOKEN=your-ai-key
+SLAY_CHECK_GITHUB_TOKEN=your-github-pat
+```
+
+**Windows (PowerShell):**
+
+```powershell
+$env:SLAY_CHECK_AI_TOKEN = "your-ai-key"
+$env:SLAY_CHECK_GITHUB_TOKEN = "your-github-pat"
 ```
 
 ## Configuration
@@ -118,8 +194,8 @@ Allowed focus names: `problem`, `algorithm`, `best_approaches`, `complexity`, `r
 
 ```yaml
 # AI Provider
-ai_provider: openai  # openai, anthropic, google, perplexity, custom_http
-ai_model: gpt-4o     # Model to use (e.g. gpt-4o, claude-3-sonnet-20240229, gemini-2.0-flash, sonar-pro)
+ai_provider: openai  # openai, anthropic, google, perplexity, ollama, github, custom_http
+ai_model: gpt-4o     # e.g. gpt-4o, claude-3-sonnet-20240229, gemini-2.0-flash, llama3, sonar-pro
 
 # Analysis Criteria (optional; use preset or focus above for simplicity)
 review_criteria:
@@ -158,8 +234,9 @@ For full configuration options (providers, custom HTTP, etc.), see [docs/github-
 | **Anthropic** | Claude 3 family (e.g. `claude-3-sonnet-20240229`) | Security and risk-focused analysis |
 | **Google AI** | Gemini family (e.g. `gemini-2.0-flash`) | Performance / efficiency analysis |
 | **Perplexity** | `sonar`, `sonar-pro`, `sonar-deep-research`, `sonar-reasoning-pro` | Fast, grounded code review |
-| **Cursor** | Use **Custom HTTP** with your Cursor-backed or internal gateway URL (see [Custom HTTP](docs/github-action.md#custom-http-provider)) | Teams using Cursor or Cursor-compatible endpoints |
-| **Custom HTTP** | Any HTTP endpoint that accepts the Slay Check review JSON and returns the standard response schema | Enterprise / internal models and gateways |
+| **Ollama** | Any local model (`llama3`, `codellama`, `mistral`, `deepseek-coder`, …). **No API key, no cost.** | Free local reviews, air-gapped environments |
+| **GitHub Models** | `gpt-4o`, `Llama-3.1-8B-Instruct`, `Mistral-large`, … **Free with a GitHub account.** Uses your GitHub PAT. | Free cloud reviews for GitHub users |
+| **Custom HTTP** | Any HTTP endpoint (including Cursor-backed gateways). Set `ai_provider: custom_http` (aliases: `http`, `cursor`) | Enterprise / internal models and gateways |
 
 ## Documentation
 
@@ -174,8 +251,6 @@ For full configuration options (providers, custom HTTP, etc.), see [docs/github-
 | Fork or contribute | [CONTRIBUTING.md](CONTRIBUTING.md) |
 
 **More:** [AI Response Control](docs/ai-response-control.md) · [Forking Guide](docs/forking-guide.md)
-
-**Open source & project health:** Security and best-practice scores are tracked by [OpenSSF Scorecard](https://scorecard.dev/viewer/?uri=github.com/prathameshap/slay-check). Results run on every push to `main` and weekly; the badge above links to the latest report.
 
 ## Development
 

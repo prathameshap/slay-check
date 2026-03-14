@@ -76,6 +76,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+          cache: 'pip'
           
       - name: Install Slay Check from fork
         run: |
@@ -123,6 +124,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+          cache: 'pip'
           
       - name: Install Slay Check from fork
         run: |
@@ -324,6 +326,7 @@ repository: YOUR_USERNAME/slay-check  # Make sure this is correct
   uses: actions/setup-python@v4
   with:
     python-version: '3.11'  # Match your fork's Python version
+    cache: 'pip'
 ```
 
 #### 4. Token Issues

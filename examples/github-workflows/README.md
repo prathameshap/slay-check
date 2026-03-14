@@ -12,7 +12,7 @@ Each file is a ready-to-use workflow for a single AI provider. Pick the one that
 |------|----------|-----------------|---------------|
 | **slay-check-anthropic.yml** | Anthropic (Claude) | `ANTHROPIC_API_KEY` | `claude-3-sonnet-20240229` |
 | **slay-check-openai.yml** | OpenAI | `OPENAI_API_KEY` | `gpt-4o` |
-| **slay-check-google.yml** | Google AI (Gemini) | `GOOGLE_AI_API_KEY` | `gemini-pro` |
+| **slay-check-google.yml** | Google AI (Gemini) | `GOOGLE_AI_API_KEY` | `gemini-2.0-flash` |
 | **slay-check-perplexity.yml** | Perplexity AI | `PERPLEXITY_API_KEY` | `sonar-pro` |
 | **slay-check-custom-http.yml** | Custom HTTP endpoint | `SLAY_CHECK_AI_TOKEN` (optional) | — |
 

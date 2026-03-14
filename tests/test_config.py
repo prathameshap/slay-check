@@ -60,7 +60,25 @@ def test_config_validation():
     with pytest.raises(ValueError, match="AI token is required"):
         config.validate()
 
+    # Ollama should pass without any token
+    config.ai_provider = "ollama"
+    config.ai_token = ""
+    config.github_token = "gh-token"
+    config.validate()  # should not raise
+
+    # GitHub Models should accept github_token as fallback
+    config.ai_provider = "github"
+    config.ai_token = ""
+    config.github_token = "gh-token"
+    config.validate()  # should not raise
+
+    # GitHub Models with no token at all should fail
+    config.github_token = ""
+    with pytest.raises(ValueError, match="GitHub Models requires"):
+        config.validate()
+
     # Test missing GitHub token
+    config.ai_provider = "openai"
     config.ai_token = "test-token"
     config.github_token = ""
     with pytest.raises(ValueError, match="GitHub token is required"):

@@ -54,7 +54,7 @@ Add these secrets to your repository:
 You can set these as repository variables:
 
 - `SLAY_CHECK_AI_PROVIDER`: AI provider to use (default: `openai`)  
-  - Supported values: `openai`, `anthropic`, `google`, `perplexity`, `cursor`, `http` (custom HTTP endpoint)
+  - Supported values: `openai`, `anthropic`, `google`, `perplexity`, `ollama`, `github` (GitHub Models), `custom_http` (aliases: `http`, `cursor`)
 - `SLAY_CHECK_AI_MODEL`: Model name/ID for the chosen provider (e.g. `gpt-4o`, `claude-3-sonnet-20240229`, `gemini-pro`, `sonar-pro` for Perplexity)
 - `SLAY_CHECK_AI_BASE_URL`: Custom API base URL (used for OpenAI-/Anthropic-compatible or custom HTTP endpoints)
 - `SLAY_CHECK_VERBOSE`: Enable verbose logging (default: `false`)
@@ -85,7 +85,7 @@ review_focus:
 **Full control:** set each criterion explicitly:
 
 ```yaml
-ai_provider: openai  # openai | anthropic | google | perplexity | cursor | http
+ai_provider: openai  # openai | anthropic | google | perplexity | ollama | github | custom_http
 review_criteria:
   analyze_problem: true
   algorithm_analysis: true
@@ -121,24 +121,12 @@ ai_token: <PERPLEXITY_API_KEY>
 
 Set `SLAY_CHECK_AI_PROVIDER=perplexity` and `SLAY_CHECK_AI_MODEL=sonar-pro` (or use `slay-check.yaml` as above).
 
-#### Cursor
-
-Cursor does not expose a simple “chat completion” API; it offers [Cloud Agents](https://cursor.com/docs/cloud-agent/api/overview) for repo-level tasks. To use a Cursor-backed or internal gateway that returns Slay Check–style JSON, use the **Custom HTTP** provider:
-
-```yaml
-ai_provider: cursor
-ai_base_url: https://your-cursor-gateway.example.com/review
-ai_token: <your-token>
-```
-
-Slay Check will `POST` the same JSON as for [Custom HTTP](#custom-http-provider) and expect the same response shape.
-
 #### Custom HTTP provider
 
-To use a completely custom HTTP API for reviews, set:
+Use `custom_http` (aliases `http` and `cursor` also work) to point at any HTTP endpoint, including Cursor-backed or internal gateways:
 
 ```yaml
-ai_provider: http
+ai_provider: custom_http
 ai_base_url: https://your-internal-endpoint.example.com/review
 ai_token: your-internal-api-token  # optional; sent as Authorization: Bearer <token>
 ```
@@ -189,7 +177,7 @@ Your endpoint should return JSON in the standard review format:
 - **Single comment**: Full review (summary + per-file issues and suggestions) in one PR comment
 - **Automated Reviews**: Runs on every pull request
 - **Configurable Criteria**: Customize what gets reviewed
-- **Multiple AI Providers**: OpenAI, Anthropic, Google AI, Perplexity, Cursor (custom HTTP), and any custom HTTP endpoint
+- **Multiple AI Providers**: OpenAI, Anthropic, Google AI, Perplexity, Ollama, GitHub Models, and custom HTTP
 - **Smart Filtering**: Exclude files and patterns you don't want reviewed
 - **Performance Limits**: Control file size and count limits
 - **Score Thresholds**: Set minimum scores and issue limits

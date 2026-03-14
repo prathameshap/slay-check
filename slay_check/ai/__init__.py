@@ -15,6 +15,8 @@ from .base import (
     Severity,
 )
 from .custom_http import CustomHTTPProvider
+from .github_models import GitHubModelsProvider
+from .ollama import OllamaProvider
 from .openai import OpenAIProvider
 from .perplexity import PerplexityProvider
 
@@ -36,4 +38,6 @@ __all__ = [
     "GoogleAIProvider",
     "PerplexityProvider",
     "CustomHTTPProvider",
+    "OllamaProvider",
+    "GitHubModelsProvider",
 ]

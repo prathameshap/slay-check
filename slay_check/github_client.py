@@ -2,10 +2,13 @@
 GitHub integration for Slay Check.
 """
 
+import logging
 from typing import List, Optional
 
 from github import Github
 from pydantic import BaseModel
+
+logger = logging.getLogger(__name__)
 
 
 class PullRequestInfo(BaseModel):
@@ -112,7 +115,12 @@ class GitHubClient:
     ) -> None:
         """Post review comments to a pull request."""
         try:
-            print(f"Posting {len(comments)} comments to PR #{pr_number} in {repo}")
+            logger.info(
+                "Posting %d comments to PR #%d in %s",
+                len(comments),
+                pr_number,
+                repo,
+            )
 
             # Parse repository name
             owner, repo_name = repo.split("/", 1)
@@ -132,14 +140,20 @@ class GitHubClient:
                         path=comment.path,
                         line=comment.line,
                     )
-                    print(
-                        f"Posted comment {i}/{len(comments)} on "
-                        f"{comment.path}:{comment.line}"
+                    logger.info(
+                        "Posted comment %d/%d on %s:%d",
+                        i,
+                        len(comments),
+                        comment.path,
+                        comment.line,
                     )
                 except Exception as e:
-                    print(
-                        f"Failed to post comment {i} on {comment.path}:"
-                        f"{comment.line}: {e}"
+                    logger.warning(
+                        "Failed to post comment %d on %s:%d: %s",
+                        i,
+                        comment.path,
+                        comment.line,
+                        e,
                     )
                     continue
 
@@ -151,7 +165,7 @@ class GitHubClient:
     ) -> None:
         """Create a pull request review."""
         try:
-            print(f"Creating review for PR #{pr_number} in {repo}")
+            logger.info("Creating review for PR #%d in %s", pr_number, repo)
 
             # Parse repository name
             owner, repo_name = repo.split("/", 1)
@@ -164,7 +178,7 @@ class GitHubClient:
 
             # Create review
             review = pr.create_review(body=body, event=event)
-            print(f"Created review with ID: {review.id}")
+            logger.info("Created review with ID: %s", review.id)
 
         except Exception as e:
             raise Exception(f"Failed to create review: {str(e)}")
@@ -172,7 +186,7 @@ class GitHubClient:
     def create_issue_comment(self, repo: str, pr_number: int, body: str) -> None:
         """Create a regular issue comment (more visible than reviews)."""
         try:
-            print(f"Creating issue comment for PR #{pr_number} in {repo}")
+            logger.info("Creating issue comment for PR #%d in %s", pr_number, repo)
 
             # Parse repository name
             owner, repo_name = repo.split("/", 1)
@@ -185,7 +199,7 @@ class GitHubClient:
 
             # Create issue comment
             comment = pr.create_issue_comment(body)
-            print(f"Created issue comment with ID: {comment.id}")
+            logger.info("Created issue comment with ID: %s", comment.id)
 
         except Exception as e:
             raise Exception(f"Failed to create issue comment: {str(e)}")

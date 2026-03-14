@@ -10,6 +10,8 @@ from typing import Any, List, Optional
 from .ai.anthropic import AnthropicProvider
 from .ai.base import Issue, ReviewRequest
 from .ai.custom_http import CustomHTTPProvider
+from .ai.github_models import GitHubModelsProvider
+from .ai.ollama import OllamaProvider
 from .ai.openai import OpenAIProvider
 from .ai.perplexity import PerplexityProvider
 from .config import Config
@@ -100,6 +102,24 @@ class ReviewEngine:
                 api_key=self.config.ai_token,
                 model=self.config.ai_model or "sonar-pro",
                 base_url=self.config.ai_base_url,
+            )
+        elif self.config.ai_provider == "ollama":
+            return OllamaProvider(
+                model=self.config.ai_model or "llama3",
+                base_url=self.config.ai_base_url or "http://localhost:11434/v1",
+            )
+        elif self.config.ai_provider in ("github", "github_models"):
+            token = self.config.ai_token or self.config.github_token
+            if not token:
+                raise ValueError(
+                    "GitHub Models requires a GitHub PAT. Set "
+                    "SLAY_CHECK_AI_TOKEN or SLAY_CHECK_GITHUB_TOKEN."
+                )
+            return GitHubModelsProvider(
+                api_key=token,
+                model=self.config.ai_model or "gpt-4o",
+                base_url=self.config.ai_base_url
+                or "https://models.inference.ai.azure.com",
             )
         elif self.config.ai_provider in ("cursor", "http", "custom_http"):
             return CustomHTTPProvider(
@@ -394,14 +414,14 @@ class ReviewEngine:
             body = self._build_single_comment_body(result)
 
             if self.config.use_issue_comments:
-                print("Posting full review as a single issue comment...")
+                logger.info("Posting full review as a single issue comment...")
                 self.github_client.create_issue_comment(repo, pr_number, body)
-                print("Review posted as single comment successfully")
+                logger.info("Review posted as single comment successfully")
             else:
-                print("Posting full review as a single review comment...")
+                logger.info("Posting full review as a single review comment...")
                 self.github_client.create_review(repo, pr_number, body, "COMMENT")
-                print("Review posted as single comment successfully")
+                logger.info("Review posted as single comment successfully")
 
         except Exception as e:
-            print(f"Error posting comment: {e}")
+            logger.error("Error posting comment: %s", e)
             raise

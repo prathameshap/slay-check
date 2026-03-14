@@ -34,6 +34,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+          cache: 'pip'
           
       - name: Install Slay Check from fork
         run: |
@@ -81,6 +82,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+          cache: 'pip'
           
       - name: Install Slay Check from fork
         run: |
@@ -127,6 +129,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+          cache: 'pip'
           
       - name: Install Slay Check from fork
         run: |
@@ -173,6 +176,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+          cache: 'pip'
           
       - name: Install Slay Check from fork
         run: |
@@ -220,6 +224,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+          cache: 'pip'
           
       - name: Install Slay Check from fork
         run: |
@@ -265,6 +270,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+          cache: 'pip'
           
       - name: Install Slay Check from fork
         run: |
@@ -310,6 +316,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+          cache: 'pip'
           
       - name: Install Slay Check from fork
         run: |
@@ -358,6 +365,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+          cache: 'pip'
           
       - name: Install Slay Check from fork
         run: |
@@ -395,6 +403,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+          cache: 'pip'
           
       - name: Install Slay Check from fork
         run: |
@@ -432,6 +441,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+          cache: 'pip'
           
       - name: Install Slay Check from fork
         run: |
@@ -489,6 +499,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+          cache: 'pip'
           
       - name: Install Slay Check
         run: |
@@ -536,6 +547,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+          cache: 'pip'
           
       - name: Copy custom configuration
         run: |
@@ -585,6 +597,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+          cache: 'pip'
           
       - name: Install Slay Check from fork
         run: |

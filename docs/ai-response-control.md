@@ -23,7 +23,7 @@ review_preset: security
 Control how long AI responses are:
 
 ```yaml
-# config/slay-check.yaml
+# slay-check.yaml
 max_tokens: 2000  # Shorter responses
 ```
 
@@ -38,7 +38,7 @@ max_tokens: 2000  # Shorter responses
 Control how strict/creative the AI is:
 
 ```yaml
-# config/slay-check.yaml
+# slay-check.yaml
 temperature: 0.1  # Very strict
 ```
 
@@ -54,7 +54,7 @@ temperature: 0.1  # Very strict
 Control how strict the review scoring is:
 
 ```yaml
-# config/slay-check.yaml
+# slay-check.yaml
 min_score_threshold: 8.0    # Very strict (default: 6.0)
 critical_issues_limit: 1    # Very strict (default: 3)
 ```
@@ -165,10 +165,10 @@ critical_issues_limit: 3
 # Test with strict settings
 export SLAY_CHECK_MAX_TOKENS="1000"
 export SLAY_CHECK_TEMPERATURE="0.1"
-python -m slay_check.cli review --local --dry-run
+slay-check review --local --dry-run
 
 # Test with lenient settings  
 export SLAY_CHECK_MAX_TOKENS="6000"
 export SLAY_CHECK_TEMPERATURE="0.5"
-python -m slay_check.cli review --local --dry-run
+slay-check review --local --dry-run
 ```

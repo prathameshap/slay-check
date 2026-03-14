@@ -12,6 +12,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
+from . import __version__
 from .config import Config
 from .github_client import PullRequestFileInfo, PullRequestInfo
 from .review import ReviewEngine
@@ -20,15 +21,24 @@ console = Console()
 
 
 @click.group()
-@click.version_option(version="1.0.0")
+@click.version_option(version=__version__)
 def cli():
-    """Slay Check - AI Code Review Tool"""
+    """Slay Check - AI-powered code review tool.
+
+    \b
+    Quick start:
+      slay-check review --local              # review unstaged git diff
+      slay-check review --local --staged     # review staged changes
+      slay-check review --repo o/r --pr 42   # review a GitHub PR
+      slay-check config init                 # create slay-check.yaml
+      slay-check config show                 # display current config
+    """
     pass
 
 
 @cli.group()
 def config():
-    """Configuration management"""
+    """Manage slay-check.yaml configuration."""
     pass
 
 
@@ -61,7 +71,15 @@ def init_config(path: str):
         provider = click.prompt(
             "AI provider",
             type=click.Choice(
-                ["openai", "anthropic", "google", "perplexity", "custom_http"],
+                [
+                    "openai",
+                    "anthropic",
+                    "google",
+                    "perplexity",
+                    "ollama",
+                    "github",
+                    "custom_http",
+                ],
                 case_sensitive=False,
             ),
             default="openai",
@@ -73,6 +91,8 @@ def init_config(path: str):
             "anthropic": "claude-3-sonnet-20240229",
             "google": "gemini-2.0-flash",
             "perplexity": "sonar-pro",
+            "ollama": "llama3",
+            "github": "gpt-4o",
             "custom_http": "",
         }.get(provider, "")
 
@@ -185,13 +205,34 @@ def show_config():
 @click.option("--pr", type=int, help="Pull request number to review")
 @click.option("--repo", help="Repository in format owner/repo")
 @click.option("--local", is_flag=True, help="Review local changes (git diff)")
+@click.option(
+    "--staged",
+    is_flag=True,
+    help="Review staged changes only (git diff --cached). Implies --local.",
+)
 @click.option("--verbose", is_flag=True, help="Enable verbose output")
 @click.option("--dry-run", is_flag=True, help="Don't post comments, just show results")
 def review(
-    pr: Optional[int], repo: Optional[str], local: bool, verbose: bool, dry_run: bool
+    pr: Optional[int],
+    repo: Optional[str],
+    local: bool,
+    staged: bool,
+    verbose: bool,
+    dry_run: bool,
 ):
-    """Review code changes"""
+    """Review code changes.
+
+    \b
+    Examples:
+      slay-check review --local                 # review unstaged changes
+      slay-check review --local --staged        # review staged changes
+      slay-check review --repo owner/repo --pr 42
+      slay-check review --repo o/r --pr 42 --dry-run --verbose
+    """
     try:
+        if staged:
+            local = True
+
         # Load configuration
         config = Config.load()
 
@@ -214,7 +255,7 @@ def review(
         config.validate(require_github_token=not local)
 
         if local:
-            review_local_changes(config)
+            review_local_changes(config, staged=staged)
         else:
             review_pull_request(config, repo, pr)
 
@@ -223,10 +264,11 @@ def review(
         sys.exit(1)
 
 
-def review_local_changes(config: Config):
+def review_local_changes(config: Config, *, staged: bool = False):
     """Review local git changes"""
-    console.print("[yellow]Reviewing local changes...[/yellow]")
-    diff = _get_local_git_diff()
+    label = "staged" if staged else "unstaged"
+    console.print(f"[yellow]Reviewing {label} local changes...[/yellow]")
+    diff = _get_local_git_diff(staged=staged)
     if not diff.strip():
         console.print("[green]No local changes detected (git diff is empty).[/green]")
         return
@@ -302,11 +344,14 @@ def review_local_changes(config: Config):
     console.print(summary)
 
 
-def _get_local_git_diff() -> str:
+def _get_local_git_diff(*, staged: bool = False) -> str:
     """Get the local git diff as a unified diff string."""
+    cmd = ["git", "diff", "--no-color"]
+    if staged:
+        cmd.append("--cached")
     try:
         result = subprocess.run(
-            ["git", "diff", "--no-color"],
+            cmd,
             check=False,
             capture_output=True,
             text=True,
@@ -407,7 +452,7 @@ def review_pull_request(config: Config, repo: str, pr_number: int):
 @cli.command("version")
 def version():
     """Show version information"""
-    console.print("Slay Check v1.0.0")
+    console.print(f"Slay Check v{__version__}")
     console.print("Built with Python")
 
 
