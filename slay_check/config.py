@@ -123,10 +123,8 @@ class Config(BaseModel):
     # AI Provider Configuration
     ai_provider: str = Field(default="openai", description="AI provider to use")
     ai_token: str = Field(default="", description="AI provider API token")
-    ai_model: Optional[str] = Field(default="gpt-4o", description="AI model to use")
-    ai_base_url: Optional[str] = Field(
-        default="https://api.openai.com/v1/", description="Custom API base URL"
-    )
+    ai_model: Optional[str] = Field(default=None, description="AI model to use")
+    ai_base_url: Optional[str] = Field(default=None, description="Custom API base URL")
 
     # GitHub Configuration
     github_token: str = Field(default="", description="GitHub personal access token")
