@@ -1,9 +1,10 @@
 # Slay Check — run every configured AI provider in parallel.
 # Each job posts its own PR comment so you can compare reviews side-by-side.
 #
-# Required secrets (add only the ones you want to use):
+# Required secrets — store in a GitHub Environment named "production"
+# (Settings > Environments > production > Environment secrets):
 #   OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_AI_API_KEY, PERPLEXITY_API_KEY
-# GITHUB_TOKEN is automatic.
+# GITHUB_TOKEN is automatic and does not need to be added.
 #
 # Jobs whose secret is missing are skipped automatically.
 # Note: secrets must be accessed via environment variables in steps, not in
@@ -23,6 +24,7 @@ jobs:
   # ── OpenAI (GPT-4o) ──────────────────────────────────────────────
   openai:
     runs-on: ubuntu-latest
+    environment: production
     if: github.event.pull_request.draft == false
     steps:
       - uses: actions/checkout@v5
@@ -63,6 +65,7 @@ jobs:
   # ── Anthropic (Claude) ────────────────────────────────────────────
   anthropic:
     runs-on: ubuntu-latest
+    environment: production
     if: github.event.pull_request.draft == false
     steps:
       - uses: actions/checkout@v5
@@ -103,6 +106,7 @@ jobs:
   # ── Google AI (Gemini) ────────────────────────────────────────────
   google:
     runs-on: ubuntu-latest
+    environment: production
     if: github.event.pull_request.draft == false
     steps:
       - uses: actions/checkout@v5
@@ -143,6 +147,7 @@ jobs:
   # ── Perplexity AI ─────────────────────────────────────────────────
   perplexity:
     runs-on: ubuntu-latest
+    environment: production
     if: github.event.pull_request.draft == false
     steps:
       - uses: actions/checkout@v5
@@ -183,6 +188,7 @@ jobs:
   # ── GitHub Models (free — uses GITHUB_TOKEN) ──────────────────────
   github-models:
     runs-on: ubuntu-latest
+    environment: production
     if: github.event.pull_request.draft == false
     steps:
       - uses: actions/checkout@v5
