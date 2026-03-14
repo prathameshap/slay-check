@@ -55,7 +55,7 @@ You can set these as repository variables:
 
 - `SLAY_CHECK_AI_PROVIDER`: AI provider to use (default: `openai`)  
   - Supported values: `openai`, `anthropic`, `google`, `perplexity`, `ollama`, `github` (GitHub Models), `custom_http` (aliases: `http`, `cursor`)
-- `SLAY_CHECK_AI_MODEL`: Model name/ID for the chosen provider (e.g. `gpt-4o`, `claude-3-sonnet-20240229`, `gemini-pro`, `sonar-pro` for Perplexity)
+- `SLAY_CHECK_AI_MODEL`: Model name/ID for the chosen provider (e.g. `gpt-4o`, `claude-sonnet-4-6`, `gemini-pro`, `sonar-pro` for Perplexity)
 - `SLAY_CHECK_AI_BASE_URL`: Custom API base URL (used for OpenAI-/Anthropic-compatible or custom HTTP endpoints)
 - `SLAY_CHECK_VERBOSE`: Enable verbose logging (default: `false`)
 - `SLAY_CHECK_DRY_RUN`: Don't post comments, just show results (default: `false`)

@@ -103,13 +103,13 @@ Slay Check is **not published to PyPI** yet. Install it from GitHub (or install 
 
 | Method | Setup | Command |
 |--------|-------|---------|
-| **Ollama** (completely free, offline) | [Install Ollama](https://ollama.com), then `ollama pull llama3` | `slay-check review --local` with `ai_provider: ollama` |
+| **Ollama** (completely free, offline) | [Install Ollama](https://ollama.com), then `ollama pull llama3.2` | `slay-check review --local` with `ai_provider: ollama` |
 | **GitHub Models** (free with GitHub account) | Use your existing GitHub PAT | `slay-check review --local` with `ai_provider: github` |
 
 ```bash
 # Ollama — zero cost, runs on your machine
 pip install git+https://github.com/prathameshap/slay-check.git
-ollama pull llama3            # download a model (once)
+ollama pull llama3.2          # download a model (once)
 export SLAY_CHECK_AI_PROVIDER=ollama
 slay-check review --local     # no API key required
 
@@ -202,7 +202,7 @@ Allowed focus names: `problem`, `algorithm`, `best_approaches`, `complexity`, `r
 ```yaml
 # AI Provider
 ai_provider: openai  # openai, anthropic, google, perplexity, ollama, github, custom_http
-ai_model: gpt-4o     # e.g. gpt-4o, claude-3-sonnet-20240229, gemini-2.0-flash, llama3, sonar-pro
+ai_model: gpt-4o     # e.g. gpt-4o, claude-sonnet-4-6, gemini-2.5-flash, llama3.2, sonar-pro
 
 # Analysis Criteria (optional; use preset or focus above for simplicity)
 review_criteria:
@@ -238,10 +238,10 @@ For full configuration options (providers, custom HTTP, etc.), see [docs/github-
 | Provider | Models / endpoints (examples) | Best For |
 |----------|-------------------------------|----------|
 | **OpenAI** | GPT-4 family (e.g. `gpt-4o`), or any compatible chat/completions model | General code review |
-| **Anthropic** | Claude 3 family (e.g. `claude-3-sonnet-20240229`) | Security and risk-focused analysis |
-| **Google AI** | Gemini family (e.g. `gemini-2.0-flash`) | Performance / efficiency analysis |
+| **Anthropic** | Claude family (e.g. `claude-sonnet-4-6`) | Security and risk-focused analysis |
+| **Google AI** | Gemini family (e.g. `gemini-2.5-flash`) | Performance / efficiency analysis |
 | **Perplexity** | `sonar`, `sonar-pro`, `sonar-deep-research`, `sonar-reasoning-pro` | Fast, grounded code review |
-| **Ollama** | Any local model (`llama3`, `codellama`, `mistral`, `deepseek-coder`, …). **No API key, no cost.** | Free local reviews, air-gapped environments |
+| **Ollama** | Any local model (`llama3.2`, `codellama`, `mistral`, `deepseek-coder`, …). **No API key, no cost.** | Free local reviews, air-gapped environments |
 | **GitHub Models** | `gpt-4o`, `Llama-3.1-8B-Instruct`, `Mistral-large`, … **Free with a GitHub account.** Uses your GitHub PAT. | Free cloud reviews for GitHub users |
 | **Custom HTTP** | Any HTTP endpoint (including Cursor-backed gateways). Set `ai_provider: custom_http` (aliases: `http`, `cursor`) | Enterprise / internal models and gateways |
 

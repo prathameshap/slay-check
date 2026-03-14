@@ -24,7 +24,7 @@ from .base import (
 logger = logging.getLogger(__name__)
 
 DEFAULT_OLLAMA_URL = "http://localhost:11434/v1"
-DEFAULT_OLLAMA_MODEL = "llama3"
+DEFAULT_OLLAMA_MODEL = "llama3.2"
 
 
 class OllamaProvider(AIProvider):

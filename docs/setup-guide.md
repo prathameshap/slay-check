@@ -13,7 +13,7 @@ For **configuration** (presets, providers, YAML reference), see [README — Conf
 | **Anthropic** | [console.anthropic.com](https://console.anthropic.com/) → API Keys → Create Key (starts with `sk-ant-`) |
 | **Google AI** | [aistudio.google.com](https://aistudio.google.com/) → API Keys → Create API Key |
 | **Perplexity** | [docs.perplexity.ai](https://docs.perplexity.ai/) → API Keys |
-| **Ollama** (free, local) | No key needed — [install Ollama](https://ollama.com), run `ollama pull llama3`, set `ai_provider: ollama` |
+| **Ollama** (free, local) | No key needed — [install Ollama](https://ollama.com), run `ollama pull llama3.2`, set `ai_provider: ollama` |
 | **GitHub Models** (free) | Use your existing GitHub PAT — set `ai_provider: github` |
 
 ## Step 2: Add Repository Secrets

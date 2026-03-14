@@ -21,7 +21,7 @@ from .base import (
 class GoogleAIProvider(AIProvider):
     """Google AI provider for code review."""
 
-    def __init__(self, api_key: str, model: str = "gemini-2.0-flash"):
+    def __init__(self, api_key: str, model: str = "gemini-2.5-flash"):
         self.api_key = api_key
         self.model_name = model
         # Only create the client when we have a key; genai.Client("") raises ValueError.

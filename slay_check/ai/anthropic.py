@@ -25,7 +25,7 @@ class AnthropicProvider(AIProvider):
     def __init__(
         self,
         api_key: str,
-        model: str = "claude-3-sonnet-20240229",
+        model: str = "claude-sonnet-4-6",
         base_url: Optional[str] = None,
     ):
         # Allow custom base URL for Anthropic-compatible APIs

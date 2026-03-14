@@ -92,7 +92,7 @@ class ReviewEngine:
         elif self.config.ai_provider == "anthropic":
             return AnthropicProvider(
                 api_key=self.config.ai_token,
-                model=self.config.ai_model or "claude-3-sonnet-20240229",
+                model=self.config.ai_model or "claude-sonnet-4-6",
                 base_url=self.config.ai_base_url,
             )
         elif self.config.ai_provider == "google":
@@ -106,7 +106,7 @@ class ReviewEngine:
 
             return GoogleAIProvider(
                 api_key=self.config.ai_token,
-                model=self.config.ai_model or "gemini-2.0-flash",
+                model=self.config.ai_model or "gemini-2.5-flash",
             )
         elif self.config.ai_provider == "perplexity":
             return PerplexityProvider(
@@ -116,7 +116,7 @@ class ReviewEngine:
             )
         elif self.config.ai_provider == "ollama":
             return OllamaProvider(
-                model=self.config.ai_model or "llama3",
+                model=self.config.ai_model or "llama3.2",
                 base_url=self.config.ai_base_url or "http://localhost:11434/v1",
             )
         elif self.config.ai_provider in ("github", "github_models"):

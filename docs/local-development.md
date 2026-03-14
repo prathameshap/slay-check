@@ -7,7 +7,7 @@ How to use Slay Check on your machine (no GitHub Actions required).
 - Python 3.11+
 - Git
 - **One of:**
-  - **Ollama** (free, local) — [install Ollama](https://ollama.com), then `ollama pull llama3`. No API key needed.
+  - **Ollama** (free, local) — [install Ollama](https://ollama.com), then `ollama pull llama3.2`. No API key needed.
   - **GitHub Models** (free) — uses your existing GitHub PAT.
   - AI provider API key (OpenAI, Anthropic, Google AI, Perplexity)
 - GitHub personal access token (only needed for `--pr` reviews, **not** for `--local`)
@@ -57,7 +57,7 @@ To avoid re-exporting in every terminal, set them in your IDE:
 **Ollama (completely free, offline):**
 
 ```bash
-ollama pull llama3                     # download model once
+ollama pull llama3.2                     # download model once
 export SLAY_CHECK_AI_PROVIDER=ollama   # or set in slay-check.yaml
 slay-check review --local
 ```

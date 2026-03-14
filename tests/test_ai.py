@@ -89,7 +89,7 @@ def test_openai_provider():
 
 def test_anthropic_provider():
     """Test Anthropic provider."""
-    provider = AnthropicProvider("test-key", "claude-3-sonnet-20240229")
+    provider = AnthropicProvider("test-key", "claude-sonnet-4-6")
 
     assert provider.get_name() == "anthropic"
     assert provider.is_available() is True
@@ -104,7 +104,7 @@ def test_google_provider():
     if GoogleAIProvider is None:
         pytest.skip("google-genai dependency not installed")
 
-    provider = GoogleAIProvider("test-key", "gemini-2.0-flash")
+    provider = GoogleAIProvider("test-key", "gemini-2.5-flash")
 
     assert provider.get_name() == "google"
     assert provider.is_available() is True
@@ -141,10 +141,10 @@ def test_custom_http_provider():
 
 def test_ollama_provider():
     """Test Ollama provider instantiation and metadata."""
-    provider = OllamaProvider(model="llama3")
+    provider = OllamaProvider(model="llama3.2")
 
     assert provider.get_name() == "ollama"
-    assert provider.model == "llama3"
+    assert provider.model == "llama3.2"
     assert provider.base_url == "http://localhost:11434/v1"
 
     # is_available makes a real HTTP call; without a running Ollama

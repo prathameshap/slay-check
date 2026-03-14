@@ -88,10 +88,10 @@ def init_config(path: str):
 
         model_default = {
             "openai": "gpt-4o",
-            "anthropic": "claude-3-sonnet-20240229",
-            "google": "gemini-2.0-flash",
+            "anthropic": "claude-sonnet-4-6",
+            "google": "gemini-2.5-flash",
             "perplexity": "sonar-pro",
-            "ollama": "llama3",
+            "ollama": "llama3.2",
             "github": "gpt-4o",
             "custom_http": "",
         }.get(provider, "")
