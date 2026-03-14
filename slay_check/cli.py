@@ -23,7 +23,7 @@ console = Console()
 @click.group()
 @click.version_option(version=__version__)
 def cli():
-    """Slay Check - AI-powered code review tool.
+    """Slay Check - AI powered code review tool.
 
     \b
     Quick start:
