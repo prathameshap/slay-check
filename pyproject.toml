@@ -49,6 +49,9 @@ dev = [
     "mypy>=1.0.0",
     "pre-commit>=3.0.0",
 ]
+mcp = [
+    "mcp>=1.0.0",
+]
 
 [project.urls]
 Homepage = "https://github.com/prathameshap/slay-check"
@@ -58,6 +61,7 @@ Issues = "https://github.com/prathameshap/slay-check/issues"
 
 [project.scripts]
 slay-check = "slay_check.cli:main"
+slay-check-mcp = "slay_check.mcp_server:main"
 
 [tool.setuptools.packages.find]
 where = ["."]

@@ -54,7 +54,7 @@ def test_review_missing_args():
     result = runner.invoke(review, [])
 
     assert result.exit_code == 1
-    assert "Please specify either" in result.output
+    assert "slay-check quick" in result.output
 
 
 def test_review_local():
@@ -63,7 +63,10 @@ def test_review_local():
 
     with (
         patch("slay_check.cli.Config.load") as mock_load,
-        patch("slay_check.cli._get_local_git_diff", return_value=""),
+        patch(
+            "slay_check.cli.perform_local_git_review",
+            return_value="No local changes detected (git diff is empty).",
+        ),
     ):
         mock_config = Mock()
         mock_config.validate.return_value = None
@@ -110,3 +113,12 @@ def test_review_pr():
 
         assert result.exit_code == 0
         assert "Reviewing pull request" in result.output
+
+
+def test_cli_no_args_shows_welcome():
+    """Bare `slay-check` prints quick start."""
+    runner = CliRunner()
+    result = runner.invoke(cli, [])
+    assert result.exit_code == 0
+    assert "Slay Check" in result.output
+    assert "setup" in result.output.lower()

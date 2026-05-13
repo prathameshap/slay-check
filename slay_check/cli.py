@@ -3,7 +3,6 @@ CLI interface for Slay Check.
 """
 
 import os
-import subprocess
 import sys
 from typing import Optional
 
@@ -14,26 +13,142 @@ from rich.table import Table
 
 from . import __version__
 from .config import Config
-from .github_client import PullRequestFileInfo, PullRequestInfo
+from .local_review import perform_local_git_review
 from .review import ReviewEngine
 
 console = Console()
 
 
-@click.group()
+@click.group(invoke_without_command=True)
+@click.pass_context
 @click.version_option(version=__version__)
-def cli():
-    """Slay Check - AI powered code review tool.
+def cli(ctx: click.Context):
+    """Slay Check — AI-powered code review (CLI, GitHub Actions, MCP).
 
     \b
-    Quick start:
-      slay-check review --local              # review unstaged git diff
-      slay-check review --local --staged     # review staged changes
-      slay-check review --repo o/r --pr 42   # review a GitHub PR
-      slay-check config init                 # create slay-check.yaml
-      slay-check config show                 # display current config
+    Fastest path (local, free, no API key):
+      slay-check setup && slay-check quick
+
+    Common commands:
+      slay-check quick              # same as: review --local
+      slay-check review --local     # review unstaged git changes
+      slay-check review --repo o/r --pr 42
+      slay-check config init       # interactive wizard
     """
-    pass
+    if ctx.invoked_subcommand is None and not _argv_requests_help():
+        _print_welcome()
+
+
+def _argv_requests_help() -> bool:
+    return any(a in ("--help", "-h") for a in sys.argv[1:])
+
+
+def _print_welcome() -> None:
+    """Shown when you run `slay-check` with no subcommand."""
+    console.print(
+        Panel.fit(
+            "[bold cyan]Slay Check[/bold cyan] — AI code review\n\n"
+            "[bold]Fastest start (free, local):[/bold]\n"
+            "  [green]slay-check setup[/green]   → writes "
+            "[cyan]slay-check.yaml[/cyan] for Ollama\n"
+            "  [green]slay-check quick[/green]    → reviews [dim]git diff[/dim] "
+            "(need Ollama running)\n\n"
+            "[bold]One-liners:[/bold]\n"
+            "  [dim]slay-check review --local[/dim]           · unstaged changes\n"
+            "  [dim]slay-check review --local --staged[/dim] · staged only\n"
+            "  [dim]slay-check config init[/dim]             · full wizard\n\n"
+            "Run [green]slay-check --help[/green] for all commands.",
+            title="Quick start",
+            border_style="cyan",
+        )
+    )
+
+
+def _write_minimal_config(
+    path: str, provider: str, *, review_preset: str = "standard"
+) -> None:
+    """Write a small slay-check.yaml without secrets (tokens via env)."""
+    import yaml
+
+    data: dict = {"review_preset": review_preset}
+    pl = provider.lower()
+    if pl in ("github", "github_models"):
+        data["ai_provider"] = "github"
+        data["ai_model"] = "gpt-4o"
+    elif pl == "ollama":
+        data["ai_provider"] = "ollama"
+        data["ai_model"] = "llama3.2"
+    elif pl == "openai":
+        data["ai_provider"] = "openai"
+        data["ai_model"] = "gpt-4o"
+    else:
+        data["ai_provider"] = pl
+
+    with open(path, "w", encoding="utf-8") as f:
+        yaml.dump(data, f, default_flow_style=False, indent=2, sort_keys=False)
+
+
+@cli.command("setup")
+@click.option(
+    "--path", default="slay-check.yaml", help="Where to write the config file"
+)
+@click.option(
+    "--provider",
+    type=click.Choice(["ollama", "github", "openai"], case_sensitive=False),
+    default="ollama",
+    show_default=True,
+    help="ollama = no cloud API key. github = GitHub Models (PAT). openai = OpenAI API key.",
+)
+def setup(path: str, provider: str):
+    """Create minimal slay-check.yaml in one step (no prompts)."""
+    if os.path.exists(path):
+        console.print(f"[yellow]{path} already exists — not overwriting.[/yellow]")
+        console.print("Remove the file or run [cyan]slay-check config init[/cyan].")
+        return
+
+    p = provider.lower()
+    _write_minimal_config(path, p)
+
+    console.print(f"[green]Wrote {path}[/green] ([cyan]{p}[/cyan])\n")
+    if p == "ollama":
+        console.print(
+            "[bold]Next:[/bold] install Ollama from [link=https://ollama.com]"
+            "ollama.com[/link], run [green]ollama pull llama3.2[/green], "
+            "then [green]slay-check quick[/green]."
+        )
+    elif p == "github":
+        console.print(
+            "[bold]Next:[/bold] set a GitHub PAT (never commit secrets):\n"
+            "  [dim]export SLAY_CHECK_AI_TOKEN=ghp_...[/dim]\n"
+            "  [green]slay-check quick[/green]"
+        )
+    else:
+        console.print(
+            "[bold]Next:[/bold] set your OpenAI key:\n"
+            "  [dim]export SLAY_CHECK_AI_TOKEN=sk-...[/dim]\n"
+            "  [green]slay-check quick[/green]"
+        )
+
+
+@cli.command("quick")
+@click.pass_context
+@click.option(
+    "--staged",
+    is_flag=True,
+    help="Review staged changes only (same as review --local --staged).",
+)
+@click.option("--verbose", is_flag=True, help="Verbose logging")
+def quick_cmd(ctx: click.Context, staged: bool, verbose: bool):
+    """Review local git diff — shortest command (same as: review --local)."""
+    ctx.invoke(
+        review,
+        pr=None,
+        repo=None,
+        local=True,
+        staged=staged,
+        verbose=verbose,
+        dry_run=False,
+    )
 
 
 @cli.group()
@@ -44,10 +159,42 @@ def config():
 
 @config.command("init")
 @click.option("--path", default="slay-check.yaml", help="Configuration file path")
-def init_config(path: str):
-    """Initialize configuration file (interactive wizard)."""
+@click.option(
+    "--quick",
+    is_flag=True,
+    help="Write minimal config in one step (same idea as: slay-check setup).",
+)
+@click.option(
+    "--provider",
+    type=click.Choice(["ollama", "github", "openai"], case_sensitive=False),
+    default="ollama",
+    show_default=True,
+    help="Used with --quick only: backend to enable.",
+)
+def init_config(path: str, quick: bool, provider: str):
+    """Initialize configuration file (interactive wizard, or use --quick)."""
     if os.path.exists(path):
         console.print(f"[yellow]Configuration file {path} already exists[/yellow]")
+        return
+
+    if quick:
+        _write_minimal_config(path, provider.lower())
+        console.print(f"[green]Wrote {path}[/green] ([cyan]{provider}[/cyan])")
+        if provider.lower() == "ollama":
+            console.print(
+                "Next: [green]ollama pull llama3.2[/green] "
+                "then [green]slay-check quick[/green]"
+            )
+        elif provider.lower() == "github":
+            console.print(
+                "Next: [dim]export SLAY_CHECK_AI_TOKEN=ghp_...[/dim] "
+                "then [green]slay-check quick[/green]"
+            )
+        else:
+            console.print(
+                "Next: [dim]export SLAY_CHECK_AI_TOKEN=sk-...[/dim] "
+                "then [green]slay-check quick[/green]"
+            )
         return
 
     # If running in a non-interactive context (e.g. CI), write a sensible default
@@ -246,8 +393,18 @@ def review(
 
         if not local and not (pr and repo):
             console.print(
-                "[red]Please specify either --pr and --repo for pull request "
-                "review or --local for local changes[/red]"
+                Panel(
+                    "Use one of:\n"
+                    "  [green]slay-check quick[/green]              · review local "
+                    "[dim]git diff[/dim]\n"
+                    "  [green]slay-check review --local[/green]         · same as above\n"
+                    "  [green]slay-check review --repo o/r --pr N[/green]"
+                    "  · GitHub PR\n\n"
+                    "[dim]First time? [green]slay-check setup[/green] "
+                    "then [green]slay-check quick[/green][/dim]",
+                    title="What to run",
+                    border_style="cyan",
+                )
             )
             sys.exit(1)
 
@@ -260,132 +417,47 @@ def review(
             review_pull_request(config, repo, pr)
 
     except Exception as e:
+        _print_friendly_error(e)
         console.print(f"[red]Error: {e}[/red]")
         sys.exit(1)
 
 
-def review_local_changes(config: Config, *, staged: bool = False):
-    """Review local git changes"""
-    label = "staged" if staged else "unstaged"
-    console.print(f"[yellow]Reviewing {label} local changes...[/yellow]")
-    diff = _get_local_git_diff(staged=staged)
-    if not diff.strip():
-        console.print("[green]No local changes detected (git diff is empty).[/green]")
-        return
-
-    pr_info = PullRequestInfo(
-        number=0,
-        title="Local changes",
-        body=None,
-        state="local",
-        base_ref="",
-        head_ref="",
-        files=[],
-        owner="",
-        repo="",
-        author="",
-        created_at="",
-        updated_at="",
-    )
-
-    files = _split_unified_diff_by_file(diff)
-    if not files:
-        console.print("[yellow]No file patches found in git diff output.[/yellow]")
-        return
-
-    file_infos = []
-    for filename, patch in files.items():
-        additions = sum(
-            1
-            for line in patch.splitlines()
-            if line.startswith("+") and not line.startswith("+++")
-        )
-        deletions = sum(
-            1
-            for line in patch.splitlines()
-            if line.startswith("-") and not line.startswith("---")
-        )
-        changes = additions + deletions
-        file_infos.append(
-            PullRequestFileInfo(
-                filename=filename,
-                status="modified",
-                additions=additions,
-                deletions=deletions,
-                changes=changes,
-                patch=patch,
+def _print_friendly_error(exc: Exception) -> None:
+    """Show copy-paste fixes for common setup mistakes."""
+    msg = str(exc).lower()
+    if "token" in msg or "api key" in msg:
+        console.print(
+            Panel(
+                "[bold]Missing credentials[/bold]\n\n"
+                "[dim]Free local (Ollama, no cloud key):[/dim]\n"
+                "  [green]slay-check setup[/green]   # then: ollama pull llama3.2\n\n"
+                "[dim]Cloud API:[/dim]\n"
+                "  [dim]export SLAY_CHECK_AI_TOKEN=...[/dim]\n\n"
+                "[dim]GitHub Models (free with PAT):[/dim]\n"
+                "  [dim]export SLAY_CHECK_AI_PROVIDER=github[/dim]\n"
+                "  [dim]export SLAY_CHECK_AI_TOKEN=ghp_...[/dim]",
+                title="Tip",
+                border_style="yellow",
             )
         )
-
-    review_engine = ReviewEngine(config)
-    filtered = review_engine._filter_files(file_infos)  # reuse same filter logic
-    if not filtered:
-        console.print("[yellow]No files to review after filtering.[/yellow]")
-        return
-
-    file_reviews = []
-    all_issues = []
-    for file_info in filtered:
-        file_review = review_engine._review_file(file_info, pr_info)
-        file_reviews.append(file_review)
-        all_issues.extend(file_review.issues)
-
-    overall_score = (
-        sum(fr.score for fr in file_reviews) / len(file_reviews)
-        if file_reviews
-        else 0.0
-    )
-    summary = review_engine._generate_summary(file_reviews, all_issues, overall_score)
-
-    console.print("\n[bold green]=== Local Review Results ===[/bold green]")
-    console.print(f"Files reviewed: {len(file_reviews)}")
-    console.print(f"Issues found: {len(all_issues)}")
-    console.print(f"Overall score: {overall_score:.1f}/10\n")
-    console.print(summary)
-
-
-def _get_local_git_diff(*, staged: bool = False) -> str:
-    """Get the local git diff as a unified diff string."""
-    cmd = ["git", "diff", "--no-color"]
-    if staged:
-        cmd.append("--cached")
-    try:
-        result = subprocess.run(
-            cmd,
-            check=False,
-            capture_output=True,
-            text=True,
+    if "github token" in msg and "local" not in msg:
+        console.print(
+            "[dim]For PR review in terminal, set SLAY_CHECK_GITHUB_TOKEN. "
+            "For local diff only, use [green]slay-check quick[/green] (no GitHub token)."
+            "[/dim]\n"
         )
-        return result.stdout or ""
-    except Exception as e:
-        raise RuntimeError(f"Failed to run git diff: {e}") from e
 
 
-def _split_unified_diff_by_file(diff_text: str) -> dict[str, str]:
-    """Split `git diff` output into per-file patches keyed by file path."""
-    files: dict[str, list[str]] = {}
-    current_file: Optional[str] = None
+def review_local_changes(config: Config, *, staged: bool = False) -> None:
+    """Review local git changes."""
+    label = "staged" if staged else "unstaged"
+    console.print(f"[yellow]Reviewing {label} local changes...[/yellow]")
+    text = perform_local_git_review(config, staged=staged)
+    console.print(text)
 
-    for line in diff_text.splitlines():
-        if line.startswith("diff --git "):
-            # Example: diff --git a/path b/path
-            parts = line.split()
-            if len(parts) >= 4:
-                b_path = parts[3]
-                if b_path.startswith("b/"):
-                    current_file = b_path[2:]
-                else:
-                    current_file = b_path
-                files.setdefault(current_file, []).append(line)
-            else:
-                current_file = None
-            continue
-
-        if current_file is None:
-            continue
-        files[current_file].append(line)
-
-    return {k: "\n".join(v) for k, v in files.items()}
+    if "No local changes" in text or "No file patches" in text:
+        return
+    console.print("\n[bold green]=== Local Review Complete ===[/bold green]")
 
 
 def _configure_logging(verbose: bool) -> None:

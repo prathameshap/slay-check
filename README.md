@@ -2,7 +2,7 @@
 
 > **Slay Check** — AI-powered code review for GitHub Actions and local development
 
-**TL;DR** — Copy a workflow template from `examples/github-workflows/` into your repo’s `.github/workflows/`, add your AI provider key as a secret, and open a PR. You’ll get **one** AI review comment per PR.
+**TL;DR** — **Local (fastest):** `pip install` this repo → `slay-check setup` → `ollama pull llama3.2` → `slay-check quick`. **GitHub PRs:** copy a workflow from `examples/github-workflows/`, add your AI secret, open a PR → one review comment.
 
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://python.org)
 [![License](https://img.shields.io/badge/license-AGPL%20v3-green.svg)](LICENSE-AGPL)
@@ -26,6 +26,8 @@
 - **GitHub Actions Ready**: Automated PR reviews
 - **Single comment**: Full review (summary + per-file details) in one PR comment
 - **CLI Interface**: Local development support
+- **MCP server** (optional): `pip install "slay-check[mcp]"` — use `slay-check-mcp` with Claude Desktop, Cursor, and other MCP clients ([docs/mcp.md](docs/mcp.md))
+- **Assistant skill packs**: [marketplace/](marketplace/) — Claude `SKILL.md` and ChatGPT Custom GPT instructions for publishing
 - **Configurable Analysis**: Customize review criteria
 - **Comprehensive Scoring**: Detailed feedback with actionable suggestions
 - **Security Focused**: Built-in security and risk assessment
@@ -94,73 +96,35 @@ The HTTP client handles retries but does not validate timeout values.
 
 </details>
 
-### Local Development
+### Local — minimal effort
 
-**PyPI status**  
-Slay Check is **not published to PyPI** yet. Install it from GitHub (or install editable for development) using the commands below.
+| Step | Command |
+|------|---------|
+| 1. Install | `pip install git+https://github.com/prathameshap/slay-check.git` |
+| 2. One-line config (Ollama — **no API key**) | `slay-check setup` |
+| 3. Pull a model once | `ollama pull llama3.2` |
+| 4. Review your working tree | `slay-check quick` (same as `slay-check review --local`) |
 
-**Free options (no API key needed):**
+Run **`slay-check`** with no arguments for a reminder. Use **`slay-check config init --quick`** for the same default YAML without prompts.
 
-| Method | Setup | Command |
-|--------|-------|---------|
-| **Ollama** (completely free, offline) | [Install Ollama](https://ollama.com), then `ollama pull llama3.2` | `slay-check review --local` with `ai_provider: ollama` |
-| **GitHub Models** (free with GitHub account) | Use your existing GitHub PAT | `slay-check review --local` with `ai_provider: github` |
+**PyPI:** not published yet — install from GitHub as above.
 
-```bash
-# Ollama — zero cost, runs on your machine
-pip install git+https://github.com/prathameshap/slay-check.git
-ollama pull llama3.2          # download a model (once)
-export SLAY_CHECK_AI_PROVIDER=ollama
-slay-check review --local     # no API key required
+Copy [`.env.example`](.env.example) to `.env` if you prefer env vars over editing YAML.
 
-# GitHub Models — free, uses your GitHub PAT
-export SLAY_CHECK_AI_PROVIDER=github
-export SLAY_CHECK_AI_TOKEN="ghp_your-github-pat"
-slay-check review --local
-```
+**Alternatives (same idea, more manual):** set `SLAY_CHECK_AI_PROVIDER` yourself — see the table below. For **MCP** (Cursor / Claude Desktop), see [docs/mcp.md](docs/mcp.md).
 
-**From VS Code or Cursor**  
-Open the integrated terminal and run Slay Check from your project (or from a clone of this repo):
+| Method | Notes |
+|--------|--------|
+| **Ollama** | Free, offline — `slay-check setup` already sets `ai_provider: ollama` |
+| **GitHub Models** | Free with a PAT — `slay-check setup --provider github` then set `SLAY_CHECK_AI_TOKEN` |
 
-```bash
-# Install (once)
-pip install git+https://github.com/prathameshap/slay-check.git
+**From VS Code or Cursor** — run the same commands in the integrated terminal, or add MCP (`slay-check-mcp`) per [docs/mcp.md](docs/mcp.md). Optional: copy [`.env.example`](.env.example) → `.env`.
 
-# Or: editable install for contributing
-# git clone https://github.com/prathameshap/slay-check.git
-# cd slay-check
-# pip install -e ".[dev]"
-
-# Set tokens (or use slay-check.yaml / .env)
-export SLAY_CHECK_AI_TOKEN="your-ai-key"
-export SLAY_CHECK_GITHUB_TOKEN="your-github-pat"
-
-# Review a PR (results in terminal; add --dry-run to avoid posting)
-slay-check review --repo owner/repo --pr 42
-```
-
-To avoid re-exporting tokens in every terminal, you can set them in the IDE: **VS Code** → Settings → search “terminal env” → add `SLAY_CHECK_AI_TOKEN` and `SLAY_CHECK_GITHUB_TOKEN` to `terminal.integrated.env.*`. In **Cursor**, the same settings apply. There is no VS Code/Cursor extension yet; the CLI is the way to “call” the repo from the IDE.
-
-```bash
-# Review local unstaged changes (no GitHub token required)
-slay-check review --local
-
-# Review staged changes only
-slay-check review --local --staged
-```
-
-You can also create a `.env` file in your project root instead of exporting:
-
-```
-SLAY_CHECK_AI_TOKEN=your-ai-key
-SLAY_CHECK_GITHUB_TOKEN=your-github-pat
-```
-
-**Windows (PowerShell):**
+**Windows (PowerShell) for tokens:**
 
 ```powershell
-$env:SLAY_CHECK_AI_TOKEN = "your-ai-key"
-$env:SLAY_CHECK_GITHUB_TOKEN = "your-github-pat"
+$env:SLAY_CHECK_AI_TOKEN = "your-key"
+slay-check quick
 ```
 
 ## Configuration
