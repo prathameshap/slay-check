@@ -1,5 +1,9 @@
 # Slay Check
 
+<p align="center">
+  <img src="assets/slay-check-icon.png" alt="Slay Check icon" width="160" />
+</p>
+
 > **Slay Check** — AI-powered code review for GitHub Actions and local development
 
 **TL;DR** — **Local (fastest):** `pip install` this repo → `slay-check setup` → `ollama pull llama3.2` → `slay-check quick`. **GitHub PRs:** copy a workflow from `examples/github-workflows/`, add your AI secret, open a PR → one review comment.
@@ -219,9 +223,10 @@ For full configuration options (providers, custom HTTP, etc.), see [docs/github-
 | Run locally (CLI) | [Local Development](docs/local-development.md) |
 | Full setup (secrets, keys, troubleshooting) | [Setup Guide](docs/setup-guide.md) |
 | Customize review (presets, providers) | [Configuration](#configuration) below |
+| Use project icon and social copy | [Branding and Assets](docs/branding.md) |
 | Fork or contribute | [CONTRIBUTING.md](CONTRIBUTING.md) |
 
-**More:** [AI Response Control](docs/ai-response-control.md) · [Forking Guide](docs/forking-guide.md)
+**More:** [AI Response Control](docs/ai-response-control.md) · [Forking Guide](docs/forking-guide.md) · [Branding and Assets](docs/branding.md)
 
 ## Development
 
