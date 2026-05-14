@@ -1,6 +1,7 @@
 # Example: Run Slay Check from your own fork (e.g. to test changes before release).
 # Copy to your repo: .github/workflows/slay-check.yml (or merge with existing).
-# Set secrets: SLAY_CHECK_TOKEN (PAT with repo access), SLAY_CHECK_AI_TOKEN, and replace YOUR_USERNAME below.
+# Set secret: SLAY_CHECK_AI_TOKEN, and replace YOUR_USERNAME below.
+# If your fork is private, add `token: ${{ secrets.SLAY_CHECK_TOKEN }}` to the checkout step.
 
 name: Slay Check - AI Code Review (Forked)
 on:
@@ -25,7 +26,6 @@ jobs:
         with:
           repository: YOUR_USERNAME/slay-check
           path: slay-check
-          token: ${{ secrets.SLAY_CHECK_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@v6

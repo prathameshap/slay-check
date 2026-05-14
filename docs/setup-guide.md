@@ -14,7 +14,9 @@ For **configuration** (presets, providers, YAML reference), see [README — Conf
 | **Google AI** | [aistudio.google.com](https://aistudio.google.com/) → API Keys → Create API Key |
 | **Perplexity** | [docs.perplexity.ai](https://docs.perplexity.ai/) → API Keys |
 | **Ollama** (free, local) | No key needed — [install Ollama](https://ollama.com), run `ollama pull llama3.2`, set `ai_provider: ollama` |
-| **GitHub Models** (free) | Use your existing GitHub PAT — set `ai_provider: github` |
+| **GitHub Models** (free) | Only if you choose GitHub Models as the AI provider, use your existing GitHub PAT and set `ai_provider: github` |
+
+Slay Check itself is installed from the public `prathameshap/slay-check` repository, so users do not need to create a GitHub token just to install or run the GitHub Actions templates.
 
 ## Step 2: Add Repository Secrets
 
@@ -64,8 +66,8 @@ See [README — Configuration](https://github.com/prathameshap/slay-check#config
 | Error | Fix |
 |-------|-----|
 | `AI token is required` | Verify the secret name matches what the workflow template expects (e.g. `OPENAI_API_KEY`). |
-| `Repository not found` | For private repos, add a PAT as `SLAY_CHECK_TOKEN`. |
-| `Permission denied` | Ensure the GitHub token has `repo` scope and hasn't expired. |
+| `Repository not found` | Verify the repository URL/name. A PAT is only needed when checking out a private fork or private dependency. |
+| `Permission denied` | For normal public Slay Check workflows, use the automatic `${{ secrets.GITHUB_TOKEN }}`. For private forks, use a PAT with the minimum required repository access. |
 | `No files to review` | Check `exclude_patterns`; verify files have code changes and aren't too large. |
 
 ### Debug mode

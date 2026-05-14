@@ -28,7 +28,6 @@ jobs:
         with:
           repository: YOUR_USERNAME/slay-check
           path: slay-check
-          token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -54,6 +53,8 @@ jobs:
 ## Advanced Fork Usage
 
 ### 1. Using Personal Access Token
+
+Use this only for private forks or workflows that need extra repository permissions.
 
 ```yaml
 name: Slay Check - AI Code Review (PAT)
@@ -123,7 +124,6 @@ jobs:
           repository: YOUR_USERNAME/slay-check
           ref: feature/custom-review-logic
           path: slay-check
-          token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -170,7 +170,6 @@ jobs:
           repository: YOUR_USERNAME/slay-check
           ref: v1.2.0-custom
           path: slay-check
-          token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -218,7 +217,6 @@ jobs:
         with:
           repository: ${{ github.ref == 'refs/heads/main' && 'prod-team/slay-check' || 'dev-team/slay-check' }}
           path: slay-check
-          token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -264,7 +262,6 @@ jobs:
         with:
           repository: ${{ contains(github.event.pull_request.labels.*.name, 'security') && 'security-team/slay-check' || 'YOUR_USERNAME/slay-check' }}
           path: slay-check
-          token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -310,7 +307,6 @@ jobs:
         with:
           repository: ${{ contains(github.event.pull_request.head.ref, 'frontend') && 'frontend-team/slay-check' || 'backend-team/slay-check' }}
           path: slay-check
-          token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -359,7 +355,6 @@ jobs:
         with:
           repository: security-team/slay-check
           path: slay-check
-          token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -397,7 +392,6 @@ jobs:
         with:
           repository: performance-team/slay-check
           path: slay-check
-          token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -435,7 +429,6 @@ jobs:
         with:
           repository: YOUR_USERNAME/slay-check
           path: slay-check
-          token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -484,7 +477,6 @@ jobs:
         with:
           repository: YOUR_USERNAME/slay-check
           path: slay-check
-          token: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
         
       - name: Checkout main Slay Check (fallback)
@@ -493,7 +485,6 @@ jobs:
         with:
           repository: slay-check/slay-check
           path: slay-check
-          token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -541,7 +532,6 @@ jobs:
         with:
           repository: YOUR_USERNAME/slay-check
           path: slay-check
-          token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -591,7 +581,6 @@ jobs:
         with:
           repository: YOUR_USERNAME/slay-check
           path: slay-check
-          token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -627,9 +616,9 @@ jobs:
 
 **Solutions:**
 - Ensure the fork repository exists and is accessible
-- Use Personal Access Token with correct permissions
+- Use a Personal Access Token only when the fork is private or needs extra permissions
 - Check repository name spelling
-- Verify token has `repo` scope for private repositories
+- For private repositories, verify the token has the minimum required repository access
 
 #### 2. Installation Failures
 
@@ -656,7 +645,7 @@ jobs:
 **Problem:** Invalid or expired tokens
 
 **Solutions:**
-- Regenerate Personal Access Token
+- Regenerate the Personal Access Token, if your workflow uses one
 - Check token permissions
 - Verify token is correctly set in repository secrets
 - Ensure token hasn't expired
