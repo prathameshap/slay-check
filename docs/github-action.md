@@ -30,7 +30,7 @@ jobs:
           
       - name: Install Slay Check
         run: |
-          pip install git+https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/prathameshap/slay-check.git
+          pip install git+https://github.com/prathameshap/slay-check.git
           
       - name: Run Slay Check
         env:
@@ -47,7 +47,8 @@ jobs:
 Add these secrets to your repository:
 
 - `SLAY_CHECK_AI_TOKEN`: Your AI provider API token (OpenAI, Anthropic, Google AI)
-- `GITHUB_TOKEN`: Automatically provided by GitHub Actions
+
+No GitHub PAT is required to install Slay Check from `prathameshap/slay-check`; the repository is public. GitHub Actions provides `GITHUB_TOKEN` automatically, and Slay Check uses that automatic token to read PR metadata and post the review comment.
 
 ### Optional Variables
 

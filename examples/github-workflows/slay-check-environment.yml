@@ -1,6 +1,6 @@
 # Example: Different AI provider and thresholds for "development" vs "production" reviews.
 # Copy to your repo: .github/workflows/slay-check-environment.yml
-# Requires secrets: OPENAI_API_KEY, ANTHROPIC_API_KEY, GITHUB_TOKEN (or SLAY_CHECK_GITHUB_TOKEN).
+# Requires secrets: OPENAI_API_KEY, ANTHROPIC_API_KEY. GitHub provides GITHUB_TOKEN automatically.
 
 name: Slay Check - Environment-Specific Review
 on:
@@ -26,7 +26,7 @@ jobs:
 
       - name: Install Slay Check
         run: |
-          pip install git+https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/prathameshap/slay-check.git
+          pip install git+https://github.com/prathameshap/slay-check.git
 
       - name: Run Development Review
         env:
@@ -60,7 +60,7 @@ jobs:
 
       - name: Install Slay Check
         run: |
-          pip install git+https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/prathameshap/slay-check.git
+          pip install git+https://github.com/prathameshap/slay-check.git
 
       - name: Run Production Review
         env:

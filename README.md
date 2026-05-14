@@ -45,6 +45,8 @@
 2. **Add the required secret** for the template you chose (Settings → Secrets and variables → Actions).
 3. **Open a PR** — Slay Check runs and posts **one** comment with the full review.
 
+Slay Check is installed from this public repository, so you do **not** need to create a GitHub PAT just to use the workflow templates. GitHub Actions provides `GITHUB_TOKEN` automatically for PR metadata and review comments.
+
 **Workflow templates (copy-paste)**:
 
 | Workflow file | Provider | Secret required |

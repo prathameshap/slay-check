@@ -70,7 +70,6 @@ jobs:
         with:
           repository: YOUR_USERNAME/slay-check
           path: slay-check
-          token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -95,7 +94,7 @@ jobs:
 
 ### Method 2: Using Personal Access Token
 
-If you need more permissions, use a Personal Access Token:
+If your fork is private or you need extra repository permissions, use a Personal Access Token:
 
 ```yaml
 name: Slay Check - AI Code Review
@@ -141,7 +140,7 @@ jobs:
           python -m slay_check.github_action
 ```
 
-**Required Secret:** `PERSONAL_ACCESS_TOKEN` with `repo` scope.
+**Required Secret:** `PERSONAL_ACCESS_TOKEN` with the minimum repository access needed for your fork. Public forks normally do not need this.
 
 ### Method 3: Using Specific Branch/Tag
 
@@ -154,7 +153,6 @@ Use a specific branch or tag from your fork:
     repository: YOUR_USERNAME/slay-check
     ref: v1.2.0  # or branch name like 'custom-features'
     path: slay-check
-    token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ## Customization Examples
@@ -302,7 +300,7 @@ Use different forks based on conditions:
 
 **Error:** `Permission denied (publickey)`
 
-**Solution:** Use Personal Access Token instead of SSH:
+**Solution:** Public forks can be checked out over HTTPS without a token. For private forks, use a Personal Access Token instead of SSH:
 ```yaml
 token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 ```

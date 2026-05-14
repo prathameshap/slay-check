@@ -1,6 +1,6 @@
 # Example: Choose AI provider by PR label (security -> Anthropic, performance -> OpenAI, else Google).
 # Copy to your repo: .github/workflows/slay-check-multi-provider.yml
-# Requires secrets: ANTHROPIC_API_KEY, OPENAI_API_KEY, GOOGLE_AI_API_KEY, GITHUB_TOKEN.
+# Requires secrets: ANTHROPIC_API_KEY, OPENAI_API_KEY, GOOGLE_AI_API_KEY. GitHub provides GITHUB_TOKEN automatically.
 
 name: Slay Check - Multi-Provider Review
 on:
@@ -26,7 +26,7 @@ jobs:
 
       - name: Install Slay Check
         run: |
-          pip install git+https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/prathameshap/slay-check.git
+          pip install git+https://github.com/prathameshap/slay-check.git
 
       - name: Run Security Review (Claude)
         env:
@@ -57,7 +57,7 @@ jobs:
 
       - name: Install Slay Check
         run: |
-          pip install git+https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/prathameshap/slay-check.git
+          pip install git+https://github.com/prathameshap/slay-check.git
 
       - name: Run Performance Review (GPT-4)
         env:
@@ -88,7 +88,7 @@ jobs:
 
       - name: Install Slay Check
         run: |
-          pip install git+https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/prathameshap/slay-check.git
+          pip install git+https://github.com/prathameshap/slay-check.git
 
       - name: Run General Review (Google AI)
         env:
